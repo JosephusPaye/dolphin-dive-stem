@@ -33,7 +33,7 @@ export http_proxy="http://billy.boyd1:coolies12@proxy.det.nsw.edu.au:8080"
 export HTTP_PROXY=$http_proxy
 export https_proxy=$http_proxy
 export HTTPS_PROXY=$http_proxy
-export ftp_proxy=$ http_proxy
+export ftp_proxy=$http_proxy
 export FTP_PROXY=$http_proxy
 export all_proxy=$http_proxy
 export ALL_PROXY=$http_proxy
@@ -52,9 +52,9 @@ We use Git to host the project and manage changes as we work on different parts 
         [push]
         	default = simple
 
-3. `cd` into a folder where you normally save your code and following command to clone the repo (change <YOUR_BITBUCKET_USERNAME> to your username. This will create a folder called `dolphin-dive-stem` in the current directory with the code in it.
+3. `cd` into a folder where you normally save your code and following command to clone the repo (change **<YOUR_BITBUCKET_USERNAME>** to your username. This will create a folder called `dolphin-dive-stem` in the current directory with the code in it.
         
-        git clone https://<YOUR_BITBUCKET_USERNAME>@bitbucket.org/systemicanomaly/dolphin-dive-stem.git
+        git clone https://**<YOUR_BITBUCKET_USERNAME>**@bitbucket.org/systemicanomaly/dolphin-dive-stem.git
 
 4. You will be prompted for a password. Enter your password and the repo should be downloaded onto your system.
 
@@ -109,7 +109,7 @@ gulp
 
 ### Folder structure
 
-All development work is done on files in the `source/` directory. Don't edit files in the `game/` directory, as your changes will be lost when the project is built again.
+All development work is done on files in the `source/` directory. **DON'T** edit files in the `game/` directory, as your changes will be lost when the project is built again.
 
 The `source/` directory contains sub folders for html, images, fonts, sass (css) and javascript. When the project is built, the following happens:
 
