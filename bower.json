@@ -1,0 +1,14 @@
+{
+  "name": "dolphin-stem",
+  "version": "0.1.0",
+  "authors": [
+    "Anomaly Blue"
+  ],
+  "description": "Dolphin Game for STEM",
+  "main": "game/index.html",
+  "license": "MIT",
+  "homepage": "",
+  "dependencies": {
+    "phaser": "~2.3.0"
+  }
+}

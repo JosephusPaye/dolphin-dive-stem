@@ -1,0 +1,5 @@
+{
+	"directory": "vendor",
+	"proxy":"http://billy.boyd1:coolies12@proxy.det.nsw.edu.au:8080",
+    "https-proxy":"http://billy.boyd1:coolies12@proxy.det.nsw.edu.au:8080"
+}

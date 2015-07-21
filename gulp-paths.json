@@ -1,0 +1,47 @@
+{
+    "source": {
+    	"html": [
+            "./source/html/**/!(_)*.html"
+        ],
+        "javascript": [
+        	"./source/javascript/**/!(_)*.js"
+        ],
+        "sass": [
+            "./source/sass/game.scss"
+        ],
+        "fonts": [
+            "./source/fonts/**/!(_)*.*(eot|ttf|woff|woff2|otf|svg)"
+        ],
+        "images": [
+        	"./source/images/**/!(_)*.*(svg|png|jpg|gif)"
+        ]
+    },
+
+    "watch": {
+    	"html": [
+            "./source/html/**/!(_)*.html"
+        ],
+        "javascript": [
+        	"./source/javascript/**/!(_)*.js"
+        ],
+        "sass": [
+            "./source/sass/!(_)*.scss"
+        ],
+        "fonts": [
+            "./source/fonts/**/!(_)*.*(eot|ttf|woff|woff2|otf|svg)"
+        ],
+        "images": [
+        	"./source/images/**/!(_)*.*(svg|png|jpg|gif)"
+        ]
+    },
+
+    "destination": {
+    	"chrome"	: "./game",
+    	"html"		: "./game",
+        "css"		: "./game/assets/css",
+        "fonts"		: "./game/assets/css/fonts",
+        "js"		: "./game/assets/js"
+    },
+
+    "build": "./game"
+}
