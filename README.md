@@ -52,9 +52,9 @@ We use Git to host the project and manage changes as we work on different parts 
         [push]
         	default = simple
 
-3. `cd` into a folder where you normally save your code and following command to clone the repo (change **<YOUR_BITBUCKET_USERNAME>** to your username. This will create a folder called `dolphin-dive-stem` in the current directory with the code in it.
+3. `cd` into a folder where you normally save your code and following command to clone the repo (change *<YOUR_BITBUCKET_USERNAME>* to your username. This will create a folder called `dolphin-dive-stem` in the current directory with the code in it.
         
-        git clone https://**<YOUR_BITBUCKET_USERNAME>**@bitbucket.org/systemicanomaly/dolphin-dive-stem.git
+        git clone https://<YOUR_BITBUCKET_USERNAME>@bitbucket.org/systemicanomaly/dolphin-dive-stem.git
 
 4. You will be prompted for a password. Enter your password and the repo should be downloaded onto your system.
 
