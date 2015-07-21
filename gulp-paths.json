@@ -40,7 +40,8 @@
     	"html"		: "./game",
         "css"		: "./game/assets/css",
         "fonts"		: "./game/assets/css/fonts",
-        "js"		: "./game/assets/js"
+        "js"		: "./game/assets/js",
+        "images"    : "./game/assets/images"
     },
 
     "build": "./game"

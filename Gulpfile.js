@@ -145,6 +145,16 @@ gulp.task('html', function() {
 });
 
 /**
+ * Copy image files
+ * 
+ * @return {Stream}
+ */
+gulp.task('images', function() {
+    return gulp.src(paths.source.images)
+        .pipe(gulp.dest(paths.destination.images));
+});
+
+/**
  * Watch source files to trigger build tasks
  */
 gulp.task('watch', function() {
@@ -159,7 +169,7 @@ gulp.task('watch', function() {
  * Default Gulp task
  */
 gulp.task('default', [
-    'css', 'fonts', 'html', 'javascript', 'browser-sync', 'watch'
+    'images', 'css', 'fonts', 'html', 'javascript', 'browser-sync', 'watch'
 ]);
 
 /**
