@@ -28,7 +28,7 @@ NPM is NodeJS's package manager and it's what we use to install Gulp, Bower and 
 ### Setup Proxy Variables (if working at school)
 
 If working at school, make sure that proxy environment variables are set. You can copy and paste the following into a terminal to setup the proxy. However, this only works in that terminal window and will be reset when the window is closed. See [this snippet](https://bitbucket.org/snippets/systemicanomaly/4p5z/bashrc-file-with-school-proxy-settings) for a more permanent solution.
-        
+```
 export http_proxy="http://billy.boyd1:coolies12@proxy.det.nsw.edu.au:8080"
 export HTTP_PROXY=$http_proxy
 export https_proxy=$http_proxy
@@ -37,6 +37,7 @@ export ftp_proxy=$ http_proxy
 export FTP_PROXY=$http_proxy
 export all_proxy=$http_proxy
 export ALL_PROXY=$http_proxy
+```
 
 ### Git (version control)
 
@@ -76,7 +77,7 @@ We use Git to host the project and manage changes as we work on different parts 
 * Run `node --version` and you should see something similar to `v0.12.7`
 * Run `npm --version` and you should see something similar to `2.11.3`
 
-## Gulp and Bower
+### Gulp and Bower
 
 With NodeJS and NPM installed, run the following commands from a terminal to install `gulp` and `bower`
 
@@ -88,28 +89,63 @@ To check if Gulp and Bower were installed correctly:
 * Run `gulp --version` and you should see something similar to `[19:27:06] CLI version 3.9.0`
 * Run `bower --version` and you should see something similar to `1.4.2`
 
-### What is this repository for? ###
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+## Working with project
 
-### How do I get set up? ###
+To begin, initialize the project by running the following in the project root (where the files `bower.json` and `package.json` are located):
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+1. `npm install`
+2. `bower install`
 
-### Contribution guidelines ###
+To build the project, run
+```
+gulp build:full
+```
 
-* Writing tests
-* Code review
-* Other guidelines
+To start the server and setup watching, run
+```
+gulp 
+```
 
-### Who do I talk to? ###
+### Folder structure
 
-* Repo owner or admin
-* Other community or team contact
+All development work is done on files in the `source/` directory. Don't edit files in the `game/` directory, as your changes will be lost when the project is built again.
+
+The `source/` directory contains sub folders for html, images, fonts, sass (css) and javascript. When the project is built, the following happens:
+
+* All `.html` files in `source/html/` are copied to the `game` folder. 
+* The `game.scss` file in `source/sass/` is compiled to `game.css` and copied to the `game/assets/css` folder. 
+* All `.js` files in `source/javascript/` are compiled into one file (`game.js`) and placed into `game/assets/js/`.
+* All image files (jpg, png, gif, svg) in `source/images/` are copied to the `game/assets/images` folder. 
+* All fonts (tff, otf, woff, woff2, svg) in `source/fonts/` are copied to the `game/assets/css/fonts` folder.
+* 3rd party JS files are all combined into `vendor.js` and copied into `game/assets/js/`
+* 3rd party CSS files are all combined into `vendor.css` and copied into `game/assets/css/` 
+
+### Suggested Code Style
+
+For consistency, I suggest we use the following code styles (open for debate):
+
+* Indent with 4 spaces (set automatically when you hit Tab in your text editor)
+* Use camel casing: e.g. `playerName` not `player_name` or `playername`
+* Have open braces on the same line as control statements. Eg:
+        
+        if ( ... ) {
+            
+        } else {
+            ...
+        }
+
+
+* Use lowercase for keywords such as `if`, `for`, `while`, etc.
+* Keep lines no more than 100 characters long
+
+
+## Contributors
+
+* Ben Mildren
+* Brian Burns
+* Josephus Paye II
+
+## License
+
+MIT
