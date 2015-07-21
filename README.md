@@ -123,7 +123,7 @@ The `source/` directory contains sub folders for html, images, fonts, sass (css)
 
 ### Suggested Code Style
 
-For consistency, I suggest we use the following code styles (open for debate):
+For consistency, I suggest we use the following code styles (open for discussion):
 
 * Indent with 4 spaces (set automatically when you hit Tab in your text editor)
 * Use camel casing: e.g. `playerName` not `player_name` or `playername`
