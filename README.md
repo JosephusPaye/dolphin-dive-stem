@@ -57,6 +57,10 @@ We use Git to host the project and manage changes as we work on different parts 
         git clone https://<YOUR_BITBUCKET_USERNAME>@bitbucket.org/systemicanomaly/dolphin-dive-stem.git
 
 4. You will be prompted for a password. Enter your password and the repo should be downloaded onto your system.
+5. Create a branch for your changes:
+
+* Run: `g checkout -b <your-branch-name>`
+* Then: `git push -u origin <your-branch-name>`
 
 
 ### NodeJS and NPM
