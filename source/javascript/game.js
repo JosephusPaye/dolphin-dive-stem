@@ -87,7 +87,41 @@ function create() {
 
     //  Our controls.
     cursors = game.input.keyboard.createCursorKeys();
+
+    //All working on creating a funtioning pause activation.
+    //Add a button using just text. This can be a sprite Heath makes, as shown in the example.
+    pauseButton = game.add.text(700, 20, 'PAUSE', { font : '24px cursive', fill : 'black' } );
+    //pauseButton = game.add.sprite(700, 20, 'pauseButton');
+    //Activating the input for this button, it can be clicked on.
+    pauseButton.inputEnabled = true;
+    //On the event where the player clicks the button change the game state to paused.
+    pauseButton.events.onInputUp.add( function() {
+        game.paused = true;
+    } );
     
+    //Some pause state tests.
+    //When the game state is paused in this instance activate the function. Useful for a focus paused menu.
+    game.onPause.add(GamePause, this);
+    game.onResume.add(GameResume, this);
+
+    function GamePause() {
+        console.log("game paused!");
+        //Paused game stuff goes here.
+        //Changing the pause button to reflect the status change.
+        pauseButton = game.add.text(700, 20, 'PAUSED', { font : '24px cursive', fill : 'black' } );
+        //When the button is pressed, this should unpause.
+        pauseButton.events.onInputUp.add( function() {
+            game.paused = false; //For some reason this isn't being recognised, may need some more context.
+        } );
+    };
+}
+
+
+
+function GameResume() {
+    console.log("game resumed");
+    //Possibly have return to game functions, or animations.
+    pauseButton = game.add.text(700, 20, 'PAUSE', { font : '24px cursive', fill : 'black' } );
 }
 
 function update() {
