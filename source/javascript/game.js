@@ -1,4 +1,4 @@
-var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render });
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 function preload() {
 
@@ -11,33 +11,38 @@ function preload() {
     game.load.image('oilspillfront', '/assets/images/GradientOil.png')
     game.load.spritesheet('dude', '/assets/images/dude.png', 32, 48);
 }
-
+// Setting all the variables
 var player;
 var cursors;
 var spill;
-var spillfront;
+var spillFront;
+var deathAlert;
 
 function create() {
 
     //  We're going to be using physics, so enable the Arcade Physics system
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
-    //  A simple background for our game
+    // Adding of background for our game
     game.add.tileSprite(0, 0, 19200, 1080, 'background');
     game.add.tileSprite(0, 0, 19200, 1080, 'seafloor');
+
+    //Set boundaries of the game world
     game.world.setBounds(0, 0, 19200, 1080);
 
+    // Grouping of the objects
+    oilSpill = game.add.group();
+    oilSpill.enableBody = true;
 
-    // The player and its settings
+    // Adding of the objects
     player = game.add.sprite(20, game.world.centerY, 'dude');
-    spill = game.add.sprite(-3100, 0, 'oilspill');
-    spillfront = game.add.sprite(-800, 0, 'oilspillfront');
+    spill = oilSpill.create(-3100, 0, 'oilspill');
+    spillFront = oilSpill.create(-800, 0, 'oilspillfront');
 
-    //  We need to enable physics on the player
+    //  Enable physics on each of the objects
     game.physics.arcade.enable(player);
-    game.physics.arcade.enable(spill);
-    game.physics.arcade.enable(spillfront);
-    //  Player physics properties. Give the little guy a slight bounce.
+
+    //  Player physics properties.
     player.body.collideWorldBounds = true;
 
     //  Our two animations, walking left and right.
@@ -53,11 +58,14 @@ function create() {
 
 function update() {
 
+    //Collisions
+    game.physics.arcade.overlap(player, spill, gameOver, null, this);
+
     //  Reset the players velocity (movement)
     player.body.velocity.x = 0;
     player.body.velocity.y = 0;
     spill.body.velocity.x = 200;
-    spillfront.body.velocity.x = 200;
+    spillFront.body.velocity.x = 200;
 
     if (cursors.left.isDown)
     {
@@ -90,9 +98,6 @@ function update() {
     }
 }
 
-function render() {
-
-    game.debug.cameraInfo(game.camera, 32, 32);
-    game.debug.spriteCoords(player, 32, 500);
-
+function gameOver(player, spill) {
+    deathAlert = game.add.text((game.camera.x + 16), (game.camera.y + 16), 'Game Over', { fontSize: '32px', fill: '#FFF' });
 }
