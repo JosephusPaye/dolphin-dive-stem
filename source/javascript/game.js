@@ -1,10 +1,10 @@
-// vim: set expandtab tabstop=4:
+// vim: set expandtab ts=4 sts=4 sw=4:
 console.log('It\'s working');
 
-var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, paused: paused, update: update });
 
 function preload() {
-
+    
     game.load.image('sky', '/assets/images/sky.png');
     game.load.image('ground', '/assets/images/platform.png');
     game.load.image('star', '/assets/images/star.png');
@@ -95,33 +95,26 @@ function create() {
     //Activating the input for this button, it can be clicked on.
     pauseButton.inputEnabled = true;
     //On the event where the player clicks the button change the game state to paused.
-    pauseButton.events.onInputUp.add( function() {
+    pauseButton.events.onInputUp.add(function() {
+        //Irrelevant test, lets me know when input is being processed.
+        console.log("WOW");
+        //This will activate phasers pause function, where some magic should happen.
         game.paused = true;
-    } );
+    });
     
-    //Some pause state tests.
-    //When the game state is paused in this instance activate the function. Useful for a focus paused menu.
-    game.onPause.add(GamePause, this);
-    game.onResume.add(GameResume, this);
-
-    function GamePause() {
-        console.log("game paused!");
-        //Paused game stuff goes here.
-        //Changing the pause button to reflect the status change.
-        pauseButton = game.add.text(700, 20, 'PAUSED', { font : '24px cursive', fill : 'black' } );
-        //When the button is pressed, this should unpause.
-        pauseButton.events.onInputUp.add( function() {
-            game.paused = false; //For some reason this isn't being recognised, may need some more context.
-        } );
-    };
 }
 
-
-
-function GameResume() {
-    console.log("game resumed");
-    //Possibly have return to game functions, or animations.
-    pauseButton = game.add.text(700, 20, 'PAUSE', { font : '24px cursive', fill : 'black' } );
+//Linked to the phaser pause stuff.
+function paused() {
+    //This will probably be external to phaser or some weird hack, not one of it's game objects.
+    pauseMenu = game.add.text(400, 300, 'PAUSED', {font : '40px cursive', fill : 'black'});
+    pauseMenu.inputEnabled = true;
+    //The issue here is that when the game is set to paused, everything stops. Including input. Ugh.
+    pauseMenu.events.onInputUp.add(function() {
+        console.log("OOH")
+        pauseMenu.destroy();
+        game.paused = false
+    });
 }
 
 function update() {
