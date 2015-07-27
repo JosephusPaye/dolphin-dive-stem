@@ -3,13 +3,12 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create
 function preload() {
 
 	game.load.image('background', '/assets/images/BackgroundStatic.png');
-    game.load.image('sky', '/assets/images/sky.png');
     game.load.image('ground', '/assets/images/platform.png');
     game.load.image('star', '/assets/images/star.png');
     game.load.image('seafloor', '/assets/images/SeaFloor.png');
     game.load.image('oilspill', '/assets/images/OilSpill.png');
-    game.load.image('oilspillfront', '/assets/images/GradientOil.png')
-    game.load.spritesheet('dude', '/assets/images/dude.png', 32, 48);
+    game.load.image('oilspillfront', '/assets/images/GradientOil.png');
+    game.load.spritesheet('dude', '/assets/images/Dolphin.png', 170, 169);
 }
 // Setting all the variables
 var player;
@@ -17,6 +16,7 @@ var cursors;
 var spill;
 var spillFront;
 var deathAlert;
+var obstacles;
 
 function create() {
 
@@ -46,8 +46,13 @@ function create() {
     player.body.collideWorldBounds = true;
 
     //  Our two animations, walking left and right.
-    player.animations.add('left', [0, 1, 2, 3], 10, true);
-    player.animations.add('right', [5, 6, 7, 8], 10, true);
+    player.animations.add('left', [0, 1, 2, 3], 8, true);
+    player.animations.add('right', [4, 5, 6, 7], 8, true);
+
+    emitter = game.add.emitter(game.camera.x + 50, game.camera.y, 250);
+    emitter.makeParticles('star');
+    emitter.start(false, 8000, 400);
+
 
     //  Our controls.
     cursors = game.input.keyboard.createCursorKeys();
@@ -57,6 +62,7 @@ function create() {
 }
 
 function update() {
+
 
     //Collisions
     game.physics.arcade.overlap(player, spill, gameOver, null, this);
@@ -90,6 +96,7 @@ function update() {
     {
     	//	Move downwards
     	player.body.velocity.y = 300;
+
     }
     if (cursors.up.isDown)
     {
