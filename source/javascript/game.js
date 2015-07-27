@@ -1,7 +1,7 @@
 // vim: set expandtab ts=4 sts=4 sw=4:
 console.log('It\'s working');
 
-var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, paused: paused, update: update });
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 function preload() {
     
@@ -88,7 +88,9 @@ function create() {
     //  Our controls.
     cursors = game.input.keyboard.createCursorKeys();
 
-    //All working on creating a funtioning pause activation.
+    /*
+     * PAUSE ACTIVATION
+     * */    
     //Add a button using just text. This can be a sprite Heath makes, as shown in the example.
     pauseButton = game.add.text(700, 20, 'PAUSE', { font : '24px cursive', fill : 'black' } );
     //pauseButton = game.add.sprite(700, 20, 'pauseButton');
@@ -100,21 +102,33 @@ function create() {
         console.log("WOW");
         //This will activate phasers pause function, where some magic should happen.
         game.paused = true;
+        //Makes the button invisible and gets rid of all interaction with it.
+        pauseButton.exists = false;
+        //Activating the external function.
+        extMenu();
     });
     
 }
 
-//Linked to the phaser pause stuff.
-function paused() {
-    //This will probably be external to phaser or some weird hack, not one of it's game objects.
-    pauseMenu = game.add.text(400, 300, 'PAUSED', {font : '40px cursive', fill : 'black'});
-    pauseMenu.inputEnabled = true;
-    //The issue here is that when the game is set to paused, everything stops. Including input. Ugh.
-    pauseMenu.events.onInputUp.add(function() {
-        console.log("OOH")
-        pauseMenu.destroy();
-        game.paused = false
-    });
+//This function does not run within the confines of the phaser framework, and hence should probably be moved out. Fine here for now.
+function extMenu() {
+    var resumeButton = document.getElementById("resumeButton");
+    var resetButton = document.getElementById("resetButton");
+    var menuButton = document.getElementById("menuButton");
+    resumeButton.onclick = function() {
+        console.log("YEEEESYEEEESYEEES");
+        game.paused = false;
+        pauseButton.exists = true;
+    }
+    resetButton.onclick = function() {
+        create();
+        //score is initialised with a value outside of create(), so it needs to be reset here.
+        score = 0;
+    }
+    menuButton.onclick = function() {
+        //This should reinitialise the menu hopefully simply once completed.
+        console.log("OPEN THE POD BAY DOORS HAL"); 
+    }
 }
 
 function update() {
