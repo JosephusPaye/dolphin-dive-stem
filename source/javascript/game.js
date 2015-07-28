@@ -8,7 +8,7 @@ function preload() {
     game.load.image('seafloor', '/assets/images/SeaFloor.png');
     game.load.image('oilspill', '/assets/images/OilSpill.png');
     game.load.image('oilspillfront', '/assets/images/GradientOil.png');
-    game.load.spritesheet('dude', '/assets/images/Dolphin.png', 170, 169);
+    game.load.spritesheet('dude', '/assets/images/Dolphin.png', 235, 96);
 }
 // Setting all the variables
 var player;
@@ -46,12 +46,20 @@ function create() {
     player.body.collideWorldBounds = true;
 
     //  Our two animations, walking left and right.
-    player.animations.add('left', [0, 1, 2, 3], 8, true);
-    player.animations.add('right', [4, 5, 6, 7], 8, true);
+    player.animations.add('left', [0, 1, 2], 6, true);
+    player.animations.add('right', [4, 3, 5], 6, true);
 
-    emitter = game.add.emitter(game.camera.x + 50, game.camera.y, 250);
-    emitter.makeParticles('star');
-    emitter.start(false, 8000, 400);
+    junkMaker = game.add.emitter(1, 1, 5000);
+    junkMaker.area = new Phaser.Rectangle(game.camera.x, 1, 10, 1080);
+    junkMaker.enableBody = true;
+    junkMaker.frequency = 1000;
+    junkMaker.maxRotation = 20;
+    junkMaker.minRotation = 20;
+    junkMaker.lifespan = 10000000;
+    junkMaker.makeParticles('star');
+    junkMaker.bounce.setTo(0.5, 0.5);
+    junkMaker.gravity = 0;
+    junkMaker.on = true;
 
 
     //  Our controls.
@@ -63,8 +71,10 @@ function create() {
 
 function update() {
 
+	junkMaker.x = game.camera.x  + 850;
 
     //Collisions
+    game.physics.arcade.collide(player, junkMaker);
     game.physics.arcade.overlap(player, spill, gameOver, null, this);
 
     //  Reset the players velocity (movement)
@@ -89,8 +99,6 @@ function update() {
     }
     else
     {
-        //  Stand still
-        player.animations.stop();
     }
     if (cursors.down.isDown)
     {
@@ -102,6 +110,10 @@ function update() {
     {
     	//	Move upwards
     	player.body.velocity.y = -300;
+    }
+    if (game.physics.arcade.collide(player, junkMaker) === true)
+    {
+    	deathAlert = game.add.text((game.camera.x + 16), (game.camera.y + 16), 'Its touching me!', { fontSize: '32px', fill: '#FFF' });
     }
 }
 
