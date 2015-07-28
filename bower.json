@@ -9,6 +9,7 @@
   "license": "MIT",
   "homepage": "",
   "dependencies": {
+    "jquery": "~2.1.4",
     "phaser": "~2.3.0"
   }
 }
