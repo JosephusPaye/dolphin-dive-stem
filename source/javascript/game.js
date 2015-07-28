@@ -17,6 +17,7 @@ var spill;
 var spillFront;
 var deathAlert;
 var obstacles;
+var junkMaker;
 
 function create() {
 
@@ -44,6 +45,7 @@ function create() {
 
     //  Player physics properties.
     player.body.collideWorldBounds = true;
+    player.pivot = new PIXI.Point(120, 48);
 
     //  Our two animations, walking left and right.
     player.animations.add('left', [0, 1, 2], 6, true);
@@ -82,34 +84,61 @@ function update() {
     player.body.velocity.y = 0;
     spill.body.velocity.x = 200;
     spillFront.body.velocity.x = 200;
-
-    if (cursors.left.isDown)
-    {
-        //  Move to the left
-        player.body.velocity.x = -300;
-
-        player.animations.play('left');
-    }
-    else if (cursors.right.isDown)
+    if (cursors.right.isDown)
     {
         //  Move to the right
         player.body.velocity.x = 300;
 
         player.animations.play('right');
     }
-    else
+    else if (cursors.left.isDown)
     {
+        player.body.velocity.x = -300;
+
+        player.animations.play('left');
     }
-    if (cursors.down.isDown)
+    else if (cursors.down.isDown)
     {
-    	//	Move downwards
-    	player.body.velocity.y = 300;
+        player.body.velocity.y = 300;
+        player.rotation = 0.5707963268;
+    }
+    else if (cursors.up.isDown)
+    {
+        player.body.velocity.y = -300;
+        player.rotation = -0.5707963268;
+    }
+    if (cursors.right.isDown && cursors.down.isDown)
+    {
+        player.body.velocity.x = 300;
+        player.body.velocity.y = 300;
+        player.animations.play('right');
+        player.rotation = 0.785398163;
 
     }
-    if (cursors.up.isDown)
+    else if (cursors.right.isDown && cursors.up.isDown)
     {
-    	//	Move upwards
-    	player.body.velocity.y = -300;
+        player.body.velocity.x = 300;
+        player.body.velocity.y = -300;
+        player.animations.play('right');
+        player.rotation = -0.785398163;
+    }
+    else if (cursors.left.isDown && cursors.down.isDown)
+    {
+        player.body.velocity.x = -300;
+        player.body.velocity.y = 300;
+        player.animations.play('left');
+        player.rotation = -0.785398163;
+    }
+    else if (cursors.left.isDown && cursors.up.isDown)
+    {
+        player.body.velocity.x = -300;
+        player.body.velocity.y = -300;
+        player.animations.play('left');
+        player.rotation = 0.785398163;
+    }
+    else
+    {
+        player.rotation = 0;
     }
     if (game.physics.arcade.collide(player, junkMaker) === true)
     {
