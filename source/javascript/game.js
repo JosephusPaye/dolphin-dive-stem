@@ -1,6 +1,5 @@
 // vim: set expandtab ts=4 sts=4 sw=4:
 console.log('It\'s working');
-
 var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 function preload() {
@@ -19,6 +18,8 @@ var cursors;
 var stars;
 var score = 0;
 var scoreText;
+
+var firstRun = true;
 
 function create() {
 
@@ -88,6 +89,12 @@ function create() {
     //  Our controls.
     cursors = game.input.keyboard.createCursorKeys();
 
+    if (firstRun) {
+        game.paused = true;
+        firstRun = false;
+        mainMenu();
+    }
+
     /*
      * PAUSE ACTIVATION
      * */    
@@ -128,6 +135,13 @@ function extMenu() {
     menuButton.onclick = function() {
         //This should reinitialise the menu hopefully simply once completed.
         console.log("OPEN THE POD BAY DOORS HAL"); 
+    }
+}
+
+function mainMenu() {
+    var beginButton = document.getElementById("beginButton");
+    beginButton.onclick = function() {
+        game.paused = false;
     }
 }
 
