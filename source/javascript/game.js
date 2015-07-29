@@ -1,4 +1,4 @@
-var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render });
 
 function preload() {
 
@@ -22,7 +22,7 @@ var junkMaker;
 function create() {
 
     //  We're going to be using physics, so enable the Arcade Physics system
-    game.physics.startSystem(Phaser.Physics.ARCADE);
+    game.physics.startSystem(Phaser.Physics.P2JS);
 
     // Adding of background for our game
     game.add.tileSprite(0, 0, 19200, 1080, 'background');
@@ -41,11 +41,12 @@ function create() {
     spillFront = oilSpill.create(-800, 0, 'oilspillfront');
 
     //  Enable physics on each of the objects
-    game.physics.arcade.enable(player);
+    game.physics.p2.enable(player);
 
     //  Player physics properties.
     player.body.collideWorldBounds = true;
     player.pivot = new PIXI.Point(120, 48);
+    player.body.fixedRotation = true;
 
     //  Our two animations, walking left and right.
     player.animations.add('left', [0, 1, 2], 6, true);
@@ -87,52 +88,52 @@ function update() {
     if (cursors.right.isDown)
     {
         //  Move to the right
-        player.body.velocity.x = 300;
+        player.body.moveRight(300);
 
         player.animations.play('right');
     }
     else if (cursors.left.isDown)
     {
-        player.body.velocity.x = -300;
+        player.body.moveLeft(300);
 
         player.animations.play('left');
     }
     else if (cursors.down.isDown)
     {
-        player.body.velocity.y = 300;
+        player.body.moveDown(300);
         player.rotation = 0.5707963268;
     }
     else if (cursors.up.isDown)
     {
-        player.body.velocity.y = -300;
+        player.body.moveUp(300);
         player.rotation = -0.5707963268;
     }
     if (cursors.right.isDown && cursors.down.isDown)
     {
-        player.body.velocity.x = 300;
-        player.body.velocity.y = 300;
+        player.body.moveRight(300);
+        player.body.moveDown(300);
         player.animations.play('right');
         player.rotation = 0.785398163;
 
     }
     else if (cursors.right.isDown && cursors.up.isDown)
     {
-        player.body.velocity.x = 300;
-        player.body.velocity.y = -300;
+        player.body.moveRight(300);
+        player.body.moveUp(300);
         player.animations.play('right');
         player.rotation = -0.785398163;
     }
     else if (cursors.left.isDown && cursors.down.isDown)
     {
-        player.body.velocity.x = -300;
-        player.body.velocity.y = 300;
+        player.body.moveLeft(300);
+        player.body.moveDown(300);
         player.animations.play('left');
         player.rotation = -0.785398163;
     }
     else if (cursors.left.isDown && cursors.up.isDown)
     {
-        player.body.velocity.x = -300;
-        player.body.velocity.y = -300;
+        player.body.moveLeft(300);
+        player.body.moveUp(300);
         player.animations.play('left');
         player.rotation = 0.785398163;
     }
@@ -148,4 +149,8 @@ function update() {
 
 function gameOver(player, spill) {
     deathAlert = game.add.text((game.camera.x + 16), (game.camera.y + 16), 'Game Over', { fontSize: '32px', fill: '#FFF' });
+}
+
+function render(argument) {
+	game.debug.body(player);
 }
