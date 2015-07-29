@@ -1,5 +1,4 @@
 // vim: set expandtab ts=4 sts=4 sw=4:
-
 var DolphinDive = {
     version: '0.0.1'
 };
@@ -101,13 +100,9 @@ var DolphinDive = {
             // Activating the external function.
             pauseMenu();
         });
-
     }
 
     function update() {
-        //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
-        // game.physics.arcade.overlap(player, stars, collectStar, null, this);
-
         //  Reset the players velocity (movement)
         player.body.velocity.x = 0;
         player.body.velocity.y = 0;
@@ -137,28 +132,6 @@ var DolphinDive = {
 
             player.frame = 4;
         }
-    }
-
-    // This function does not run within the confines of the phaser framework, and hence should probably be moved out. Fine here for now.
-    function extMenu() {
-        var resumeButton = document.getElementById('resumeButton');
-        var resetButton = document.getElementById('resetButton');
-        var menuButton = document.getElementById('menuButton');
-
-        resumeButton.onclick = function() {
-            console.log('YEEEESYEEEESYEEES');
-            game.paused = false;
-            gamePauseButton.exists = true;
-        };
-
-        resetButton.onclick = function() {
-            create();
-        };
-
-        menuButton.onclick = function() {
-            // This should reinitialise the menu hopefully simply once completed.
-            console.log('OPEN THE POD BAY DOORS HAL'); 
-        };
     }
 
     function mainMenu() {
