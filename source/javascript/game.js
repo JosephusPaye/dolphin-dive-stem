@@ -18,11 +18,14 @@ var spillFront;
 var deathAlert;
 var obstacles;
 var junkMaker;
+var angle;
+var angleCompensation;
 
 function create() {
 
     //  We're going to be using physics, so enable the Arcade Physics system
     game.physics.startSystem(Phaser.Physics.P2JS);
+
 
     // Adding of background for our game
     game.add.tileSprite(0, 0, 19200, 1080, 'background');
@@ -36,33 +39,31 @@ function create() {
     oilSpill.enableBody = true;
 
     // Adding of the objects
-    player = game.add.sprite(20, game.world.centerY, 'dude');
     spill = oilSpill.create(-3100, 0, 'oilspill');
     spillFront = oilSpill.create(-800, 0, 'oilspillfront');
+    player = game.add.sprite(20, game.world.centerY, 'dude');
+    point = game.add.sprite(20, game.world.centerY, 'star');
 
     //  Enable physics on each of the objects
     game.physics.p2.enable(player);
 
     //  Player physics properties.
-    player.body.collideWorldBounds = true;
-    player.pivot = new PIXI.Point(120, 48);
-    player.body.fixedRotation = true;
 
     //  Our two animations, walking left and right.
     player.animations.add('left', [0, 1, 2], 6, true);
     player.animations.add('right', [4, 3, 5], 6, true);
 
-    junkMaker = game.add.emitter(1, 1, 5000);
-    junkMaker.area = new Phaser.Rectangle(game.camera.x, 1, 10, 1080);
-    junkMaker.enableBody = true;
-    junkMaker.frequency = 1000;
-    junkMaker.maxRotation = 20;
-    junkMaker.minRotation = 20;
-    junkMaker.lifespan = 10000000;
-    junkMaker.makeParticles('star');
-    junkMaker.bounce.setTo(0.5, 0.5);
-    junkMaker.gravity = 0;
-    junkMaker.on = true;
+    // junkMaker = game.add.emitter(1, 1, 5000);
+    // junkMaker.area = new Phaser.Rectangle(game.camera.x, 1, 10, 1080);
+    // junkMaker.enableBody = true;
+    // junkMaker.frequency = 1000;
+    // junkMaker.maxRotation = 20;
+    // junkMaker.minRotation = 20;
+    // junkMaker.lifespan = 10000000;
+    // junkMaker.makeParticles('star');
+    // junkMaker.bounce.setTo(0.5, 0.5);
+    // junkMaker.gravity = 0;
+    // junkMaker.on = true;
 
 
     //  Our controls.
@@ -74,82 +75,97 @@ function create() {
 
 function update() {
 
-	junkMaker.x = game.camera.x  + 850;
+	// junkMaker.x = game.camera.x  + 850;
 
-    //Collisions
-    game.physics.arcade.collide(player, junkMaker);
-    game.physics.arcade.overlap(player, spill, gameOver, null, this);
+ //    //Collisions
+ //    game.physics.arcade.collide(player, junkMaker);
+ //    game.physics.arcade.overlap(player, spill, gameOver, null, this);
 
     //  Reset the players velocity (movement)
-    player.body.velocity.x = 0;
-    player.body.velocity.y = 0;
     spill.body.velocity.x = 200;
     spillFront.body.velocity.x = 200;
-    if (cursors.right.isDown)
-    {
-        //  Move to the right
-        player.body.moveRight(300);
 
-        player.animations.play('right');
+    player.body.velocity.x = 0;
+    player.body.velocity.y = 0;
+    angle = 45;
+
+    if (cursors.left.isDown) 
+    {
+    	player.body.velocity.x = -300;
+    	player.animations.play('left');
+    	angleCompensation = true;
     }
-    else if (cursors.left.isDown)
+    else if (cursors.right.isDown)
     {
-        player.body.moveLeft(300);
-
-        player.animations.play('left');
+    	player.body.velocity.x = 300;
+    	player.animations.play('right');
+    	angleCompensation = false;
+    }
+    else 
+    {
+    	player.body.velocity.x = 0;
+    }
+    if (cursors.up.isDown)
+    {
+    	if (angleCompensation === false){
+    		angle = angle*(-1);
+    	}
+    	player.body.angle = angle;
+    	player.body.velocity.y = -300;
     }
     else if (cursors.down.isDown)
     {
-        player.body.moveDown(300);
-        player.rotation = 0.5707963268;
-    }
-    else if (cursors.up.isDown)
-    {
-        player.body.moveUp(300);
-        player.rotation = -0.5707963268;
-    }
-    if (cursors.right.isDown && cursors.down.isDown)
-    {
-        player.body.moveRight(300);
-        player.body.moveDown(300);
-        player.animations.play('right');
-        player.rotation = 0.785398163;
-
-    }
-    else if (cursors.right.isDown && cursors.up.isDown)
-    {
-        player.body.moveRight(300);
-        player.body.moveUp(300);
-        player.animations.play('right');
-        player.rotation = -0.785398163;
-    }
-    else if (cursors.left.isDown && cursors.down.isDown)
-    {
-        player.body.moveLeft(300);
-        player.body.moveDown(300);
-        player.animations.play('left');
-        player.rotation = -0.785398163;
-    }
-    else if (cursors.left.isDown && cursors.up.isDown)
-    {
-        player.body.moveLeft(300);
-        player.body.moveUp(300);
-        player.animations.play('left');
-        player.rotation = 0.785398163;
+    	if (angleCompensation === true){
+    		angle = angle*(-1);
+    	}
+    	player.body.angle = angle;
+    	player.body.velocity.y = 300;
     }
     else
     {
-        player.rotation = 0;
+    	player.body.angle = 0;
     }
-    if (game.physics.arcade.collide(player, junkMaker) === true)
+    if (cursors.down.isDown && cursors.right.isDown) 
     {
-    	deathAlert = game.add.text((game.camera.x + 16), (game.camera.y + 16), 'Its touching me!', { fontSize: '32px', fill: '#FFF' });
+    	player.body.velocity.y = 300;
+    	player.body.velocity.x = 300;
+    	player.body.angle = 45;
+    	player.animations.play('right');
+    	angleCompensation = false;
     }
+    else if(cursors.down.isDown && cursors.left.isDown) 
+    {
+    	player.body.velocity.y = 300;
+    	player.body.velocity.x = -300;
+    	player.body.angle = -45;
+    	player.animations.play('left');
+    	angleCompensation = false;
+    }
+    else if(cursors.up.isDown && cursors.right.isDown) 
+    {
+    	player.body.velocity.y = -300;
+    	player.body.velocity.x = 300;
+    	player.body.angle = -45;
+    	player.animations.play('right');
+    	angleCompensation = false;
+    }
+    else if(cursors.up.isDown && cursors.left.isDown)
+    {
+    	player.body.velocity.y = -300;
+    	player.body.velocity.x = -300;
+    	player.body.angle = 45;
+    	player.animations.play('left');
+    	angleCompensation = true;
+    }
+    // if (game.physics.arcade.collide(player, junkMaker) === true)
+    // {
+    // 	deathAlert = game.add.text((game.camera.x + 16), (game.camera.y + 16), 'Its touching me!', { fontSize: '32px', fill: '#FFF' });
+    // }
 }
 
-function gameOver(player, spill) {
-    deathAlert = game.add.text((game.camera.x + 16), (game.camera.y + 16), 'Game Over', { fontSize: '32px', fill: '#FFF' });
-}
+// function gameOver(player, spill) {
+//     deathAlert = game.add.text((game.camera.x + 16), (game.camera.y + 16), 'Game Over', { fontSize: '32px', fill: '#FFF' });
+// }
 
 function render(argument) {
 	game.debug.body(player);
