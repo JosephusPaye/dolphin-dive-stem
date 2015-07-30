@@ -167,6 +167,6 @@ function update() {
 //     deathAlert = game.add.text((game.camera.x + 16), (game.camera.y + 16), 'Game Over', { fontSize: '32px', fill: '#FFF' });
 // }
 
-function render(argument) {
-	game.debug.body(player);
+function render() {
+	player.body.debug = true;
 }
