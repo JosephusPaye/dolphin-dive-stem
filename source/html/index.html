@@ -16,7 +16,7 @@
     
     <div class="game-area">
 		<div id="game"></div>
-		<div id="mainMenu" class="menu">
+		<div id="mainMenu" class="menu hidden">
 			<h1 class="title">Main Menu</h1>
 			<ul class="menu-buttons">
 				<li><a id="beginButton">New Game</a></li>
@@ -27,10 +27,11 @@
 		<div id="pauseMenu" class="menu hidden">
 			<h1 class="title">Paused</h1>
 			<ul class="menu-buttons">
-				<li><a id="resumeButton">Resume</a></li>
 				<li><a id="mainMenuButton">Quit to Main Menu</a></li>
+				<li><a id="resetButton">Restart</a></li>
 			</ul>
 		</div>
+		<div id="pauseButton" class="pauseButton"><p>P</p></div>
     </div>
 
     <script src="assets/js/vendor.js"></script>
