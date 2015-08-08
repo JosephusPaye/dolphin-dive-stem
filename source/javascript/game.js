@@ -136,11 +136,12 @@ function pauseMenu() {
             create();
         });
         //Reset the game, with the same principle.
-        $('#resetButton').click(function() {
+        $('#restartButton').click(function() {
             //Score calc
 
             $('#pauseMenu').addClass('hidden');
             create();
+            game.paused = false;
         });
     }
     else {
@@ -161,4 +162,28 @@ function mainMenu() {
         $('#mainMenu').addClass('hidden');
         $('#pauseButton').removeClass('hidden');
     });
+
+    // Setup high scores stuff
+    $('#highScoresButton').click(function() {
+        $('#mainMenu').addClass('hidden');
+        //Score array changes elements before display here.
+        $('#scoreMenu').removeClass('hidden');
+
+        $('#scoreReturnButton').click(function() {
+            $('#scoreMenu').addClass('hidden');
+            mainMenu();
+        });
+    });
+    $('#aboutButton').click(function() {
+        $('#mainMenu').addClass('hidden');
+        //Score array changes elements before display here.
+        $('#aboutMenu').removeClass('hidden');
+
+        $('#aboutReturnButton').click(function() {
+            $('#aboutMenu').addClass('hidden');
+            mainMenu();
+        });
+    });
+
+    // Setup about stuff
 }

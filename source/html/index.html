@@ -1,40 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <title>Dolphin Dive STEM</title>
-    <!-- <link rel="stylesheet" type="text/css" href="assets/css/vendor.css"> -->
-    <link rel="stylesheet" type="text/css" href="assets/css/game.css">
-</head>
-<body>
-	<div class="testing">
-		<!-- <button id="resumeButton">Resume</button> -->
-	    <button id="resetButton">Reset</button>
-	    <button id="menuButton">Main menu</button>
-	    <!-- <button id="beginButton">Begin</button> -->
-	</div>
-    
-    <div class="game-area">
-		<div id="game"></div>
-		<div id="mainMenu" class="menu hidden">
-			<h1 class="title">Main Menu</h1>
-			<ul class="menu-buttons">
-				<li><a id="beginButton">New Game</a></li>
-				<li><a id="highScoresButton">High Scores</a></li>
-				<li><a id="aboutButton">About</a></li>
-			</ul>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Dolphin Dive STEM</title>
+		<!-- <link rel="stylesheet" type="text/css" href="assets/css/vendor.css"> -->
+		<link rel="stylesheet" type="text/css" href="assets/css/game.css">
+	</head>
+	<body>
+		<div class="game-area">
+			<div id="game"></div>
+			<div id="mainMenu" class="menu hidden">
+				<h1 class="title">Main Menu</h1>
+				<ul class="menu-buttons">
+					<li><a id="beginButton">New Game</a></li>
+					<li><a id="highScoresButton">High Scores</a></li>
+					<li><a id="aboutButton">About</a></li>
+				</ul>
+			</div>
+			<div id="pauseMenu" class="menu hidden">
+				<h1 class="title">Paused</h1>
+				<ul class="menu-buttons">
+					<li><a id="mainMenuButton">Quit to Main Menu</a></li>
+					<li><a id="restartButton">Restart</a></li>
+				</ul>
+			</div>
+			<div id="scoreMenu" class="menu hidden">
+				<h1 class="title">Scores</h1>
+				<ul class="menu-buttons">
+					<li><a id="scoreOne">0</a></li>
+					<li><a id="scoreTwo">0</a></li>
+					<li><a id="scoreThree">0</a></li>
+					<li><a id="scoreReturnButton">Return</a></li>
+				</ul>
+			</div>
+			<div id="aboutMenu" class="menu hidden">
+				<h1 class="title">About Us</h1>
+				<p class="aboutTex">We're all great, better than u, the end</p>
+				<ul class="menu-buttons">
+					<li><a id="aboutReturnButton">Return</a></li>
+				</ul>
+			</div>
+			<div id="pauseButton" class="pauseButton"></div>
 		</div>
-		<div id="pauseMenu" class="menu hidden">
-			<h1 class="title">Paused</h1>
-			<ul class="menu-buttons">
-				<li><a id="mainMenuButton">Quit to Main Menu</a></li>
-				<li><a id="resetButton">Restart</a></li>
-			</ul>
-		</div>
-		<div id="pauseButton" class="pauseButton"><p>P</p></div>
-    </div>
 
-    <script src="assets/js/vendor.js"></script>
-    <script src="assets/js/game.js"></script>
-</body>
+		<script src="assets/js/vendor.js"></script>
+		<script src="assets/js/game.js"></script>
+	</body>
 </html>
