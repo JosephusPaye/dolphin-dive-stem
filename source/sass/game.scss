@@ -1,9 +1,13 @@
-// CSS styles in here
+@import 'fonts';
+
+* {
+	box-sizing: border-box;
+}
+
 body {
 	font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
 	padding: 0;
 	margin: 0;
-	box-sizing: border-box;
 }
 
 .game-area {
@@ -11,6 +15,7 @@ body {
 	margin: 0 auto;
 	margin-top: 20px;
 	position: relative;
+	font-family: 'Architects Daughter', cursive;
 }
 
 .testing {
@@ -32,6 +37,12 @@ body {
 		margin-top: 100px;
 		margin-bottom: 50px;
 		color: #FFF;
+		font-size: 46px;
+		text-shadow: 0 0 10px #000;
+	}
+
+	p {
+		font-size: 20px;
 	}
 }
 
@@ -41,17 +52,20 @@ body {
 
 	a {
 		background: peachpuff;
+		background: linear-gradient(to bottom, rgba(241,231,103,1) 0%, rgba(254,182,69,1) 100%);
 		padding: 10px 50px;
 		border-radius: 10px;
 		cursor: pointer;
 		text-align: center;
-		width: 200px;
+		min-width: 300px;
 		display: inline-block;
 		margin-bottom: 25px;
+		font-size: 22px;
 
-		&:hover {
+		&:hover,
+		&:focus {
 			background-color: #F9C08E;
-			box-shadow: 0 0 10px #000;
+			box-shadow: 0 0 15px #222;
 		}	
 	}
 }
@@ -62,18 +76,24 @@ body {
 
 .pauseButton {
 	padding: 0;
-	background:peachpuff;
-	width: 30px;
-	height: 30px;
+	background: peachpuff;
+	background: linear-gradient(to bottom, #f1e767 0%, #feb645 100%);
 	border-radius: 20px;
 	text-align: center;
 	display: inline-block;
 	position: absolute;
-	top: 0;
-	right: 0;
+	top: 5px;
+	right: 5px;
 	cursor: pointer;
-	&:hover {
+	font-size: 24px;
+	width: 40px;
+	height: 40px;
+	padding-top: 6px;
+	padding-left: 1px;
+
+	&:hover,
+	&:focus {
 		background-color: #F9C08E;
-		box-shadow: 0 0 10px #000;
+		box-shadow: 0 0 15px #222;
 	}	
 }

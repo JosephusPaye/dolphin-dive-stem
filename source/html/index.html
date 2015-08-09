@@ -14,7 +14,7 @@
 
 		<!-- Main Menu -->
 		<div id="mainMenu" class="menu hidden">
-			<h1 class="title">Main Menu</h1>
+			<h1 class="title">Dolphin Dive</h1>
 			<ul class="menu-buttons">
 				<li><a id="beginButton">New Game</a></li>
 				<li><a id="highScoresButton">High Scores</a></li>
@@ -26,8 +26,9 @@
 		<div id="pauseMenu" class="menu hidden">
 			<h1 class="title">Paused</h1>
 			<ul class="menu-buttons">
-				<li><a id="mainMenuButton">Quit to Main Menu</a></li>
+				<li><a id="resumeButton">Resume</a></li>
 				<li><a id="restartButton">Restart</a></li>
+				<li><a id="mainMenuButton">Quit to Main Menu</a></li>
 			</ul>
 		</div>
 
@@ -35,24 +36,25 @@
 		<div id="scoreMenu" class="menu hidden">
 			<h1 class="title">Scores</h1>
 			<ul class="menu-buttons">
-				<li><a id="scoreOne">0</a></li>
-				<li><a id="scoreTwo">0</a></li>
-				<li><a id="scoreThree">0</a></li>
+				<li><a id="scoreOne">120</a></li>
+				<li><a id="scoreTwo">100</a></li>
+				<li><a id="scoreThree">73</a></li>
 				<li><a id="scoreReturnButton">Return</a></li>
 			</ul>
 		</div>
 
 		<!-- About Menu -->
 		<div id="aboutMenu" class="menu hidden">
-			<h1 class="title">About Us</h1>
+			<h1 class="title">Dolphin Dive v<span id="versionTag"></span></h1>
 			<p class="aboutText">We're all great, better than u, the end.</p>
+			<br>
 			<ul class="menu-buttons">
-				<li><a id="aboutReturnButton">Okie dokie.</a></li>
+				<li><a id="aboutReturnButton">Okie dokie :)</a></li>
 			</ul>
 		</div>
 
 		<!-- Top right pause button -->
-		<div id="pauseButton" class="pauseButton"></div>
+		<div id="pauseButton" class="pauseButton hidden"><span class="icon-pause"></span></div>
 	</div>
 
 	<!-- Scripts -->

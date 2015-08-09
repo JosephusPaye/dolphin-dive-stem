@@ -2,7 +2,8 @@
 'use strict'; // Shows all errors and warnings
 
 /**
- * Setup global DolphinDive object
+ * Global DolphinDive object
+ * 
  * Contains game properties like current version
  */
 var DolphinDive = {
@@ -10,7 +11,8 @@ var DolphinDive = {
 };
 
 // Just a friendly reminder
-console.info('Starting Dolphin Dive v' + DolphinDive.version);
+console.info('Dolphin Dive v' + DolphinDive.version);
+$('#versionTag').html(DolphinDive.version);
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', {
     preload: preload,
@@ -20,13 +22,15 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', {
 });
 
 var player;
-var spill;
 var cursors;
 var speed = 300;
 var firstRun = true;
 var gamePauseButton;
 
+var spill ;
+var oilSpill;
 var spillFront;
+var point;
 var deathAlert;
 var obstacles;
 var junkMaker;
@@ -261,29 +265,45 @@ $('#pauseButton').click(function() {
  * and quit
  */
 function pauseMenu() {
+    var pauseMenu = $('#pauseMenu');
+    var pauseButton = $('#pauseButton');
+
     if (game.paused) {
-        $('#pauseMenu').removeClass('hidden');
+        pauseMenu.removeClass('hidden');
+        pauseButton.addClass('hidden');
 
         // Return to Main Menu
         $('#mainMenuButton').click(function() {
             // Do score calculations
             
-            $('#pauseMenu').addClass('hidden');
+            pauseMenu.addClass('hidden');
+            pauseButton.removeClass('hidden');
+
             firstRun = true;
             create();
+        });
+
+        // Resume button handler
+        $('#resumeButton').click(function() {
+            pauseMenu.addClass('hidden');
+            pauseButton.removeClass('hidden');
+
+            game.paused = false;
         });
 
         // Reset the game, with the same principle
         $('#restartButton').click(function() {
             // Score calc
 
-            $('#pauseMenu').addClass('hidden');
+            pauseMenu.addClass('hidden');
+            pauseButton.removeClass('hidden');
+
             create();
             game.paused = false;
         });
     } else {
-        $('#pauseMenu').addClass('hidden');
-        console.log('Game paused from pauseMenu()');
+        pauseMenu.addClass('hidden');
+        pauseButton.removeClass('hidden');
     }
 }
 

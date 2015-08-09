@@ -55,7 +55,7 @@ gulp.task('vendor-js', function() {
     return gulp.src(mainFiles)
         .pipe(jsFilter)
         .pipe(concat('vendor.js'))
-        // .pipe(uglify())
+        .pipe(uglify())
         .pipe(gulp.dest(paths.destination.js))
         .pipe(jsFilter.restore());
 });
@@ -173,17 +173,18 @@ gulp.task('default', [
 ]);
 
 /**
- * Build without watching
+ * Build without watching or starting the server
  */
 gulp.task('build', [
-    'css', 'html', 'javascript', 'fonts'
+    'build:full'
+    // 'css', 'html', 'javascript', 'fonts'
 ]);
 
 /**
  * Build without watching
  */
 gulp.task('build:full', [
-    'vendor-js', 'vendor-css', 'css', 'html', 'javascript', 'fonts'
+    'vendor-js', 'vendor-css', 'css', 'html', 'javascript', 'images', 'fonts'
 ]);
 
 /**
