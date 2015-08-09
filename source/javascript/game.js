@@ -1,10 +1,15 @@
 // vim: set expandtab ts=4 sts=4 sw=4:
-'use strict';
+'use strict'; // Shows all errors and warnings
 
+/**
+ * Setup global DolphinDive object
+ * Contains game properties like current version
+ */
 var DolphinDive = {
     version: '0.1.0'
 };
 
+// Just a friendly reminder
 console.info('Starting Dolphin Dive v' + DolphinDive.version);
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', {
