@@ -1,74 +1,144 @@
 // vim: set expandtab ts=4 sts=4 sw=4:
-var DolphinDive = {
-    version: '0.0.1'
-};
-
-
 'use strict';
+
+var DolphinDive = {
+    version: '0.1.0'
+};
 
 console.info('Starting Dolphin Dive v' + DolphinDive.version);
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', {
     preload: preload,
     create: create,
-    update: update
+    update: update,
+    render: render
 });
 
 var player;
 var spill;
 var cursors;
-var time;
 var speed = 300;
 var firstRun = true;
 var gamePauseButton;
 
+var spillFront;
+var deathAlert;
+var obstacles;
+var junkMaker;
+var angle;
+var angleCompensation;
+var result;
+var level = 1;
+var x = 2000;
+
 /**
- * Where we register and load assets
- * including images and sprite sheets
+ * Preload function
+ * 
+ * Where we register and load assets including 
+ * images and sprite sheets
  */
 function preload() {
-    game.load.image('sky', '/assets/images/sky.png');
-    game.load.image('spill', '/assets/images/ball.png');
-    game.load.spritesheet('dude', '/assets/images/dude.png', 32, 48);
+    game.load.image('background', '/assets/images/BackgroundStatic.png');
+    game.load.image('ground', '/assets/images/platform.png');
+    game.load.image('star', '/assets/images/star.png');
+    game.load.image('seafloor', '/assets/images/SeaFloor.png');
+    game.load.image('oilspill', '/assets/images/OilSpill.png');
+    game.load.image('oilspillfront', '/assets/images/GradientOil.png');
+    game.load.spritesheet('dude', '/assets/images/Dolphin.png', 235, 96);
 }
 
 /**
- * Where we initialize objects
+ * Create function
+ * 
+ * Where we create and initialize objects
  * for the game
  */
 function create() {
-    // We're going to be using physics, so enable the Arcade Physics system
-    game.physics.startSystem(Phaser.Physics.ARCADE);
+    // Enable the P2 Physics system
+    game.physics.startSystem(Phaser.Physics.P2JS);
+    game.physics.p2.setImpactEvents(true);
 
-    // A simple background for our game
-    game.add.tileSprite(0, 0, 98200, 600, 'sky');
-    game.world.setBounds(0, 0, 98200, 600);
+    // Add background
+    game.add.tileSprite(0, 0, 192000, 1080, 'background');
+    game.add.tileSprite(0, 0, 192000, 1080, 'seafloor');
 
-    // The player and its settings
-    player = game.add.sprite(parseInt((game.camera.width / 2), 10), game.world.height - 150, 'dude');
+    // Set boundaries of the world
+    game.world.setBounds(0, 0, 192000, 1080);
 
-    // The spill (ball for now)
-    spill = game.add.sprite(-575, 0, 'spill');
+    // Add oilspill group
+    oilSpill = game.add.group();
+    oilSpill.enableBody = true;
 
-    // We need to enable physics on the player and the spill
-    game.physics.arcade.enable(player);
-    game.physics.arcade.enable(spill);
+    // Add oilspill elements
+    spill = oilSpill.create(-3100, 0, 'oilspill');
+    spillFront = oilSpill.create(-800, 0, 'oilspillfront');
 
-    // Player physics properties. Give the little guy a slight bounce.
-    player.body.collideWorldBounds = true;
+    // Add player
+    player = game.add.sprite(20, game.world.centerY, 'dude');
+    player.scale.setTo(0.4, 0.4);
 
-    // Our two animations, walking left and right.
-    player.animations.add('left', [0, 1, 2, 3], 10, true);
-    player.animations.add('right', [5, 6, 7, 8], 10, true);
+    // Add star
+    point = game.add.sprite(20, game.world.centerY, 'star');
 
-    //  Our controls.
+    // Enable physics on the objects
+    game.physics.p2.enable(player);
+    game.physics.p2.enable(spill);
+
+    // Player physics properties. Add bounce to player
+    // player.body.collideWorldBounds = true;
+
+    // Animations: walking left and right
+    player.animations.add('left', [0, 1, 2], 6, true);
+    player.animations.add('right', [4, 3, 5], 6, true);
+
+    // junkMaker = game.add.emitter(1, 1, 5000);
+    // junkMaker.area = new Phaser.Rectangle(game.camera.x, 1, 10, 1080);
+    // junkMaker.enableBody = true;
+    // junkMaker.frequency = 1000;
+    // junkMaker.maxRotation = 20;
+    // junkMaker.minRotation = 20;
+    // junkMaker.lifespan = 10000000;
+    // junkMaker.makeParticles('star');
+    // junkMaker.bounce.setTo(0.5, 0.5);
+    // junkMaker.gravity = 0;
+    // junkMaker.on = true;
+    
+    var playerCollisionGroup = game.physics.p2.createCollisionGroup();
+    var junkCollisionGroup = game.physics.p2.createCollisionGroup();
+
+    // This part is vital if you want the objects with their own collision groups to still 
+    // collide with the world bounds (which we do)
+    // What this does is adjust the bounds to use its own collision group.
+    game.physics.p2.updateBoundsCollisionGroup();
+
+    var junks = game.add.group();
+    junks.enableBody = true;
+    junks.physicsBodyType = Phaser.Physics.P2JS;
+
+    // Create a thousand junk objects
+    for (var i = 0; i < 1000; i++) {
+        var junk = junks.create(game.world.randomX, game.world.randomY, 'star');
+        junk.body.setRectangle(24, 22);
+
+        // Tell the junk to use the junkCollisionGroup 
+        junk.body.setCollisionGroup(junkCollisionGroup);
+
+        // junks will collide against themselves and the player
+        // If you don't set this they'll not collide with anything.
+        // The first parameter is either an array or a single collision group.
+        junk.body.collides([junkCollisionGroup, playerCollisionGroup]);
+    }
+
+    player.body.setCollisionGroup(playerCollisionGroup);
+    player.body.collides(junkCollisionGroup, gameOver, this);
+
+    // The controls
     cursors = game.input.keyboard.createCursorKeys();
 
+    // Setup camera
     game.camera.follow(player);
 
-    // Timer - for ball acceleration
-    time = 1;
-
+    // Pause and show Main Menu on first run
     if (firstRun) {
         game.paused = true;
         firstRun = false;
@@ -76,80 +146,148 @@ function create() {
     }
 }
 
+/**
+ * Update function
+ * 
+ * The game loop - run once per frame
+ */
 function update() {
-    //  Reset the players velocity (movement)
+    // junkMaker.x = game.camera.x  + 850;
+
+    // Collisions
+    // player.body.onBeginContact.add(gameOver, this)
+    // game.physics.arcade.collide(player, junkMaker);
+    // game.physics.arcade.overlap(player, spill, gameOver, null, this);
+
+    // Reset the players velocity (movement)
+    spill.body.velocity.x = speed - 200;
+    spillFront.body.velocity.x = speed - 200;
+
     player.body.velocity.x = 0;
     player.body.velocity.y = 0;
+    angle = 45;
 
-    spill.body.velocity.x = time;
-    time++;
+    if (player.body.x >= (x * level) ) {
+        console.log('speed up!');
 
-    if (cursors.left.isDown) {
-        //  Move to the left
-        player.body.velocity.x = -1 * speed;
-
-        player.animations.play('left');
-    } else if (cursors.right.isDown) {
-        //  Move to the right
-        player.body.velocity.x = speed;
-
-        player.animations.play('right');
-    } else if (cursors.down.isDown) {
-        //  Move downwards
-        player.body.velocity.y = speed;
-    } else if (cursors.up.isDown) {
-        //  Move upwards
-        player.body.velocity.y = -1 * speed;
-    } else {
-        //  Stand still
-        player.animations.stop();
-
-        player.frame = 4;
+        speed += 50;
+        level += 1;
     }
+    
+    if (cursors.left.isDown) {
+        player.body.velocity.x = -1 * speed;
+        player.animations.play('left');
+        angleCompensation = true;
+    } else if (cursors.right.isDown) {
+        player.body.velocity.x = speed;
+        player.animations.play('right');
+        angleCompensation = false;
+    } else {
+        player.body.velocity.x = 0;
+    }
+
+    if (cursors.up.isDown) {
+        if (angleCompensation === false) {
+            angle = angle * -1;
+        }
+
+        player.body.angle = angle;
+        player.body.velocity.y = -1 * 300;
+    } else if (cursors.down.isDown) {
+        if (angleCompensation === true){
+            angle = angle * -1;
+        }
+
+        player.body.angle = angle;
+        player.body.velocity.y = 300;
+    } else {
+        player.body.angle = 0;
+    }
+
+    if (cursors.down.isDown && cursors.right.isDown) {
+        player.body.velocity.y = 300;
+        player.body.velocity.x = speed;
+        player.body.angle = 45;
+        player.animations.play('right');
+        angleCompensation = false;
+    } else if(cursors.down.isDown && cursors.left.isDown) {
+        player.body.velocity.y = 300;
+        player.body.velocity.x = -1 * speed;
+        player.body.angle = -45;
+        player.animations.play('left');
+        angleCompensation = false;
+    } else if(cursors.up.isDown && cursors.right.isDown) {
+        player.body.velocity.y = -300;
+        player.body.velocity.x = speed;
+        player.body.angle = -45;
+        player.animations.play('right');
+        angleCompensation = false;
+    } else if(cursors.up.isDown && cursors.left.isDown) {
+        player.body.velocity.y = -300;
+        player.body.velocity.x = -speed;
+        player.body.angle = 45;
+        player.animations.play('left');
+        angleCompensation = true;
+    }
+
+    // if (game.physics.arcade.collide(player, junkMaker) === true) {
+    //     deathAlert = game.add.text((game.camera.x + 16), (game.camera.y + 16), 'Its touching me!', { fontSize: '32px', fill: '#FFF' });
+    // }
 }
 
-/*
- * PAUSE ACTIVATION
- * */
-
-// On the event where the player clicks the button change the game state to paused.
-// 
+/**
+ * Pause activation
+ * 
+ * On the event where the player clicks the button change 
+ * the game state to paused.
+ */
 $('#pauseButton').click(function() {
-    // This will activate phasers pause function, where some magic should happen.
+    // This will activate Phaser's pause function, where some magic should happen.
     game.paused = !game.paused;
 
-    console.log('click!');
-    // Activating the external function.
+    // Activate the pause menu
     pauseMenu();
 });
 
+/**
+ * Pause Menu
+ *
+ * Shows Pause Menu and handles resume, restart
+ * and quit
+ */
 function pauseMenu() {
     if (game.paused) {
         $('#pauseMenu').removeClass('hidden');
 
-        //Returning to main menu.
+        // Return to Main Menu
         $('#mainMenuButton').click(function() {
-            //Do score calculations.
+            // Do score calculations
             
             $('#pauseMenu').addClass('hidden');
             firstRun = true;
             create();
         });
-        //Reset the game, with the same principle.
+
+        // Reset the game, with the same principle
         $('#restartButton').click(function() {
-            //Score calc
+            // Score calc
 
             $('#pauseMenu').addClass('hidden');
             create();
             game.paused = false;
         });
-    }
-    else {
+    } else {
         $('#pauseMenu').addClass('hidden');
-        console.log('this happens');
+        console.log('Game paused from pauseMenu()');
     }
 }
 
+/**
+ * Main Menu
+ *
+ * Shows Main Menu and handles start, highscores
+ * and about
+ */
 function mainMenu() {
     // Show the main menu
     $('#mainMenu').removeClass('hidden');
@@ -163,10 +301,11 @@ function mainMenu() {
         $('#pauseButton').removeClass('hidden');
     });
 
-    // Setup high scores stuff
+    // Handle Highscores button click
     $('#highScoresButton').click(function() {
         $('#mainMenu').addClass('hidden');
-        //Score array changes elements before display here.
+
+        // Score array changes elements before display here
         $('#scoreMenu').removeClass('hidden');
 
         $('#scoreReturnButton').click(function() {
@@ -174,9 +313,12 @@ function mainMenu() {
             mainMenu();
         });
     });
+
+    // Handle About button click
     $('#aboutButton').click(function() {
         $('#mainMenu').addClass('hidden');
-        //Score array changes elements before display here.
+
+        // Score array changes elements before display here
         $('#aboutMenu').removeClass('hidden');
 
         $('#aboutReturnButton').click(function() {
@@ -184,6 +326,21 @@ function mainMenu() {
             mainMenu();
         });
     });
+}
 
-    // Setup about stuff
+/**
+ * Handle game over
+ * 
+ * Display score and such...
+ */
+function gameOver(body, shapeA, shapeB, equation) {
+    result = 'Game Over!';
+}
+
+/**
+ * Render function
+ */
+function render() {
+    // player.body.debug = true;
+    game.debug.text(result, 32, 32);
 }
