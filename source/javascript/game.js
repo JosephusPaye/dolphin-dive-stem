@@ -23,10 +23,11 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', {
 
 var player;
 var cursors;
-var speed = 300;
+var playerSpeed = 300;
+var spillSpeed = 250;
 var firstRun = true;
 var gamePauseButton;
-
+var modifiers = true;
 var spill ;
 var oilSpill;
 var spillFront;
@@ -38,8 +39,17 @@ var angle;
 var angleCompensation;
 var result;
 var level = 1;
-var x = 2000;
+var Interval = 2000;
+var score;
+var scoreMultiplier = 1;
+var junkCount = 1000;
+var coinCount = 0;
 
+//boost variables
+var boost = false;
+var boostValue = 0;
+var boostStart = 0;
+var boostCharges = 0;
 /**
  * Preload function
  * 
@@ -50,6 +60,7 @@ function preload() {
     game.load.image('background', '/assets/images/BackgroundStatic.png');
     game.load.image('ground', '/assets/images/platform.png');
     game.load.image('star', '/assets/images/star.png');
+    game.load.image('healthpack', '/assets/images/firstaid.png');
     game.load.image('seafloor', '/assets/images/SeaFloor.png');
     game.load.image('oilspill', '/assets/images/OilSpill.png');
     game.load.image('oilspillfront', '/assets/images/GradientOil.png');
@@ -77,46 +88,34 @@ function create() {
     // Add oilspill group
     oilSpill = game.add.group();
     oilSpill.enableBody = true;
+    oilSpill.physicsBodyType = Phaser.Physics.P2JS;
 
     // Add oilspill elements
-    spill = oilSpill.create(-3100, 0, 'oilspill');
-    spillFront = oilSpill.create(-800, 0, 'oilspillfront');
+    spill = oilSpill.create(0, 0, 'oilspill');
+    spillFront = oilSpill.create(2450, 550, 'oilspillfront');
 
     // Add player
-    player = game.add.sprite(20, game.world.centerY, 'dude');
+    player = game.add.sprite(3000, game.world.centerY, 'dude');
     player.scale.setTo(0.4, 0.4);
 
     // Add star
     point = game.add.sprite(20, game.world.centerY, 'star');
 
-    // Enable physics on the objects
+    // Player physics properties
     game.physics.p2.enable(player);
-    game.physics.p2.enable(spill);
+    player.body.collideWorldBounds = true;
 
-    // Player physics properties. Add bounce to player
-    // player.body.collideWorldBounds = true;
-
-    // Animations: walking left and right
-    player.animations.add('left', [0, 1, 2], 6, true);
+    // Animation for moving right
     player.animations.add('right', [4, 3, 5], 6, true);
-
-    // junkMaker = game.add.emitter(1, 1, 5000);
-    // junkMaker.area = new Phaser.Rectangle(game.camera.x, 1, 10, 1080);
-    // junkMaker.enableBody = true;
-    // junkMaker.frequency = 1000;
-    // junkMaker.maxRotation = 20;
-    // junkMaker.minRotation = 20;
-    // junkMaker.lifespan = 10000000;
-    // junkMaker.makeParticles('star');
-    // junkMaker.bounce.setTo(0.5, 0.5);
-    // junkMaker.gravity = 0;
-    // junkMaker.on = true;
     
+    //
     var playerCollisionGroup = game.physics.p2.createCollisionGroup();
     var junkCollisionGroup = game.physics.p2.createCollisionGroup();
+    var spillCollisionGroup = game.physics.p2.createCollisionGroup();
+    var coinCollisionGroup = game.physics.p2.createCollisionGroup();
 
     // This part is vital if you want the objects with their own collision groups to still 
-    // collide with the world bounds (which we do)
+    // Collide with the world bounds (which we do)
     // What this does is adjust the bounds to use its own collision group.
     game.physics.p2.updateBoundsCollisionGroup();
 
@@ -125,9 +124,17 @@ function create() {
     junks.physicsBodyType = Phaser.Physics.P2JS;
 
     // Create a thousand junk objects
-    for (var i = 0; i < 1000; i++) {
+    for (var i = 0; i < junkCount; i++) {
+
+        // For where it says 'star', i want to add a list which it will take from randomly.
         var junk = junks.create(game.world.randomX, game.world.randomY, 'star');
+        // The size of the object will likely change too, if that is possible
         junk.body.setRectangle(24, 22);
+
+
+        junk.body.angularVelocity = Math.random()*2;
+        junk.body.velocity.x = Math.random()*100;
+        junk.body.velocity.y = Math.random()*80;
 
         // Tell the junk to use the junkCollisionGroup 
         junk.body.setCollisionGroup(junkCollisionGroup);
@@ -137,9 +144,37 @@ function create() {
         // The first parameter is either an array or a single collision group.
         junk.body.collides([junkCollisionGroup, playerCollisionGroup]);
     }
+    var coins = game.add.group();
+    coins.enableBody = true;
+    coins.physicsBodyType = Phaser.Physics.P2JS;
+    coinCount = Math.random()*1000;
+
+    // Create a thousand junk objects
+    for (var i = 0; i < coinCount; i++) {
+
+        // For where it says 'star', i want to add a list which it will take from randomly.
+        var coin = coins.create(game.world.randomX, game.world.randomY, 'healthpack');
+        // The size of the object will likely change too, if that is possible
+        coin.body.setRectangle(24, 22);
+
+        // Tell the coin to use the coinCollisionGroup 
+        coin.body.setCollisionGroup(coinCollisionGroup);
+
+        // coins will collide against themselves and the player
+        // If you don't set this they'll not collide with anything.
+        // The first parameter is either an array or a single collision group.
+        coin.body.collides([coinCollisionGroup, playerCollisionGroup]);
+    }
+
+    spill.body.setCollisionGroup(spillCollisionGroup);
+    spill.body.collides([spillCollisionGroup, playerCollisionGroup]);
 
     player.body.setCollisionGroup(playerCollisionGroup);
-    player.body.collides(junkCollisionGroup, gameOver, this);
+    player.body.collides(junkCollisionGroup, junkHit, this);
+    player.body.collides(spillCollisionGroup, gameOver, this);
+    player.body.collides(coinCollisionGroup, collectCoin, this);
+    
+    score = 0;
 
     // The controls
     cursors = game.input.keyboard.createCursorKeys();
@@ -153,6 +188,22 @@ function create() {
         firstRun = false;
         mainMenu();
     }
+    // Game modifiers and upgrades
+    if (modifiers === true) {
+        
+        // Basic mods
+        playerSpeed;
+        spillSpeed;
+        scoreMultiplier;
+        Interval;
+        junkCount;
+        boost;
+        boostValue = 500;
+        boostCharges = 1;
+        
+        // Upgrades
+        player.scale.setTo(0.4, 0.4);
+    }
 }
 
 /**
@@ -161,87 +212,89 @@ function create() {
  * The game loop - run once per frame
  */
 function update() {
-    // junkMaker.x = game.camera.x  + 850;
 
-    // Collisions
-    // player.body.onBeginContact.add(gameOver, this)
-    // game.physics.arcade.collide(player, junkMaker);
-    // game.physics.arcade.overlap(player, spill, gameOver, null, this);
+    if (boost === true) {
+        if ((player.x - boostStart) >= 1000) {
 
-    // Reset the players velocity (movement)
-    spill.body.velocity.x = speed - 200;
-    spillFront.body.velocity.x = speed - 200;
+            modifiers += -1 * boostValue;
+            boost = false;
+            console.log('Boost End :(');
 
-    player.body.velocity.x = 0;
-    player.body.velocity.y = 0;
-    angle = 45;
-
-    if (player.body.x >= (x * level) ) {
-        console.log('speed up!');
-
-        speed += 50;
-        level += 1;
+        }
     }
-    
-    if (cursors.left.isDown) {
-        player.body.velocity.x = -1 * speed;
-        player.animations.play('left');
-        angleCompensation = true;
-    } else if (cursors.right.isDown) {
-        player.body.velocity.x = speed;
+    // Governs and controls boost
+    if (result !== 'Game Over!') {
+        // Sets score based on the position of the player. the -60 compensates for the position of the player in the world
+        score = ((player.x/50)-60)*scoreMultiplier;
+        score = parseInt(score, 10);
+
+        // Updates the player and oil spill velocities
+        player.body.velocity.x = playerSpeed + modifiers;
         player.animations.play('right');
-        angleCompensation = false;
-    } else {
+        spill.body.velocity.x = spillSpeed;
+        spillFront.body.velocity.x = spillSpeed;
+    }
+    else {
+        // Stops all of the objects so that its not clunky. Once the death menu is implemented, this will look quite nice.
+        spill.body.velocity.x = 0;
+        spillFront.body.velocity.x = 0;
         player.body.velocity.x = 0;
     }
 
+    // Reset the players velocity (movement)
+    player.body.velocity.y = 0;
+    angle = 20;
+
+
+    if (player.body.x >= (Interval * level) ) {
+        
+        console.log('speed up!');
+        playerSpeed += 50;
+        spillSpeed += 50;
+        level += 1;
+    
+    }
+    if (cursors.right.isDown) {
+        if (boostCharges > 0) {
+
+            boostCharges += -1;
+            modifiers += boostValue;
+            boost = true;
+            boostStart = player.x;
+            console.log('BOOST!');
+      
+        }
+        else {
+
+            console.log('no charges left')
+
+        }
+    
+    }
     if (cursors.up.isDown) {
-        if (angleCompensation === false) {
-            angle = angle * -1;
-        }
 
-        player.body.angle = angle;
+        player.body.angle = -1 * angle;
         player.body.velocity.y = -1 * 300;
-    } else if (cursors.down.isDown) {
-        if (angleCompensation === true){
-            angle = angle * -1;
-        }
+
+    } 
+    else if (cursors.down.isDown) {
 
         player.body.angle = angle;
         player.body.velocity.y = 300;
-    } else {
+
+    } 
+    else {
+
         player.body.angle = 0;
+    
     }
-
-    if (cursors.down.isDown && cursors.right.isDown) {
-        player.body.velocity.y = 300;
-        player.body.velocity.x = speed;
-        player.body.angle = 45;
-        player.animations.play('right');
-        angleCompensation = false;
-    } else if(cursors.down.isDown && cursors.left.isDown) {
-        player.body.velocity.y = 300;
-        player.body.velocity.x = -1 * speed;
-        player.body.angle = -45;
-        player.animations.play('left');
-        angleCompensation = false;
-    } else if(cursors.up.isDown && cursors.right.isDown) {
-        player.body.velocity.y = -300;
-        player.body.velocity.x = speed;
-        player.body.angle = -45;
-        player.animations.play('right');
-        angleCompensation = false;
-    } else if(cursors.up.isDown && cursors.left.isDown) {
-        player.body.velocity.y = -300;
-        player.body.velocity.x = -speed;
-        player.body.angle = 45;
-        player.animations.play('left');
-        angleCompensation = true;
+    // This function is currently not working so i will have to read the docs when i can to see how to fix this.
+    if (player.collideWorldBounds === true) {
+        
+        console.log('touching')
+        player.body.velocity.y = 0;
+   
     }
-
-    // if (game.physics.arcade.collide(player, junkMaker) === true) {
-    //     deathAlert = game.add.text((game.camera.x + 16), (game.camera.y + 16), 'Its touching me!', { fontSize: '32px', fill: '#FFF' });
-    // }
 }
 
 /**
@@ -358,14 +411,26 @@ function mainMenu() {
  * 
  * Display score and such...
  */
-function gameOver(body, shapeA, shapeB, equation) {
+function gameOver() {
     result = 'Game Over!';
 }
 
+function junkHit() {
+    console.log('junk hit!')
+    playerSpeed += -50;
+}
+
+function collectCoin() {
+    console.log('Coin Collected');
+    //additionally have to add code which will remove the object from the game
+}
 /**
  * Render function
  */
 function render() {
-    // player.body.debug = true;
+    //player.body.debug = true;
+    //spill.body.debug = true;
     game.debug.text(result, 32, 32);
+    game.debug.text(score, 32, 52);
+    game.debug.text('Score Multiplier: ' + scoreMultiplier, 32, 72)
 }
