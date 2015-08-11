@@ -2,17 +2,76 @@
 'use strict'; // Shows all errors and warnings
 
 /**
- * Global DolphinDive object
+ * Global DD object
  * 
  * Contains game properties like current version
  */
-var DolphinDive = {
-    version: '0.1.0'
+var DD = {
+    version: '0.1.0',
+
+    objects: {
+        spill: {
+            speed: 250,
+            element: null,
+            collisionGroup: null
+        },
+
+        coins: {
+            amount: Math.random() * 100,
+            elements: [],
+            collisionGroup: null 
+        },
+
+        junks: {
+            amount: 0,
+            elements: [],
+            collisionGroup: null 
+        },
+    },
+
+    player: {
+        speed: 300,
+        element: null,
+        collisionGroup: null
+    },
+
+    game: {
+        firstRun: true,
+        runEnd: false,
+        inputs: null,
+        world: {
+            level: 1,
+            interval: 2000
+        },
+
+        score: {
+            coins: {
+                lastRun: 0,
+                total: 0
+            },
+
+            lastRun: 0,
+            highScores: []
+        }
+
+        modifiers: {
+            active: true,
+
+            boost: {
+                active: false,
+                value: 0,
+                start: 0,
+                charges: 0,
+            },
+
+            scoreMultiplier: 1,
+        }
+    }
 };
 
 // Just a friendly reminder
-console.info('Dolphin Dive v' + DolphinDive.version);
-$('#versionTag').html(DolphinDive.version);
+console.info('Dolphin Dive v' + DD.version);
+$('#versionTag').html(DD.version);
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', {
     preload: preload,
@@ -21,13 +80,6 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', {
     render: render
 });
 
-var player;
-var cursors;
-var playerSpeed = 300;
-var spillSpeed = 250;
-var firstRun = true;
-var gamePauseButton;
-var modifiers = true;
 var spill ;
 var oilSpill;
 var spillFront;
@@ -38,19 +90,7 @@ var junkMaker;
 var angle;
 var angleCompensation;
 var result;
-var level = 1;
-var Interval = 2000;
 var score;
-var scoreMultiplier = 1;
-var junkCount = 1000;
-var coinCount = 0;
-var coinRun = 0;
-
-//boost variables
-var boost = false;
-var boostValue = 0;
-var boostStart = 0;
-var boostCharges = 0;
 /**
  * Preload function
  * 
@@ -87,48 +127,45 @@ function create() {
     game.world.setBounds(0, 0, 192000, 1080);
 
     // Add oilspill group
-    oilSpill = game.add.group();
-    oilSpill.enableBody = true;
-    oilSpill.physicsBodyType = Phaser.Physics.P2JS;
+    DD.objects.oilSpill = game.add.group();
+    DD.objects.oilSpill.enableBody = true;
+    DD.objects.oilSpill.physicsBodyType = Phaser.Physics.P2JS;
 
     // Add oilspill elements
-    spill = oilSpill.create(0, 0, 'oilspill');
-    spillFront = oilSpill.create(2450, 550, 'oilspillfront');
+    DD.objects.spill.element = DD.objects.oilSpill.create(0, 0, 'oilspill');
+    DD.objects.oilSpill.spillFront = DD.objects.oilSpill.create(2450, 550, 'oilspillfront');
 
     // Add player
-    player = game.add.sprite(3000, game.world.centerY, 'dude');
-    player.scale.setTo(0.4, 0.4);
-
-    // Add star
-    point = game.add.sprite(20, game.world.centerY, 'star');
+    DD.objects.player = game.add.sprite(3000, game.world.centerY, 'dude');
+    DD.objects.player.scale.setTo(0.4, 0.4);
 
     // Player physics properties
-    game.physics.p2.enable(player);
-    player.body.collideWorldBounds = true;
+    game.physics.p2.enable(DD.objects.player);
+    DD.objects.player.body.collideWorldBounds = true;
 
     // Animation for moving right
-    player.animations.add('right', [4, 3, 5], 6, true);
+    DD.objects.player.animations.add('right', [4, 3, 5], 6, true);
     
     //
-    var playerCollisionGroup = game.physics.p2.createCollisionGroup();
-    var junkCollisionGroup = game.physics.p2.createCollisionGroup();
-    var spillCollisionGroup = game.physics.p2.createCollisionGroup();
-    var coinCollisionGroup = game.physics.p2.createCollisionGroup();
+    DD.player.collisionGroup = game.physics.p2.createCollisionGroup();
+    DD.objects.junks.collisionGroup = game.physics.p2.createCollisionGroup();
+    DD.objects.spill.collisionGroup = game.physics.p2.createCollisionGroup();
+    DD.objects.coins.collisionGroup = game.physics.p2.createCollisionGroup();
 
     // This part is vital if you want the objects with their own collision groups to still 
     // Collide with the world bounds (which we do)
     // What this does is adjust the bounds to use its own collision group.
     game.physics.p2.updateBoundsCollisionGroup();
 
-    var junks = game.add.group();
-    junks.enableBody = true;
-    junks.physicsBodyType = Phaser.Physics.P2JS;
+    var junk;
 
     // Create a thousand junk objects
     for (var i = 0; i < junkCount; i++) {
-
         // For where it says 'star', i want to add a list which it will take from randomly.
-        var junk = junks.create((Math.floor(Math.random() * 187000) + 5000), game.world.randomY, 'star');
+        junk = game.add.sprite((Math.floor(Math.random() * 187000) + 5000), game.world.randomY, 'star');
+        junk.enableBody = true;
+        junk.physicsBodyType = Phaser.Physics.P2JS;
+
         // The size of the object will likely change too, if that is possible
         junk.body.setRectangle(24, 22);
 
@@ -144,17 +181,19 @@ function create() {
         // If you don't set this they'll not collide with anything.
         // The first parameter is either an array or a single collision group.
         junk.body.collides([junkCollisionGroup, playerCollisionGroup]);
+
+        DD.objects.junks.push(junk);
     }
-    var coins = game.add.group();
-    coins.enableBody = true;
-    coins.physicsBodyType = Phaser.Physics.P2JS;
-    coinCount = Math.random()*100;
+
+    var coin;
 
     // Create a thousand junk objects
-    for (i = 0; i < coinCount; i++) {
-
+    for (i = 0; i < DD.objects.coins.amount; i++) {
         // For where it says 'star', i want to add a list which it will take from randomly.
-        var coin = coins.create((Math.floor(Math.random() * 187000) + 5000), game.world.randomY, 'healthpack');
+        coin = coins.create((Math.floor(Math.random() * 187000) + 5000), game.world.randomY, 'healthpack');
+        coin.enableBody = true;
+        coin.physicsBodyType = Phaser.Physics.P2JS;
+
         // The size of the object will likely change too, if that is possible
         coin.body.setRectangle(24, 22);
 
@@ -165,6 +204,8 @@ function create() {
         // If you don't set this they'll not collide with anything.
         // The first parameter is either an array or a single collision group.
         coin.body.collides([coinCollisionGroup, playerCollisionGroup]);
+
+        DD.objects.coins.push(coin);
     }
 
     spill.body.setCollisionGroup(spillCollisionGroup);
@@ -178,7 +219,7 @@ function create() {
     score = 0;
 
     // The controls
-    cursors = game.input.keyboard.createCursorKeys();
+    DD.game.input = game.input.keyboard.createCursorKeys();
 
     // Setup camera
     game.camera.follow(player);
@@ -224,7 +265,7 @@ function update() {
         }
     }
     // Governs and controls boost
-    if (result !== 'Game Over!') {
+    if (DD.game.runEnd) {
         // Sets score based on the position of the player. the -60 compensates for the position of the player in the world
         score = ((player.x/50)-60)*scoreMultiplier;
         score = parseInt(score, 10);
@@ -255,7 +296,7 @@ function update() {
         level += 1;
     
     }
-    if (cursors.right.isDown) {
+    if (DD.game.input.right.isDown) {
         if (boostCharges > 0) {
 
             boostCharges += -1;
@@ -272,13 +313,13 @@ function update() {
         }
     
     }
-    if (cursors.up.isDown) {
+    if (DD.game.input.up.isDown) {
 
         player.body.angle = -1 * angle;
         player.body.velocity.y = -1 * 300;
 
     } 
-    else if (cursors.down.isDown) {
+    else if (DD.game.input.down.isDown) {
 
         player.body.angle = angle;
         player.body.velocity.y = 300;
@@ -416,6 +457,7 @@ function mainMenu() {
  */
 function gameOver() {
     result = 'Game Over!';
+    DD.game.runEnd = true;
 }
 
 function junkHit() {
