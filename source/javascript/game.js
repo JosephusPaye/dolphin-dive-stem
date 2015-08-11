@@ -18,27 +18,29 @@ var DD = {
 
         coins: {
             amount: Math.random() * 100,
-            elements: [],
+            element: [],
             collisionGroup: null 
         },
 
         junks: {
-            amount: 0,
-            elements: [],
+            amount: 1000,
+            element: [],
             collisionGroup: null 
         },
     },
 
     player: {
         speed: 300,
+        vertSpeed: 300,
         element: null,
-        collisionGroup: null
+        collisionGroup: null,
+        angle: 20
     },
 
     game: {
         firstRun: true,
         runEnd: false,
-        inputs: null,
+        cursors: null,
         world: {
             level: 1,
             interval: 2000
@@ -52,19 +54,20 @@ var DD = {
 
             lastRun: 0,
             highScores: []
-        }
+        },
 
         modifiers: {
+            total: 0,
             active: true,
 
             boost: {
                 active: false,
-                value: 0,
-                start: 0,
+                total: 0,
+                begin: 0,
                 charges: 0,
             },
 
-            scoreMultiplier: 1,
+            ultiplier: 1,
         }
     }
 };
@@ -80,17 +83,6 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', {
     render: render
 });
 
-var spill ;
-var oilSpill;
-var spillFront;
-var point;
-var deathAlert;
-var obstacles;
-var junkMaker;
-var angle;
-var angleCompensation;
-var result;
-var score;
 /**
  * Preload function
  * 
@@ -126,25 +118,21 @@ function create() {
     // Set boundaries of the world
     game.world.setBounds(0, 0, 192000, 1080);
 
-    // Add oilspill group
-    DD.objects.oilSpill = game.add.group();
-    DD.objects.oilSpill.enableBody = true;
-    DD.objects.oilSpill.physicsBodyType = Phaser.Physics.P2JS;
-
-    // Add oilspill elements
-    DD.objects.spill.element = DD.objects.oilSpill.create(0, 0, 'oilspill');
-    DD.objects.oilSpill.spillFront = DD.objects.oilSpill.create(2450, 550, 'oilspillfront');
+    // Add oilspill elements.
+    DD.objects.spill.element = game.add.sprite(0, 0, 'oilspill');
+    DD.objects.spill.element.enableBody = true;
+    DD.objects.spill.element.physicsBodyType = Phaser.Physics.P2JS;
 
     // Add player
-    DD.objects.player = game.add.sprite(3000, game.world.centerY, 'dude');
-    DD.objects.player.scale.setTo(0.4, 0.4);
+    DD.player.element = game.add.sprite(3000, game.world.centerY, 'dude');
+    DD.player.element.scale.setTo(0.4, 0.4);
 
     // Player physics properties
-    game.physics.p2.enable(DD.objects.player);
-    DD.objects.player.body.collideWorldBounds = true;
+    game.physics.p2.enable(DD.player.element);
+    DD.player.element.body.collideWorldBounds = true;
 
     // Animation for moving right
-    DD.objects.player.animations.add('right', [4, 3, 5], 6, true);
+    DD.player.element.animations.add('right', [4, 3, 5], 6, true);
     
     //
     DD.player.collisionGroup = game.physics.p2.createCollisionGroup();
@@ -160,7 +148,7 @@ function create() {
     var junk;
 
     // Create a thousand junk objects
-    for (var i = 0; i < junkCount; i++) {
+    for (var i = 0; i < DD.objects.junks.amount; i++) {
         // For where it says 'star', i want to add a list which it will take from randomly.
         junk = game.add.sprite((Math.floor(Math.random() * 187000) + 5000), game.world.randomY, 'star');
         junk.enableBody = true;
@@ -182,7 +170,7 @@ function create() {
         // The first parameter is either an array or a single collision group.
         junk.body.collides([junkCollisionGroup, playerCollisionGroup]);
 
-        DD.objects.junks.push(junk);
+        DD.objects.junks.element.push(junk);
     }
 
     var coin;
@@ -208,43 +196,24 @@ function create() {
         DD.objects.coins.push(coin);
     }
 
-    spill.body.setCollisionGroup(spillCollisionGroup);
-    spill.body.collides([spillCollisionGroup, playerCollisionGroup]);
+    DD.objects.spill.body.setCollisionGroup(spillCollisionGroup);
+    DD.objects.spill.body.collides([spillCollisionGroup, playerCollisionGroup]);
 
-    player.body.setCollisionGroup(playerCollisionGroup);
-    player.body.collides(junkCollisionGroup, junkHit, this);
-    player.body.collides(spillCollisionGroup, gameOver, this);
-    player.body.collides(coinCollisionGroup, collectCoin, this);
-    
-    score = 0;
+    DD.player.body.setCollisionGroup(playerCollisionGroup);
+    DD.player.body.collides(junkCollisionGroup, junkHit, this);
+    DD.player.body.collides(spillCollisionGroup, gameOver, this);
+    DD.player.body.collides(coinCollisionGroup, collectCoin, this);
 
     // The controls
-    DD.game.input = game.input.keyboard.createCursorKeys();
+    DD.game.cursors = game.input.keyboard.createCursorKeys();
 
     // Setup camera
-    game.camera.follow(player);
-
+    game.camera.follow(DD.player.element);
     // Pause and show Main Menu on first run
-    if (firstRun) {
+    if (DD.game.firstRun) {
         game.paused = true;
         firstRun = false;
         mainMenu();
-    }
-    // Game modifiers and upgrades
-    if (modifiers === true) {
-        
-        // Basic mods
-        playerSpeed;
-        spillSpeed;
-        scoreMultiplier;
-        Interval;
-        junkCount;
-        boost;
-        boostValue = 500;
-        boostCharges = 1;
-        
-        // Upgrades
-        player.scale.setTo(0.4, 0.4);
     }
 }
 
@@ -255,8 +224,8 @@ function create() {
  */
 function update() {
 
-    if (boost === true) {
-        if ((player.x - boostStart) >= 1000) {
+    if (DD.game.modifiers.boost.active === true) {
+        if ((player.x - DD.game.modifiers.boost.begin) >= 1000) {
 
             modifiers += -1 * boostValue;
             boost = false;
@@ -265,28 +234,24 @@ function update() {
         }
     }
     // Governs and controls boost
-    if (DD.game.runEnd) {
-        // Sets score based on the position of the player. the -60 compensates for the position of the player in the world
-        score = ((player.x/50)-60)*scoreMultiplier;
-        score = parseInt(score, 10);
+    if (DD.game.runEnd !== true) {
+        // Sets DD.game.score.lastRun based on the position of the player. the -60 compensates for the position of the player in the world
+        DD.game.score.lastRun = ((DD.player.element.x/50)-60)*DD.game.score.lastRunMultiplier;
+        DD.game.score.lastRun = parseInt(DD.game.score.lastRun, 10);
 
         // Updates the player and oil spill velocities
-        player.body.velocity.x = playerSpeed + modifiers;
-        player.animations.play('right');
-        spill.body.velocity.x = spillSpeed;
-        spillFront.body.velocity.x = spillSpeed;
+        DD.player.element.body.velocity.x = DD.player.Speed + DD.game.modifiers.total;
+        DD.player.element.animations.play('right');
+        DD.objects.spill.element.body.velocity.x = DD.objects.spill.speed;
     }
     else {
         // Stops all of the objects so that its not clunky. Once the death menu is implemented, this will look quite nice.
-        spill.body.velocity.x = 0;
-        spillFront.body.velocity.x = 0;
-        player.body.velocity.x = 0;
+        DD.objects.spill.element.body.velocity.x = 0;
+        DD.player.element.body.velocity.x = 0;
     }
 
     // Reset the players velocity (movement)
-    player.body.velocity.y = 0;
-    angle = 20;
-
+    DD.player.element.body.velocity.y = 0;
 
     if (player.body.x >= (Interval * level) ) {
         
@@ -296,12 +261,12 @@ function update() {
         level += 1;
     
     }
-    if (DD.game.input.right.isDown) {
+    if (DD.game.cursors.right.isDown) {
         if (boostCharges > 0) {
 
-            boostCharges += -1;
-            modifiers += boostValue;
-            boost = true;
+            DD.modifiers.boost.charges += -1;
+            DD.modifiers.total += DD.modifiers.boost.total;
+            DD.modifiers.boost.active = true;
             boostStart = player.x;
             console.log('BOOST!');
       
@@ -313,28 +278,28 @@ function update() {
         }
     
     }
-    if (DD.game.input.up.isDown) {
+    if (DD.game.cursors.up.isDown) {
 
-        player.body.angle = -1 * angle;
-        player.body.velocity.y = -1 * 300;
+        DD.player.element.body.angle = -1 * DD.player.angle;
+        DD.player.element.body.velocity.y = -1 * DD.player.vertSpeed;
 
     } 
-    else if (DD.game.input.down.isDown) {
+    else if (DD.game.cursors.down.isDown) {
 
-        player.body.angle = angle;
-        player.body.velocity.y = 300;
+        DD.player.element.body.angle = DD.player.angle;
+        DD.player.element.body.velocity.y = DD.player.vertSpeed;
 
     } 
     else {
 
-        player.body.angle = 0;
+        DD.player.element.body.angle = 0;
     
     }
     // This function is currently not working so i will have to read the docs when i can to see how to fix this.
-    if (player.collideWorldBounds === true) {
+    if (DD.player.element.collideWorldBounds === true) {
         
         console.log('touching');
-        player.body.velocity.y = 0;
+        DD.player.element.body.velocity.y = 0;
    
     }
 }
@@ -374,7 +339,7 @@ function pauseMenu() {
             pauseMenu.addClass('hidden');
             pauseButton.removeClass('hidden');
 
-            firstRun = true;
+            DD.game.firstRun = true;
             create();
         });
 
@@ -456,20 +421,20 @@ function mainMenu() {
  * Display score and such...
  */
 function gameOver() {
-    result = 'Game Over!';
+    DD.game.result = 'Game Over!';
     DD.game.runEnd = true;
 }
 
 function junkHit() {
     console.log('junk hit!');
-    playerSpeed += -50;
+    DD.player.speed += -50;
 }
 
 function collectCoin(playerA, coinA) {
     console.log('Coin Collected');
     coinA.body = null;
     coinA.sprite.kill();
-    coinRun += 1;
+    DD.game.score.coins.lastRun += 1;
     //additionally have to add code which will remove the object from the game
 }
 
@@ -479,10 +444,10 @@ function collectCoin(playerA, coinA) {
 function render() {
     //player.body.debug = true;
     //spill.body.debug = true;
-    game.debug.text(result, 32, 32);
-    game.debug.text(score, 32, 52);
-    game.debug.text('Score Multiplier: ' + scoreMultiplier, 32, 72);
-    game.debug.text('Coins: ' + coinRun, 32, 92);
+    game.debug.text(DD.game.result, 32, 32);
+    game.debug.text(DD.game.score.lastRun, 32, 52);
+    game.debug.text('Score Multiplier: ' + DD.game.score.multiplier, 32, 72);
+    game.debug.text('Coins: ' + DD.game.score.coins.lastRun, 32, 92);
 }
 
 function displayHighScores() {
