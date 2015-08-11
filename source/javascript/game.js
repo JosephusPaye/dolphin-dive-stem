@@ -44,6 +44,7 @@ var score;
 var scoreMultiplier = 1;
 var junkCount = 1000;
 var coinCount = 0;
+var coinRun = 0;
 
 //boost variables
 var boost = false;
@@ -127,7 +128,7 @@ function create() {
     for (var i = 0; i < junkCount; i++) {
 
         // For where it says 'star', i want to add a list which it will take from randomly.
-        var junk = junks.create(game.world.randomX, game.world.randomY, 'star');
+        var junk = junks.create((Math.floor(Math.random() * 187000) + 5000), game.world.randomY, 'star');
         // The size of the object will likely change too, if that is possible
         junk.body.setRectangle(24, 22);
 
@@ -153,7 +154,7 @@ function create() {
     for (i = 0; i < coinCount; i++) {
 
         // For where it says 'star', i want to add a list which it will take from randomly.
-        var coin = coins.create((Math.floor(Math.random() * 182000) + 10000), game.world.randomY, 'healthpack');
+        var coin = coins.create((Math.floor(Math.random() * 187000) + 5000), game.world.randomY, 'healthpack');
         // The size of the object will likely change too, if that is possible
         coin.body.setRectangle(24, 22);
 
@@ -384,6 +385,8 @@ function mainMenu() {
         $('#mainMenu').addClass('hidden');
 
         // Score array changes elements before display here
+        displayHighScores();
+
         $('#scoreMenu').removeClass('hidden');
 
         $('#scoreReturnButton').click(function() {
@@ -420,10 +423,14 @@ function junkHit() {
     playerSpeed += -50;
 }
 
-function collectCoin() {
+function collectCoin(playerA, coinA) {
     console.log('Coin Collected');
+    coinA.body = null;
+    coinA.sprite.kill();
+    coinRun += 1;
     //additionally have to add code which will remove the object from the game
 }
+
 /**
  * Render function
  */
@@ -433,4 +440,21 @@ function render() {
     game.debug.text(result, 32, 32);
     game.debug.text(score, 32, 52);
     game.debug.text('Score Multiplier: ' + scoreMultiplier, 32, 72);
+    game.debug.text('Coins: ' + coinRun, 32, 92);
+}
+
+function displayHighScores() {
+    var highScores = [120, 1200, 10920, 153135, 555, 343, 2];
+
+    highScores.sort(function(a, b) {
+        return a < b;
+    });
+
+    var highScoresHtml = '';
+
+    highScores.forEach(function(score, index) { 
+       highScoresHtml += '<li><a>' + score + '</a></li>';
+    });
+
+    $('#highscores-menu').html(highScoresHtml);
 }

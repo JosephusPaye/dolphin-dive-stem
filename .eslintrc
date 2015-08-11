@@ -6,7 +6,9 @@
     },
     "globals": {
         "Phaser": true,
-        "DolphinDive": false
+        "DolphinDive": false,
+        "$": true,
+        "jQuery": true
     },
     "ecmaFeatures": {
         "templateStrings": true
