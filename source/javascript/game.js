@@ -147,13 +147,13 @@ function create() {
     var coins = game.add.group();
     coins.enableBody = true;
     coins.physicsBodyType = Phaser.Physics.P2JS;
-    coinCount = Math.random()*1000;
+    coinCount = Math.random()*100;
 
     // Create a thousand junk objects
-    for (var i = 0; i < coinCount; i++) {
+    for (i = 0; i < coinCount; i++) {
 
         // For where it says 'star', i want to add a list which it will take from randomly.
-        var coin = coins.create(game.world.randomX, game.world.randomY, 'healthpack');
+        var coin = coins.create((Math.floor(Math.random() * 182000) + 10000), game.world.randomY, 'healthpack');
         // The size of the object will likely change too, if that is possible
         coin.body.setRectangle(24, 22);
 
@@ -266,7 +266,7 @@ function update() {
         }
         else {
 
-            console.log('no charges left')
+            console.log('no charges left');
 
         }
     
@@ -291,7 +291,7 @@ function update() {
     // This function is currently not working so i will have to read the docs when i can to see how to fix this.
     if (player.collideWorldBounds === true) {
         
-        console.log('touching')
+        console.log('touching');
         player.body.velocity.y = 0;
    
     }
@@ -416,7 +416,7 @@ function gameOver() {
 }
 
 function junkHit() {
-    console.log('junk hit!')
+    console.log('junk hit!');
     playerSpeed += -50;
 }
 
@@ -432,5 +432,5 @@ function render() {
     //spill.body.debug = true;
     game.debug.text(result, 32, 32);
     game.debug.text(score, 32, 52);
-    game.debug.text('Score Multiplier: ' + scoreMultiplier, 32, 72)
+    game.debug.text('Score Multiplier: ' + scoreMultiplier, 32, 72);
 }
