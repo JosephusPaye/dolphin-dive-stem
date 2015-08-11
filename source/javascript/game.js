@@ -26,7 +26,14 @@ var DD = {
             amount: 1000,
             elements: [],
             collisionGroup: null 
-        }
+        },
+    },
+
+    textures: {
+        layerA: null,
+        layerB: null,
+        layerC: null,
+        Speed: 50
     },
 
     player: {
@@ -95,8 +102,9 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', {
  * images and sprite sheets
  */
 function preload() {
-    game.load.image('background', '/assets/images/BackgroundStatic.png');
-    game.load.image('ground', '/assets/images/platform.png');
+    game.load.image('background', '/assets/images/StaticBackground.png');
+    game.load.image('backgroundL1', '/assets/images/Layer1.png');
+    game.load.image('backgroundL2', '/assets/images/Layer2.png');
     game.load.image('star', '/assets/images/star.png');
     game.load.image('healthpack', '/assets/images/firstaid.png');
     game.load.image('seafloor', '/assets/images/SeaFloor.png');
@@ -117,8 +125,19 @@ function create() {
     game.physics.p2.setImpactEvents(true);
 
     // Add background
-    game.add.tileSprite(0, 0, 192000, 1080, 'background');
-    game.add.tileSprite(0, 0, 192000, 1080, 'seafloor');
+    DD.textures.layerA = game.add.tileSprite(0, 0, 192000, 1080, 'background');
+    DD.textures.layerB = game.add.tileSprite(0, 0, 384000, 1080, 'backgroundL1');
+    DD.textures.layerC = game.add.tileSprite(0, 0, 576000, 1080, 'backgroundL2');
+
+    game.physics.p2.enable(DD.textures.layerA);
+    game.physics.p2.enable(DD.textures.layerB);
+    game.physics.p2.enable(DD.textures.layerC);
+    
+    // Begin Parallax
+    DD.textures.layerA.body.velocity.x = DD.textures.speed;
+    DD.textures.layerB.body.velocity.x = 2*DD.textures.speed;
+    DD.textures.layerC.body.velocity.x = 3*DD.textures.speed;
+
 
     // Set boundaries of the world
     game.world.setBounds(0, 0, 192000, 1080);
@@ -288,13 +307,13 @@ function update() {
     }
 
     if (DD.game.cursors.up.isDown) {
-        DD.player.angle = -1 * DD.player.angle;
+        DD.player.element.body.angle = -1 * DD.player.angle;
         DD.player.element.body.velocity.y = -1 * DD.player.vertSpeed;
     } else if (DD.game.cursors.down.isDown) {
-        DD.player.angle = DD.player.angle;
+        DD.player.element.body.angle = DD.player.angle;
         DD.player.element.body.velocity.y = DD.player.vertSpeed;
     } else {
-        DD.player.angle = 0;
+        DD.player.element.body.angle = 0;
     }
 
     // This function is currently not working so i will have to read the docs when i can to see how to fix this.
