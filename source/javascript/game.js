@@ -33,7 +33,7 @@ var DD = {
         layerA: null,
         layerB: null,
         layerC: null,
-        Speed: 50
+        speed: -50
     },
 
     player: {
@@ -120,27 +120,35 @@ function preload() {
  * for the game
  */
 function create() {
+
+    // Set boundaries of the world
+    game.world.setBounds(0, 0, 192000, 1080);
+
     // Enable the P2 Physics system
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.p2.setImpactEvents(true);
 
     // Add background
     DD.textures.layerA = game.add.tileSprite(0, 0, 192000, 1080, 'background');
-    DD.textures.layerB = game.add.tileSprite(0, 0, 384000, 1080, 'backgroundL1');
-    DD.textures.layerC = game.add.tileSprite(0, 0, 576000, 1080, 'backgroundL2');
+    DD.textures.layerB = game.add.tileSprite(0, 0, 192000, 1080, 'backgroundL1');
+    DD.textures.layerC = game.add.tileSprite(0, 0, 192000, 1080, 'backgroundL2');
 
-    game.physics.p2.enable(DD.textures.layerA);
-    game.physics.p2.enable(DD.textures.layerB);
-    game.physics.p2.enable(DD.textures.layerC);
-    
+    DD.textures.layerA.alpha = 1;
+    DD.textures.layerB.alpha = 0;
+    DD.textures.layerC.alpha = 1;
+
+    game.physics.enable(DD.textures.layerA, Phaser.Physics.ARCADE);
+    game.physics.enable(DD.textures.layerB, Phaser.Physics.ARCADE);
+    game.physics.enable(DD.textures.layerC, Phaser.Physics.ARCADE);
+
     // Begin Parallax
     DD.textures.layerA.body.velocity.x = DD.textures.speed;
     DD.textures.layerB.body.velocity.x = 2*DD.textures.speed;
     DD.textures.layerC.body.velocity.x = 3*DD.textures.speed;
 
-
-    // Set boundaries of the world
-    game.world.setBounds(0, 0, 192000, 1080);
+    DD.textures.layerA.body.immovable = true;
+    DD.textures.layerB.body.immovable = true;
+    DD.textures.layerC.body.immovable = true;
 
     // Add oilspill elements.
     DD.objects.spill.element = game.add.sprite(0, 0, 'oilspill');
