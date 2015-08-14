@@ -147,6 +147,7 @@ For consistency, I suggest we use the following code styles (open for discussion
 ## Contributors
 
 * Ben Mildren
+* Heath Tyler
 * Brian Burns
 * Josephus Paye II
 
