@@ -158,10 +158,8 @@ function create() {
 
     // Add oilspill elements.
     DD.objects.spill.element = game.add.sprite(0, 0, 'oilspill');
-    DD.objects.spill.gradient.element = game.add.sprite(0, 0, 'oilspillfront');
-    game.physics.enable(DD.objects.spill.gradient.element, Phaser.Physics.ARCADE);
-    // DD.objects.spill.element.enableBody = true;
-    // DD.objects.spill.element.physicsBodyType = Phaser.Physics.P2JS;
+    //DD.objects.spill.gradient.element = game.add.sprite(0, 0, 'oilspillfront');
+    //game.physics.enable(DD.objects.spill.gradient.element, Phaser.Physics.ARCADE);
     
     game.physics.p2.enable(DD.objects.spill.element);
 
@@ -176,7 +174,7 @@ function create() {
 
     // Animation for moving right
     DD.player.element.animations.add('right', [4, 3, 5], 6, true);
-    DD.objects.spill.gradient.element.animations.add('spill', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 10, true);
+    //DD.objects.spill.gradient.element.animations.add('spill', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 10, true);
     
     //
     DD.player.collisionGroup = game.physics.p2.createCollisionGroup();
@@ -291,8 +289,8 @@ function update() {
         DD.player.element.body.velocity.x = DD.player.speed + (50*DD.game.world.level) + DD.game.modifiers.total;
         DD.player.element.animations.play('right');
         DD.objects.spill.element.body.velocity.x = DD.objects.spill.speed + (50*DD.game.world.level);
-        DD.objects.spill.gradient.element.body.velocity.x = DD.objects.spill.speed + (50*DD.game.world.level);
-        DD.objects.spill.gradient.element.animations.play('spill');
+        //DD.objects.spill.gradient.element.body.velocity.x = DD.objects.spill.element.body.velocity.x;
+        //DD.objects.spill.gradient.element.animations.play('spill');
     } else {
         // Stops all of the objects so that its not clunky. Once the death menu is implemented, this will look quite nice.
         DD.objects.spill.element.body.velocity.x = 0;
@@ -541,8 +539,66 @@ function reset() {
         coin.body = null;
         coin.kill();
     });
-    DD.game.level = 1;
-    DD
+    DD.player.element.body = null;
+    DD.player.element.kill();
+    DD.objects.spill.element.body = null;
+    DD.objects.spill.element.kill();
+
+    DD = {
+    version: '0.1.0',
+
+    objects: {
+        spill: {
+            speed: 250,
+            element: null,
+            collisionGroup: null,
+            gradient: {
+                element: null
+            }
+        },
+
+        coins: {
+            amount: (Math.random() * 50) + 50,
+            elements: [],
+            collectedIds: [],
+            collisionGroup: null
+        },
+
+        junks: {
+            amount: 1000,
+            elements: [],
+            slow: 0.6,
+            collisionGroup: null,
+            active: false
+        },
+    },
+
+    textures: {
+        layerA: null,
+        layerB: null,
+        layerC: null,
+        speed: 50
+    },
+
+    player: {
+        speed: 300,
+        vertSpeed: 300,
+        element: null,
+        collisionGroup: null,
+        angle: 20
+    },
+
+    game: {
+        firstRun: true,
+        runEnd: false,
+        cursors: null,
+
+        world: {
+            level: 1,
+            interval: 2000
+        }
+    }
+};
 
     DD = jQuery.extend(true, {}, DDBluepint);
     DD.game.firstRun = false;
