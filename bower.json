@@ -10,6 +10,7 @@
   "homepage": "",
   "dependencies": {
     "jquery": "~2.1.4",
-    "phaser": "~2.3.0"
+    "phaser": "~2.3.0",
+    "animate.css": "~3.4.0"
   }
 }

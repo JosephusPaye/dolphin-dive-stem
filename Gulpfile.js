@@ -15,11 +15,10 @@ var sourcemaps      = require('gulp-sourcemaps');
 var paths           = require('./gulp-paths.json');
 
 var browserSync     = require('browser-sync');
-var reload          = browserSync.reload;
 
 var config = {
-    production : !! util.env.production,
-    sourcemaps : ! util.env.production
+    production: !!util.env.production,
+    sourcemaps: !util.env.production
 };
 
 /**
@@ -46,16 +45,18 @@ gulp.task('bs-reload', function() {
  * @return {Stream}
  */
 gulp.task('vendor-js', function() {
-    var mainFiles = mainBowerFiles();
-    var jsFilter = filterByExtension(['js']);
+    var mainFiles = mainBowerFiles().concat(paths.source.javascript.vendor);
 
     if (mainFiles.length < 1) {
         return;
     }
+    
+    var jsFilter = filterByExtension(['js']);
+
     return gulp.src(mainFiles)
         .pipe(jsFilter)
         .pipe(concat('vendor.js'))
-        .pipe(uglify())
+        // .pipe(uglify())
         .pipe(gulp.dest(paths.destination.js))
         .pipe(jsFilter.restore());
 });
@@ -67,15 +68,17 @@ gulp.task('vendor-js', function() {
  */
 gulp.task('vendor-css', function() {
     var mainFiles = mainBowerFiles();
-    var cssFilter = filterByExtension(['css']);
-
+    
     if (mainFiles.length < 1) {
         return;
     }
+
+    var cssFilter = filter(['*.css']);
+
     return gulp.src(mainFiles)
         .pipe(cssFilter)
         .pipe(concat('vendor.css'))
-        .pipe(prefixer())
+        // .pipe(prefixer())
         .pipe(minifycss())
         .pipe(gulp.dest(paths.destination.css))
         .pipe(cssFilter.restore());
@@ -87,7 +90,7 @@ gulp.task('vendor-css', function() {
  * @return {Stream}
  */
 gulp.task('fonts', function() {
-    var mainFiles = paths.source.fonts.concat( mainBowerFiles() );
+    var mainFiles = mainBowerFiles().concat(paths.source.fonts);
     var fontFilter = filterByExtension(['eot', 'ttf', 'woff', 'woff2', 'otf']);
 
     if (mainFiles.length < 1) {
@@ -121,7 +124,7 @@ gulp.task('css', function() {
  * @return {Stream}
  */
 gulp.task('javascript', function() {
-    return gulp.src(paths.source.javascript)
+    return gulp.src(paths.source.javascript.game)
         .pipe( gulpif(config.sourcemaps, sourcemaps.init()) )
             .pipe(concat('game.js'))
             .pipe( gulpif(config.production, uglify()) )

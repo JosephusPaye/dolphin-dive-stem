@@ -3,9 +3,19 @@
     	"html": [
             "./source/html/**/!(_)*.html"
         ],
-        "javascript": [
-        	"./source/javascript/**/!(_)*.js"
-        ],
+        "javascript": {
+            "game": [
+                "./source/javascript/data.js",
+                "./source/javascript/display.js",
+                "./source/javascript/animations.js",
+                "./source/javascript/actions.js",
+                "./source/javascript/events.js",
+            	"./source/javascript/game.js"
+            ],
+            "vendor": [
+                "./source/javascript/vendor/**/!(_)*.js"
+            ]
+        },
         "sass": [
             "./source/sass/game.scss"
         ],

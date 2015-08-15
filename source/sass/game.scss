@@ -33,16 +33,60 @@ body {
 	left: 0;
 	text-align: center;
 
+	.overlay {
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		top: 0;
+		left: 0;
+
+		&.dark {
+			background-color: rgba(0, 0, 0, 0.3);
+		}
+	}
+
 	.title {
 		margin-top: 100px;
 		margin-bottom: 50px;
 		color: #FFF;
 		font-size: 46px;
 		text-shadow: 0 0 10px #000;
+		position: relative;
 	}
 
-	p {
-		font-size: 20px;
+	.text {
+		max-width: 90%;
+	    margin: 0 auto;
+	    margin-bottom: 50px;
+	    position: relative;
+
+	    p {
+			font-size: 22px;
+		}
+	}
+
+	.blank-state {
+		font-size: 22px;
+		margin-bottom: 50px;
+		display: inline-block;
+		position: relative;
+	}
+
+	ul {
+		position: relative;
+	}
+
+	.wrapper {
+		position: relative;
+		padding-bottom: 20px;
+		max-width: 550px;
+		margin: 0 auto;
+		overflow: hidden;
+		margin-top: 75px;
+
+		.title {
+			margin-top: 25px!important;
+		}
 	}
 }
 
@@ -50,31 +94,37 @@ body {
 	list-style: none;
 	padding: 0;
 
-	a {
+	li {
 		background: peachpuff;
 		background: linear-gradient(to bottom, rgba(241,231,103,1) 0%, rgba(254,182,69,1) 100%);
 		padding: 10px 50px;
 		border-radius: 10px;
 		cursor: pointer;
 		text-align: center;
-		min-width: 300px;
-		display: inline-block;
-		margin-bottom: 25px;
+		display: block;
+		max-width: 300px;
 		font-size: 22px;
+		margin: 0 auto;
+		margin-bottom: 25px;
 
 		&:hover,
 		&:focus {
 			background-color: #F9C08E;
 			box-shadow: 0 0 15px #222;
 		}	
+
+		&:active {
+			background: linear-gradient(to bottom, #feb645 100%, #f1e767 0%)!important;
+		}
 	}
 }
 
 .hidden {
-	display: none !important;
+	// display: none !important;
+	visibility: hidden;
 }
 
-.pauseButton {
+.pause-btn {
 	padding: 0;
 	background: peachpuff;
 	background: linear-gradient(to bottom, #f1e767 0%, #feb645 100%);
@@ -96,13 +146,19 @@ body {
 		background-color: #F9C08E;
 		box-shadow: 0 0 15px #222;
 	}	
+
+	&:active {
+		background: linear-gradient(to bottom, #feb645 100%, #f1e767 0%)!important;
+	}
 }
 
 #hud {
 	position: absolute;
-	left: 15px;
-	top: 8px;
-	font-size: 20px;
+    left: 0;
+    right: 0;
+    top: 0;
+    font-size: 20px;
+    padding: 5px 10px 0 10px;
 
 	ul {
 		padding: 0 5px;

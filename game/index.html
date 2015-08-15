@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8" />
 	<title>Dolphin Dive STEM</title>
-	<!-- <link rel="stylesheet" type="text/css" href="assets/css/vendor.css"> -->
+	<link rel="stylesheet" type="text/css" href="assets/css/vendor.css">
 	<link rel="stylesheet" type="text/css" href="assets/css/game.css">
 </head>
 <body>
@@ -12,59 +12,76 @@
 		<!-- Game canvas -->
 		<div id="game"></div>
 		
-		<!-- Score indicators -->
+		<!-- Heads-up Display -->
 		<div id="hud" class="hidden">
+			<!-- Score display -->
 			<ul class="hud">
-				<li>Score: <span id="currentScore">0</span></li>
-				<li>Coins: <span id="currentCoinCount">0</span></li>
+				<li>Score: <span id="hud-score">0</span></li>
+				<li>Coins: <span id="hud-coins">0</span></li>
 			</ul>
+	
+			<!-- Pause button -->
+			<div id="hud-pauseBtn" class="pause-btn">
+				<span class="icon-pause"></span>
+			</div>
 		</div>
 
 		<!-- Main Menu -->
 		<div id="mainMenu" class="menu hidden">
 			<h1 class="title">Dolphin Dive</h1>
 			<ul class="menu-buttons">
-				<li><a id="beginButton">New Game</a></li>
-				<li><a id="highScoresButton">High Scores</a></li>
-				<li><a id="aboutButton">About</a></li>
+				<li id="mainMenu-newGame">New Game</li>
+				<li id="mainMenu-highScores">High Scores</li>
+				<li id="mainMenu-howToPlay">How to Play</li>
+				<li id="mainMenu-about">About</li>
 			</ul>
 		</div>
 
 		<!-- Pause Menu -->
-		<div id="pauseMenu" class="menu hidden">
-			<h1 class="title">Paused</h1>
-			<ul class="menu-buttons">
-				<li><a id="resumeButton">Resume</a></li>
-				<li><a id="restartButton">Restart</a></li>
-				<li><a id="mainMenuButton">Quit to Main Menu</a></li>
-			</ul>
+		<div id="pauseMenu" class="menu hidden darken">
+			<div class="overlay dark"></div>
+			<div class="wrapper">
+				<h1 class="title">Paused</h1>
+				<ul class="menu-buttons">
+					<li id="pauseMenu-resume">Resume</li>
+					<li id="pauseMenu-restart">Restart</li>
+					<li id="pauseMenu-mainMenu">Quit to Main Menu</li>
+				</ul>
+			</div>
 		</div>
 
-		<!-- Score Menu -->
-		<div id="scoreMenu" class="menu hidden">
-			<h1 class="title">Scores</h1>
+		<!-- High Scores Menu -->
+		<div id="highScoresMenu" class="menu hidden">
+			<h1 class="title">High Scores</h1>
 			<ul class="menu-buttons">
-				<span id="highscores-menu">
-					<li><a>1020</a></li>
-					<li><a>100</a></li>
-					<li><a>73</a></li>
+				<span id="highScoresMenu-list">
+					<span class="blank-state">No highScores yet</span>
 				</span>
-				<li><a id="scoreReturnButton">Return</a></li>
+				<li id="highScoresMenu-mainMenu">Back</li>
 			</ul>
 		</div>
 
-		<!-- About Menu -->
-		<div id="aboutMenu" class="menu hidden">
-			<h1 class="title">Dolphin Dive v<span id="versionTag"></span></h1>
-			<p class="aboutText">We're all great, better than u, the end.</p>
-			<br>
+		<!-- How to Play Menu -->
+		<div id="howToPlayMenu" class="menu hidden">
+			<h1 class="title">How to Play</h1>
+			<div class="text">
+				<p>Instructions on how to play.</p>
+			</div>
 			<ul class="menu-buttons">
-				<li><a id="aboutReturnButton">Okie dokie :)</a></li>
+				<li id="howToPlayMenu-mainMenu">Okie dokie :)</li>
 			</ul>
 		</div>
 
-		<!-- Top right pause button -->
-		<div id="pauseButton" class="pauseButton hidden"><span class="icon-pause"></span></div>
+		<!-- About menu -->
+		<div id="aboutMenu" class="menu hidden">
+			<h1 class="title">Dolphin Dive v<span id="aboutMenu-version"></span></h1>
+			<div class="text">
+				<p>We're all great, better than u, the end.</p>
+			</div>
+			<ul class="menu-buttons">
+				<li id="aboutMenu-mainMenu">Okie dokie :)</li>
+			</ul>
+		</div>		
 	</div>
 
 	<!-- Scripts -->

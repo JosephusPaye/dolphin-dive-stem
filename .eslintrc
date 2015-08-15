@@ -5,10 +5,19 @@
         "jquery": true
     },
     "globals": {
-        "Phaser": true,
-        "DolphinDive": false,
-        "$": true,
-        "jQuery": true
+        "Phaser": false,
+        "game": true,
+        
+        "jQuery": false,
+        "$": false,
+
+        "TweenMax": false,
+        
+        "DD": true,
+        "Display": true,
+        "DisplayData": true,
+
+        "PlayAnimations": true
     },
     "ecmaFeatures": {
         "templateStrings": true
