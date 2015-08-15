@@ -29,10 +29,10 @@ var DD = {
         junks: {
             amount: 1000,
             elements: [],
-            slow: 0.6,
+            slow: 0.5,
             collisionGroup: null,
             active: false
-        },
+        }
     },
 
     textures: {
@@ -67,6 +67,10 @@ var DD = {
             },
 
             lastRun: 0,
+            lastFrameValue: {
+                coins: 0,
+                score: 0
+            },
             highScores: []
         },
 
@@ -76,18 +80,15 @@ var DD = {
 
             boost: {
                 active: false,
-                total: 0,
+                total: 200,
                 begin: 0,
-                charges: 0,
+                charges: 1
             },
 
             multiplier: 1
         }
     }
 };
-
-// Copy defaults for reset
-var DDBluepint = jQuery.extend(true, {}, DD);
 
 // Just a friendly reminder
 console.info('Dolphin Dive v' + DD.version);
@@ -126,7 +127,6 @@ function preload() {
  * for the game
  */
 function create() {
-
     // Set boundaries of the world
     game.world.setBounds(0, 0, 192000, 1080);
 
@@ -148,21 +148,21 @@ function create() {
     game.physics.enable(DD.textures.layerC, Phaser.Physics.ARCADE);
 
     // Begin Parallax
-    DD.textures.layerA.body.velocity.x = DD.player.speed - (3*DD.textures.speed);
-    DD.textures.layerB.body.velocity.x = DD.player.speed - (2*DD.textures.speed);
-    DD.textures.layerC.body.velocity.x = DD.player.speed - (1*DD.textures.speed);
+    DD.textures.layerA.body.velocity.x = DD.player.speed - (3 * DD.textures.speed);
+    DD.textures.layerB.body.velocity.x = DD.player.speed - (2 * DD.textures.speed);
+    DD.textures.layerC.body.velocity.x = DD.player.speed - (1 * DD.textures.speed);
 
     DD.textures.layerA.body.immovable = true;
     DD.textures.layerB.body.immovable = true;
     DD.textures.layerC.body.immovable = true;
 
-    // Add oilspill elements.
+    // Add oilspill elements
     DD.objects.spill.element = game.add.sprite(0, 0, 'oilspill');
-    //DD.objects.spill.gradient.element = game.add.sprite(0, 0, 'oilspillfront');
-    //game.physics.enable(DD.objects.spill.gradient.element, Phaser.Physics.ARCADE);
+
+    // DD.objects.spill.gradient.element = game.add.sprite(0, 0, 'oilspillfront');
+    // game.physics.enable(DD.objects.spill.gradient.element, Phaser.Physics.ARCADE);
     
     game.physics.p2.enable(DD.objects.spill.element);
-
 
     // Add player
     DD.player.element = game.add.sprite(3000, game.world.centerY, 'dude');
@@ -172,11 +172,10 @@ function create() {
     game.physics.p2.enable(DD.player.element);
     DD.player.element.body.collideWorldBounds = true;
 
-    // Animation for moving right
+    // Player animations
     DD.player.element.animations.add('right', [4, 3, 5], 6, true);
-    //DD.objects.spill.gradient.element.animations.add('spill', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 10, true);
+    // DD.objects.spill.gradient.element.animations.add('spill', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 10, true);
     
-    //
     DD.player.collisionGroup = game.physics.p2.createCollisionGroup();
     DD.objects.junks.collisionGroup = game.physics.p2.createCollisionGroup();
     DD.objects.spill.collisionGroup = game.physics.p2.createCollisionGroup();
@@ -187,58 +186,9 @@ function create() {
     // What this does is adjust the bounds to use its own collision group.
     game.physics.p2.updateBoundsCollisionGroup();
 
-    var junk;
-
-    // Create a thousand junk objects
-    for (var i = 0; i < DD.objects.junks.amount; i++) {
-        // For where it says 'star', i want to add a list which it will take from randomly.
-        junk = game.add.sprite( (Math.floor(Math.random() * 187000) + 5000), game.world.randomY, 'star');
-
-        // junk.physicsBodyType = Phaser.Physics.P2JS;
-        // junk.enableBody = true;
-        game.physics.p2.enable(junk);
-
-        // The size of the object will likely change too, if that is possible
-        junk.body.setRectangle(24, 22);
-
-        junk.body.angularVelocity = Math.random()*2;
-        junk.body.velocity.y = Math.random()*80;
-
-        // Tell the junk to use the DD.objects.junks.collisionGroup 
-        junk.body.setCollisionGroup(DD.objects.junks.collisionGroup);
-
-        // junks will collide against themselves and the player
-        // If you don't set this they'll not collide with anything.
-        // The first parameter is either an array or a single collision group.
-        junk.body.collides([DD.objects.junks.collisionGroup, DD.player.collisionGroup]);
-
-        DD.objects.junks.elements.push(junk);
-    }
-
-    var coin;
-
-    // Create a thousand junk objects
-    for (i = 0; i < DD.objects.coins.amount; i++) {
-        // For where it says 'star', i want to add a list which it will take from randomly.
-        coin = game.add.sprite( (Math.floor(Math.random() * 187000) + 5000), game.world.randomY, 'healthpack');
-
-        // coin.enableBody = true;
-        // coin.physicsBodyType = Phaser.Physics.P2JS;
-        game.physics.p2.enable(coin);
-
-        // The size of the object will likely change too, if that is possible
-        coin.body.setRectangle(24, 22);
-
-        // Tell the coin to use the DD.objects.coins.collisionGroup 
-        coin.body.setCollisionGroup(DD.objects.coins.collisionGroup);
-
-        // coins will collide against themselves and the player
-        // If you don't set this they'll not collide with anything.
-        // The first parameter is either an array or a single collision group.
-        coin.body.collides([DD.objects.coins.collisionGroup, DD.player.collisionGroup]);
-
-        DD.objects.coins.elements.push(coin);
-    }
+    // Generate junks and coins
+    createJunks();
+    createCoins();
 
     DD.objects.spill.element.body.setCollisionGroup(DD.objects.spill.collisionGroup);
     DD.objects.spill.element.body.collides([DD.objects.spill.collisionGroup, DD.player.collisionGroup]);
@@ -280,17 +230,19 @@ function update() {
     }
 
     // Governs and controls boost
-    if (! DD.game.runEnd) {
+    if (!DD.game.runEnd) {
         // Sets DD.game.score.lastRun based on the position of the player. the -60 compensates for the position of the player in the world
-        DD.game.score.lastRun = ((DD.player.element.x / 50) - 60) * DD.game.modifiers.multiplier;
+        DD.game.score.lastRun = ((DD.player.element.x / 400) - 8) * DD.game.modifiers.multiplier;
         DD.game.score.lastRun = parseInt(DD.game.score.lastRun, 10);
 
         // Updates the player and oil spill velocities
-        DD.player.element.body.velocity.x = DD.player.speed + (50*DD.game.world.level) + DD.game.modifiers.total;
+        DD.player.element.body.velocity.x = DD.player.speed + (50 * DD.game.world.level) + DD.game.modifiers.total;
         DD.player.element.animations.play('right');
-        DD.objects.spill.element.body.velocity.x = DD.objects.spill.speed + (50*DD.game.world.level);
-        //DD.objects.spill.gradient.element.body.velocity.x = DD.objects.spill.element.body.velocity.x;
-        //DD.objects.spill.gradient.element.animations.play('spill');
+
+        DD.objects.spill.element.body.velocity.x = DD.objects.spill.speed + (50 * DD.game.world.level);
+
+        // DD.objects.spill.gradient.element.body.velocity.x = DD.objects.spill.element.body.velocity.x;
+        // DD.objects.spill.gradient.element.animations.play('spill');
     } else {
         // Stops all of the objects so that its not clunky. Once the death menu is implemented, this will look quite nice.
         DD.objects.spill.element.body.velocity.x = 0;
@@ -310,7 +262,7 @@ function update() {
         if (DD.game.modifiers.boost.charges > 0) {
             DD.game.modifiers.boost.charges += -1;
 
-            DD.game.modifiers.total += DD.modifiers.boost.total;
+            DD.game.modifiers.total += DD.game.modifiers.boost.total;
 
             DD.game.modifiers.boost.active = true;
             DD.game.modifiers.boost.begin = DD.player.element.x;
@@ -339,6 +291,63 @@ function update() {
     }
 }
 
+function createJunks() {
+    var junk;
+
+    // Create a thousand junk objects
+    for (var i = 0; i < DD.objects.junks.amount; i++) {
+        // For where it says 'star', i want to add a list which it will take from randomly.
+        junk = game.add.sprite( (Math.floor(Math.random() * 187000) + 5000), game.world.randomY, 'star');
+
+        // junk.physicsBodyType = Phaser.Physics.P2JS;
+        // junk.enableBody = true;
+        game.physics.p2.enable(junk);
+
+        // The size of the object will likely change too, if that is possible
+        junk.body.setRectangle(24, 22);
+
+        junk.body.angularVelocity = Math.random() * 2;
+        junk.body.velocity.y = Math.random() * 80;
+
+        // Tell the junk to use the DD.objects.junks.collisionGroup 
+        junk.body.setCollisionGroup(DD.objects.junks.collisionGroup);
+
+        // junks will collide against themselves and the player
+        // If you don't set this they'll not collide with anything.
+        // The first parameter is either an array or a single collision group.
+        junk.body.collides([DD.objects.junks.collisionGroup, DD.player.collisionGroup]);
+
+        DD.objects.junks.elements.push(junk);
+    }
+}
+
+function createCoins() {
+    var coin;
+
+    // Create a thousand junk objects
+    for (var j = 0; j < DD.objects.coins.amount; j++) {
+        // For where it says 'star', i want to add a list which it will take from randomly.
+        coin = game.add.sprite( (Math.floor(Math.random() * 187000) + 5000), game.world.randomY, 'healthpack');
+
+        // coin.enableBody = true;
+        // coin.physicsBodyType = Phaser.Physics.P2JS;
+        game.physics.p2.enable(coin);
+
+        // The size of the object will likely change too, if that is possible
+        coin.body.setRectangle(24, 22);
+
+        // Tell the coin to use the DD.objects.coins.collisionGroup 
+        coin.body.setCollisionGroup(DD.objects.coins.collisionGroup);
+
+        // coins will collide against themselves and the player
+        // If you don't set this they'll not collide with anything.
+        // The first parameter is either an array or a single collision group.
+        coin.body.collides([DD.objects.coins.collisionGroup, DD.player.collisionGroup]);
+
+        DD.objects.coins.elements.push(coin);
+    }
+}
+
 /**
  * Pause activation
  * 
@@ -360,27 +369,37 @@ $('#pauseButton').click(function() {
  * and quit
  */
 function pauseMenu() {
-    var pauseMenu = $('#pauseMenu');
+    var pauseMenuElement = $('#pauseMenu');
     var pauseButton = $('#pauseButton');
+    var hud = $('#hud');
 
     if (game.paused) {
-        pauseMenu.removeClass('hidden');
+        // Hide HUD and pause button
         pauseButton.addClass('hidden');
+        hud.addClass('hidden');
+
+        // Show pause menu
+        pauseMenuElement.removeClass('hidden');
 
         // Return to Main Menu
         $('#mainMenuButton').click(function() {
             // Do score calculations
             
-            pauseMenu.addClass('hidden');
+            // Hide pause menu
+            pauseMenuElement.addClass('hidden');
             pauseButton.removeClass('hidden');
 
             DD.game.firstRun = true;
-            create();
+            reset();
+            game.paused = true;
+
+            // Show main menu
+            mainMenu();
         });
 
         // Resume button handler
         $('#resumeButton').click(function() {
-            pauseMenu.addClass('hidden');
+            pauseMenuElement.addClass('hidden');
             pauseButton.removeClass('hidden');
 
             game.paused = false;
@@ -390,7 +409,7 @@ function pauseMenu() {
         $('#restartButton').click(function() {
             // Score calc
 
-            pauseMenu.addClass('hidden');
+            pauseMenuElement.addClass('hidden');
             pauseButton.removeClass('hidden');
 
             reset();
@@ -398,7 +417,7 @@ function pauseMenu() {
             game.paused = false;
         });
     } else {
-        pauseMenu.addClass('hidden');
+        pauseMenuElement.addClass('hidden');
         pauseButton.removeClass('hidden');
     }
 }
@@ -420,6 +439,7 @@ function mainMenu() {
 
         $('#mainMenu').addClass('hidden');
         $('#pauseButton').removeClass('hidden');
+        $('#hud').removeClass('hidden');
     });
 
     // Handle Highscores button click
@@ -462,54 +482,77 @@ function gameOver() {
     DD.game.score.highScores.push(DD.game.score.lastRun);
 }
 
+function hideAllElements() {
+    $('#mainMenu').addClass('hidden');
+    $('#pauseMenu').addClass('hidden');
+    $('#scoreMenu').addClass('hidden');
+    $('#aboutMenu').addClass('hidden');
+    
+    $('#hud').addClass('hidden');
+    $('#pauseButton').addClass('hidden');
+}
+
 function junkHit() {
-    console.log('junk hit!');
+    console.log('Junk hit!');
+
     if (DD.objects.junks.active !== true) {
-        DD.player.speed = DD.player.speed*DD.objects.junks.slow;
+        DD.player.speed = DD.player.speed * DD.objects.junks.slow;
         DD.objects.junks.active = true;
         game.time.events.add(Phaser.Timer.SECOND * 2, regainSpeed, this); 
-        }  
+    }  
 }
 
 function regainSpeed() {
-    console.log('regaining speed!');
-    DD.player.speed = DD.player.speed/DD.objects.junks.slow;
+    console.log('Regaining speed!');
+
+    DD.player.speed = DD.player.speed / DD.objects.junks.slow;
     DD.objects.junks.active = false;
 }
 
 function collectCoin(playerA, coinA) {
     console.log('Coin Collected');
+
     coinA.body = null;
     coinA.sprite.kill();
+
     if (DD.objects.coins.collectedIds.indexOf(coinA.data.id) === -1) {
         DD.game.score.coins.lastRun += 1;
         DD.objects.coins.collectedIds.push(coinA.data.id);
-    };
-    //additionally have to add code which will remove the object from the game
+    }
+
+    // Additionally have to add code which will remove the object from the game
 }
 
 /**
  * Render function
  */
 function render() {
-    //player.body.debug = true;
-    //spill.body.debug = true;
-    game.debug.text(DD.game.result, 32, 32);
-    game.debug.text(DD.game.score.lastRun, 32, 52);
-    game.debug.text('Score Multiplier: ' + DD.game.modifiers.multiplier, 32, 72);
-    game.debug.text('Coins: ' + DD.game.score.coins.lastRun, 32, 92);
+    // Update score
+    if (DD.game.score.lastFrameValue.score !== DD.game.score.lastRun) {
+        $('#currentScore').text(DD.game.score.lastRun);
+        DD.game.score.lastFrameValue.score = DD.game.score.lastRun;
+    }
+
+    // Update coins
+    if (DD.game.score.lastFrameValue.coins !== DD.game.score.coins.lastRun) {
+        $('#currentCoinCount').text(DD.game.score.coins.lastRun);
+        DD.game.score.lastFrameValue.coins = DD.game.score.coins.lastRun;
+    }
+
+    // game.debug.text(DD.game.score.lastRun, 32, 52);
+    // game.debug.text('Score Multiplier: ' + DD.game.modifiers.multiplier, 32, 72);
+    // game.debug.text('Coins: ' + DD.game.score.coins.lastRun, 32, 92);
 }
 
 function displayHighScores() {
-
     DD.game.score.highScores.sort(function(a, b) {
         return a < b;
     });
 
     var highScoresHtml = '';
 
-    DD.game.score.highScores.forEach(function(score, index) { 
-       highScoresHtml += '<li><a>' + score + '</a></li>';
+    DD.game.score.highScores.forEach(function(score) { 
+        highScoresHtml += '<li><a>' + score + '</a></li>';
     });
 
     $('#highscores-menu').html(highScoresHtml);
@@ -527,83 +570,58 @@ function displayHighScores() {
  * coin, player, which is what create() does.
  */
 function reset() {
-    // Reset game
-    // DD = null;
-    // game = null;
-
-    DD.objects.junks.elements.forEach(function(junk) {
+    // Kill off junks
+    DD.objects.junks.elements.forEach(function(junk, index) {
         junk.body = null;
         junk.kill();
+        DD.objects.junks[index] = null;
     });
-    DD.objects.coins.elements.forEach(function(coin) {
+
+    // Kill off coins
+    DD.objects.coins.elements.forEach(function(coin, index) {
         coin.body = null;
         coin.kill();
+        DD.objects.coins[index] = null;
     });
-    DD.player.element.body = null;
-    DD.player.element.kill();
-    DD.objects.spill.element.body = null;
-    DD.objects.spill.element.kill();
 
-    DD = {
-    version: '0.1.0',
+    // Reset junks and coins arrays
+    DD.objects.junks.elements = [];
+    DD.objects.coins.elements = [];
 
-    objects: {
-        spill: {
-            speed: 250,
-            element: null,
-            collisionGroup: null,
-            gradient: {
-                element: null
-            }
-        },
+    // Reset background textures' position
+    // DD.textures.layerA.body.x = 0;
+    // DD.textures.layerB.body.x = 0;
+    // DD.textures.layerC.body.x = 0;
 
-        coins: {
-            amount: (Math.random() * 50) + 50,
-            elements: [],
-            collectedIds: [],
-            collisionGroup: null
-        },
+    // Reset background textures' velocities
+    // DD.textures.layerA.body.velocity.x = DD.player.speed - (3 * DD.textures.speed);
+    // DD.textures.layerB.body.velocity.x = DD.player.speed - (2 * DD.textures.speed);
+    // DD.textures.layerC.body.velocity.x = DD.player.speed - (1 * DD.textures.speed);
 
-        junks: {
-            amount: 1000,
-            elements: [],
-            slow: 0.6,
-            collisionGroup: null,
-            active: false
-        },
-    },
+    // Reset player position and velocity
+    // DD.player.element.body.x = 3000;
+    // DD.player.element.body.y = game.world.centerY;
 
-    textures: {
-        layerA: null,
-        layerB: null,
-        layerC: null,
-        speed: 50
-    },
+    // DD.player.element.body.velocity.x = 0;
+    // DD.player.element.body.velocity.y = 0;
 
-    player: {
-        speed: 300,
-        vertSpeed: 300,
-        element: null,
-        collisionGroup: null,
-        angle: 20
-    },
+    // // Reset spill position and velocity
+    // DD.objects.spill.element.body.x = 0;
+    // DD.objects.spill.element.body.y = 0;
 
-    game: {
-        firstRun: true,
-        runEnd: false,
-        cursors: null,
+    // DD.objects.spill.element.body.velocity.x = 0;
+    // DD.objects.spill.element.body.velocity.y = 0;
 
-        world: {
-            level: 1,
-            interval: 2000
-        }
-    }
-};
+    // Reset game world
+    DD.game.world.level = 1;
 
-    DD = jQuery.extend(true, {}, DDBluepint);
-    DD.game.firstRun = false;
+    game.destroy();
+    game = null;
 
-    create();
-
-    // start();
+    game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', {
+        preload: preload,
+        create: create,
+        update: update,
+        render: render
+    });
 }
