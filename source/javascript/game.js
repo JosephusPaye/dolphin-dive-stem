@@ -212,27 +212,45 @@ DD.game.render = function render() {
 };
 
 /**
- * Handle player collision with junk
- */
-function junkHit() {
-    console.log('Junk hit!');
-
-    if (DD.objects.junks.active !== true) {
-        DD.player.speed = DD.player.speed * DD.objects.junks.slow;
-        DD.objects.junks.active = true;
-        game.time.events.add(Phaser.Timer.SECOND * 2, regainSpeed, this); 
-    }  
-}
-
-/**
  * Increase player speed after
  * collision with junk
  */
-function regainSpeed() {
-    console.log('Regaining speed!');
 
-    DD.player.speed = DD.player.speed / DD.objects.junks.slow;
-    DD.objects.junks.active = false;
+//Should be a variable that prevents multiple instances of the junkHit function at the same time.
+var isHit = false;
+
+function junkHit() {
+    //At this point the function is closed off from repetition.
+    isHit = true;
+    //The speed that the player should be travelling at is stored, otherwise the function below will slow down rather than speed up.
+    var originalSpeed = DD.player.speed; 
+
+    //setInterval means that I can perform this over some time and gradually without using Phasers stupid time function.
+    //Time on the second argument is in milliseconds. 
+    var speedUp = setInterval(function() {
+        console.log(DD.objects.junks.slow);
+        //This is where originalSpeed is used to provide a gradual speed up that feels a little more natural.
+        DD.player.speed = originalSpeed * DD.objects.junks.slow;
+        //Every second the dolphin gets 10% closer to full speed.
+        DD.objects.junks.slow += 0.1;
+
+        //Detecting when the maximum speed is reached, so the function can end.
+        if (DD.objects.junks.slow >= 1) {
+            //End the interval that is causing the change in dolphin speed.
+            clearInterval(speedUp);
+        }
+    }, 1000);
+
+    //Resetting the slowing effect after the normal speed is reached again.
+    DD.objects.junks.slow = 0.4;
+    //Everything is done so the function can be opened up for usage again.
+    isHit = false
+
+        /*
+         * DD.player.speed = DD.player.speed / DD.objects.junks.slow;
+         * DD.objects.junks.active = false;
+         */
+
 }
 
 /**
