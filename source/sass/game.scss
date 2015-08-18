@@ -2,10 +2,11 @@
 
 * {
 	box-sizing: border-box;
+	-webkit-user-select: none;
 }
 
 body {
-	font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+	font-family: 'Architects Daughter', cursive;
 	padding: 0;
 	margin: 0;
 }
@@ -15,7 +16,6 @@ body {
 	margin: 0 auto;
 	margin-top: 20px;
 	position: relative;
-	font-family: 'Architects Daughter', cursive;
 }
 
 .testing {
@@ -52,6 +52,7 @@ body {
 		font-size: 46px;
 		text-shadow: 0 0 10px #000;
 		position: relative;
+		cursor: default;
 	}
 
 	.text {
@@ -90,6 +91,38 @@ body {
 	}
 }
 
+#gameOverMenu {
+	.title {
+		margin-bottom: 25px;
+		margin-top: 15px!important;
+	}
+
+	.info {
+		text-shadow: 0 0 10px #000;
+		margin-top: 15px;
+		margin-bottom: 50px;
+	}
+
+	h2 {
+		margin-top: 0;
+		font-size: 26px;
+		color: #FFF;
+		margin-bottom: 10px;
+		font-weight: normal;
+	}
+
+	.score {
+		font-size: 36px;
+		color: #FFF;
+		font-weight: bold;
+		margin-left: 12px;
+	}
+
+	ul {
+		margin-top: 40px;
+	}
+}
+
 .menu-buttons {
 	list-style: none;
 	padding: 0;
@@ -120,8 +153,8 @@ body {
 }
 
 .hidden {
-	// display: none !important;
-	visibility: hidden;
+	display: none !important;
+	// visibility: hidden;
 }
 
 .pause-btn {
@@ -159,6 +192,7 @@ body {
     top: 0;
     font-size: 20px;
     padding: 5px 10px 0 10px;
+    cursor: default;
 
 	ul {
 		padding: 0 5px;
@@ -184,3 +218,33 @@ body {
 	    }
 	}
 }
+
+.odometer.odometer-auto-theme, .odometer.odometer-theme-default {
+	font-family: 'Architects Daughter', cursive;
+	line-height: normal;
+}
+
+#highScoresMenu {
+	.title {
+		margin-top: 75px;
+	    margin-bottom: 25px;
+	}
+
+	.list {
+		display: block;
+	    margin-bottom: 30px;
+        min-height: 150px;
+
+		> div {
+			width: 300px;
+			margin: 0 auto;
+			margin-bottom: 10px;
+			border: 2px solid #FFF;
+			font-size: 32px;
+			color: #FFF;
+			text-shadow: 0 0 10px #000;
+			font-weight: bold;
+		}
+	}
+}
+

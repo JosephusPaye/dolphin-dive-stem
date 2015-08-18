@@ -10,8 +10,11 @@
         
         "jQuery": false,
         "$": false,
+        "simpleStorage": false,
 
         "TweenMax": false,
+        "Bounce": false,
+        "Back": false,
         
         "DD": true,
         "Display": true,

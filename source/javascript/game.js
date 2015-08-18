@@ -1,5 +1,8 @@
 // vim: set expandtab ts=4 sts=4 sw=4:
 
+// Restore persisted values from local storage
+DD.game.actions.restoreSavedValues();
+
 /**
  * Preload function
  * 
@@ -13,7 +16,7 @@ DD.game.preload = function preload() {
     game.load.image('star', '/assets/images/star.png');
     game.load.image('healthpack', '/assets/images/firstaid.png');
     game.load.image('seafloor', '/assets/images/SeaFloor.png');
-    game.load.image('oilspill', '/assets/images/OilSpill.png');
+    game.load.image('oilspill', '/assets/images/oilback.png');
     game.load.spritesheet('oilspillfront', '/assets/images/GradientOil.png', 1920, 1080);
     game.load.spritesheet('dude', '/assets/images/Dolphin.png', 235, 96);
 };
@@ -58,7 +61,7 @@ DD.game.create = function create() {
     DD.textures.layerC.body.immovable = true;
 
     // Add oilspill element and enable Physics
-    DD.objects.spill.element = game.add.sprite(0, 0, 'oilspill');
+    DD.objects.spill.element = game.add.sprite(1600, 0, 'oilspill');
     game.physics.p2.enable(DD.objects.spill.element);
 
     // Add player

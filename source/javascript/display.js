@@ -49,6 +49,29 @@ var DisplayData = {
         resumeBtn: $('#pauseMenu-resume'),
         restartBtn: $('#pauseMenu-restart'),
         mainMenuBtn: $('#pauseMenu-mainMenu')
+    },
+
+    gameOverMenu: {
+        element: $('#gameOverMenu'),
+        overlay: $('#gameOverMenu .overlay'),
+
+        highScore: {
+            element: $('#gameOverMenu-highScore'),
+            number: $('#gameOverMenu-highScore .score')
+        },
+
+        score: {
+            element: $('#gameOverMenu-score'),
+            number: $('#gameOverMenu-score .score')
+        },
+
+        coins: {
+            element: $('#gameOverMenu-coins'),
+            number: $('#gameOverMenu-coins .score')
+        },
+
+        playAgainBtn: $('#gameOverMenu-playAgain'),
+        mainMenuBtn: $('#gameOverMenu-mainMenu')
     }
 };
 
@@ -100,7 +123,8 @@ var Display = {
             DisplayData.highScoresMenu.element,
             DisplayData.howToPlayMenu.element,
             DisplayData.aboutMenu.element,
-            DisplayData.pauseMenu.element
+            DisplayData.pauseMenu.element,
+            DisplayData.gameOverMenu.element
         ];
 
         menus.forEach(function(menu) {
@@ -120,6 +144,9 @@ var Display = {
      * Update scores in About menu
      */
     updateHighScores: function() {
+        // Get unique scores
+        DD.game.score.highScores = DD.game.score.highScores.unique();
+        
         // Sort scores
         DD.game.score.highScores.sort(function(a, b) {
             return a < b;
@@ -127,9 +154,12 @@ var Display = {
 
         // Generate HTML for scores
         var highScoresHtml = '';
-        DD.game.score.highScores.forEach(function(score) { 
-            highScoresHtml += '<li>' + score + '</li>';
-        });
+
+        for (var i = 0; i < 5; i++) {
+            if (DD.game.score.highScores[i]) {
+                highScoresHtml += '<div>' + DD.game.score.highScores[i] + '</div>';
+            }
+        }
 
         // Display updated scores
         if (DD.game.score.highScores.length) {

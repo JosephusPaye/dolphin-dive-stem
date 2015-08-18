@@ -97,6 +97,58 @@ DD.game.actions = {
         }
     },
 
+    // Restore saved values from local storage
+    restoreSavedValues: function() {
+        var highScores;
+        var coins;
+
+        if (!simpleStorage.canUse()) {
+            console.error('Local storage not available');
+            return;
+        }
+
+        // Restore high scores
+        highScores = simpleStorage.get('highScores');
+        if (highScores) {
+            DD.game.score.highScores = highScores;
+        }
+
+        // Restore coins
+        coins = simpleStorage.get('coins');
+        if (coins) {
+            DD.game.score.coins.total = coins;
+        }
+    },
+
+    updateHighScores: function(score) {
+        if (score.score <= 0) {
+            return;
+        }
+
+        // Add new values to current values
+        var highScores = [score.score].concat(DD.game.score.highScores);
+        var coins = score.coins + DD.game.score.coins.total;
+
+        // Get unique scores and sort in DESC
+        highScores = highScores.unique();
+        highScores.sort(function(a, b) {
+            return a < b;
+        });
+
+        // Get only top 10 scores
+        highScores = highScores.splice(0, 9);
+
+        // Update in-game values
+        DD.game.score.highScores = highScores;
+        DD.game.score.coins.total = coins;
+
+        // Update persisted values
+        simpleStorage.set('highScores', highScores);
+        simpleStorage.set('coins', coins);
+    },
+
+    // TODO: function similar to that above for coins
+
     /**
      * Handle game restart
      * 
@@ -126,6 +178,11 @@ DD.game.actions = {
         // Reset game world
         DD.game.world.level = 1;
 
+        // Reset scores
+        DD.game.score.lastRun = 0;
+        DD.game.score.lastFrameValue.coins = 0;
+        DD.game.score.lastFrameValue.score = 0;
+
         game.destroy();
         game = null;
 
@@ -139,9 +196,52 @@ DD.game.actions = {
      * game over menu
      */
     gameOver: function() {
-        DD.game.result = 'Game Over!';
-        DD.game.runEnd = true;
-        DD.game.score.highScores.push(DD.game.score.lastRun);
+        var newHighestScore = false;
+
+        if (!DD.game.gameOverCalled) {
+            DD.game.runEnd = true;
+
+            if (DD.game.score.lastRun > DD.game.score.highScores[0]) {
+                newHighestScore = true;
+            }
+
+            DD.game.actions.updateHighScores({
+                score: DD.game.score.lastRun,
+                coins: DD.game.score.coins.lastRun
+            });
+
+            Display.hideElements([
+                DisplayData.gameOverMenu.highScore.element,
+                DisplayData.gameOverMenu.score.element
+            ]);
+
+            if (newHighestScore) {
+                Display.showElements([
+                    DisplayData.gameOverMenu.highScore.element
+                ]);
+            } else {
+                Display.showElements([
+                    DisplayData.gameOverMenu.score.element
+                ]);
+            }
+
+            Display.showMenu(DisplayData.gameOverMenu.element);
+            PlayAnimations.gameOverMenu();
+
+            // Wait half a second, then trigger score display animation
+            window.setTimeout(function() {
+                DisplayData.gameOverMenu.coins.number.text(DD.game.score.coins.lastRun); 
+                
+                if (newHighestScore) {
+                    DisplayData.gameOverMenu.highScore.number.text(DD.game.score.lastRun);
+                } else {
+                    DisplayData.gameOverMenu.score.number.text(DD.game.score.lastRun);
+                }
+            }, 500);
+
+            // Prevent gameOver() from being called multiple times
+            DD.game.gameOverCalled = true;
+        }
     }
 };
 

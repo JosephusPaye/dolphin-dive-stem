@@ -21,6 +21,7 @@ $(document).ready(function() {
     $(DisplayData.mainMenu.highScoresBtn).click(function() {
         Display.updateHighScores();
         Display.showMenu(DisplayData.highScoresMenu.element);
+        PlayAnimations.highScoresMenu();
     });
 
     // Main menu: How to Play button
@@ -85,6 +86,34 @@ $(document).ready(function() {
         // First run will show Main Menu and play its animation
         DD.game.firstRun = true;
         DD.game.actions.restart();
+    });
+
+    // Game over menu: Play again button
+    $(DisplayData.gameOverMenu.playAgainBtn).click(function() {
+        Display.hideAllMenus();
+
+        // Reset HUD scores
+        DisplayData.hud.score.text(0);
+        DisplayData.hud.coins.text(0);
+
+        // Show HUD and pause button
+        Display.showElements([DisplayData.hud.element, DisplayData.hud.pauseBtn]);
+
+        // Restart game
+        DD.game.actions.restart();
+        DD.game.gameOverCalled = false;
+
+        // Resume game
+        game.paused = false;
+    });
+
+    // Game Over menu: Quit to Main Menu button
+    $(DisplayData.gameOverMenu.mainMenuBtn).click(function() {
+        // First run will show Main Menu and play its animation
+        DD.game.firstRun = true;
+        DD.game.actions.restart();
+
+        DD.game.gameOverCalled = false;
     });
 
     /**

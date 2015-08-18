@@ -51,6 +51,7 @@ var DD = {
     },
 
     game: {
+        gameOverCalled: false,
         firstRun: true,
         runEnd: false,
         cursors: null,

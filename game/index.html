@@ -50,12 +50,29 @@
 			</div>
 		</div>
 
+		<!-- Game Over menu -->
+		<div id="gameOverMenu" class="menu hidden darken">
+			<div class="overlay dark"></div>
+			<div class="wrapper">
+				<h1 class="title">Game Over</h1>
+				<div class="info">
+					<h2 id="gameOverMenu-highScore" class="hidden">New highscore! <span class="score odometer">0</span></h2>
+					<h2 id="gameOverMenu-score" class="hidden">Score: <span class="score odometer">0</span></h2>
+					<h2 id="gameOverMenu-coins">Coins: <span class="score">0</span></h2>
+				</div>
+				<ul class="menu-buttons">
+					<li id="gameOverMenu-playAgain">Play again</li>
+					<li id="gameOverMenu-mainMenu">Quit to Main Menu</li>
+				</ul>
+			</div>
+		</div>
+
 		<!-- High Scores Menu -->
 		<div id="highScoresMenu" class="menu hidden">
 			<h1 class="title">High Scores</h1>
 			<ul class="menu-buttons">
-				<span id="highScoresMenu-list">
-					<span class="blank-state">No highScores yet</span>
+				<span id="highScoresMenu-list" class="list">
+					<span class="blank-state">No high scores yet</span>
 				</span>
 				<li id="highScoresMenu-mainMenu">Back</li>
 			</ul>
