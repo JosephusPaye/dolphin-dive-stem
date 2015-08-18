@@ -10,12 +10,16 @@ DD.game.preload = function preload() {
     game.load.image('background', '/assets/images/StaticBackground.png');
     game.load.image('backgroundL1', '/assets/images/Layer1.png');
     game.load.image('backgroundL2', '/assets/images/Layer2.png');
-    game.load.image('star', '/assets/images/star.png');
+    game.load.image('junk', '/assets/images/plasticBag.png');
     game.load.image('healthpack', '/assets/images/firstaid.png');
     game.load.image('seafloor', '/assets/images/SeaFloor.png');
     game.load.image('oilspill', '/assets/images/OilSpill.png');
+    game.load.image('overnet', '/assets/images/overnet.png');
+    game.load.image('undernet', '/assets/images/undernet.png');
     game.load.spritesheet('oilspillfront', '/assets/images/GradientOil.png', 1920, 1080);
     game.load.spritesheet('dude', '/assets/images/Dolphin.png', 235, 96);
+
+    game.load.audio('junkImpact', '/assets/audio/junkCollide.mp3');
 };
 
 /**
@@ -57,6 +61,10 @@ DD.game.create = function create() {
     DD.textures.layerB.body.immovable = true;
     DD.textures.layerC.body.immovable = true;
 
+    //sound stuff
+    junkCollide = game.add.audio('junkImpact');
+    junkCollide.addMarker('beginning', 0, 1.0);
+
     // Add oilspill element and enable Physics
     DD.objects.spill.element = game.add.sprite(0, 0, 'oilspill');
     game.physics.p2.enable(DD.objects.spill.element);
@@ -86,6 +94,7 @@ DD.game.create = function create() {
     // Generate junks and coins
     DD.game.actions.createJunks();
     DD.game.actions.createCoins();
+
 
     // Setup collisions
     DD.objects.spill.element.body.setCollisionGroup(DD.objects.spill.collisionGroup);
@@ -221,6 +230,8 @@ function junkHit() {
         DD.player.speed = DD.player.speed * DD.objects.junks.slow;
         DD.objects.junks.active = true;
         game.time.events.add(Phaser.Timer.SECOND * 2, regainSpeed, this); 
+        //sound stuff
+        junkCollide.play('beginning');
     }  
 }
 

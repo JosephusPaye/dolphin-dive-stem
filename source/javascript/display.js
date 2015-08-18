@@ -15,7 +15,8 @@ var DisplayData = {
         element: $('#hud'),
         score: $('#hud-score'),
         coins: $('#hud-coins'),
-        pauseBtn: $('#hud-pauseBtn')
+        pauseBtn: $('#hud-pauseBtn'),
+        progressBar: $('#progress-bar')
     },
 
     mainMenu: {

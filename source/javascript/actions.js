@@ -34,7 +34,7 @@ DD.game.actions = {
             junk = game.add.sprite(
                 (Math.floor(Math.random() * 187000) + 5000),
                 game.world.randomY,
-                'star'
+                'junk'
             );
 
             // junk.physicsBodyType = Phaser.Physics.P2JS;
@@ -43,6 +43,7 @@ DD.game.actions = {
 
             // The size of the object will likely change too, if that is possible
             junk.body.setRectangle(24, 22);
+            junk.scale.setTo(0.5, 0.5);
 
             junk.body.angularVelocity = Math.random() * 2;
             junk.body.velocity.y = Math.random() * 80;
@@ -94,6 +95,36 @@ DD.game.actions = {
             coin.body.collides([DD.objects.coins.collisionGroup, DD.player.collisionGroup]);
 
             DD.objects.coins.elements.push(coin);
+        }
+    },
+
+    createNets: function() {
+        var net;
+        var underNet;
+        var k;
+
+        // Create a two hundred net objects
+        for (k = 0; k < DD.objects.nets.amount; k++) {
+            // For where it says 'star', i want to add a list which it will take from randomly.
+            net = game.add.sprite(((k+8)*400), 0, 'overnet'); 
+            // net.enableBody = true;
+            // net.physicsBodyType = Phaser.Physics.P2JS;
+            game.physics.p2.enable(net);
+
+            underNet = game.add.sprite(net.body.x, net.body.y, 'undernet'); 
+
+            // The size of the object will likely change too, if that is possible
+            net.body.setRectangle(24, 22);
+
+            // Tell the net to use the DD.objects.nets.collisionGroup 
+            net.body.setCollisionGroup(DD.objects.nets.collisionGroup);
+
+            // nets will collide against themselves and the player
+            // If you don't set this they'll not collide with anything.
+            // The first parameter is either an array or a single collision group.
+            net.body.collides([DD.objects.nets.collisionGroup, DD.player.collisionGroup]);
+
+            DD.objects.nets.elements.push(net);
         }
     },
 

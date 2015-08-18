@@ -32,6 +32,11 @@ var DD = {
             slow: 0.5,
             collisionGroup: null,
             active: false
+        },
+
+        nets: {
+            amount: 200,
+            elements: []
         }
     },
 
