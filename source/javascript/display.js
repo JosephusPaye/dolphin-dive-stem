@@ -16,7 +16,11 @@ var DisplayData = {
         score: $('#hud-score'),
         coins: $('#hud-coins'),
         pauseBtn: $('#hud-pauseBtn'),
-        progressBar: $('#progress-bar')
+        progressBar: {
+            element: $('#hud-progressbar'),
+            spill: $('#hud-progressbar-oilspill'),
+            dolphin: $('#hud-progressbar-dolphin')
+        }
     },
 
     mainMenu: {

@@ -1,5 +1,5 @@
 // vim: set expandtab ts=4 sts=4 sw=4:
-
+var junkCollide;
 /**
  * Preload function
  * 
@@ -17,9 +17,9 @@ DD.game.preload = function preload() {
     game.load.image('overnet', '/assets/images/overnet.png');
     game.load.image('undernet', '/assets/images/undernet.png');
     game.load.spritesheet('oilspillfront', '/assets/images/GradientOil.png', 1920, 1080);
-    game.load.spritesheet('dude', '/assets/images/Dolphin.png', 235, 96);
+    game.load.spritesheet('dude', '/assets/images/dolphinsprite.png', 227, 95);
 
-    game.load.audio('junkImpact', '/assets/audio/junkCollide.mp3');
+    game.load.audio('junkImpact', '/assets/audio/yey.wav');
 };
 
 /**
@@ -63,7 +63,7 @@ DD.game.create = function create() {
 
     //sound stuff
     junkCollide = game.add.audio('junkImpact');
-    junkCollide.addMarker('beginning', 0, 1.0);
+    junkCollide.allowMultiple = true;
 
     // Add oilspill element and enable Physics
     DD.objects.spill.element = game.add.sprite(0, 0, 'oilspill');
@@ -78,7 +78,8 @@ DD.game.create = function create() {
     DD.player.element.body.collideWorldBounds = true;
 
     // Player animations
-    DD.player.element.animations.add('right', [4, 3, 5], 6, true);
+    DD.player.element.animations.add('right', [9, 8, 7, 6, 5, 4, 3, 2, 1, 0], 20, true);
+    DD.player.element.animations.add('collide', [9, 8, 7, 6, 5, 4, 3, 2, 1, 0], 100, true);
 
     // Create collision groups
     DD.player.collisionGroup = game.physics.p2.createCollisionGroup();
@@ -142,6 +143,10 @@ DD.game.update = function update() {
         // Sets DD.game.score.lastRun based on the position of the player. the -8 compensates for the position of the player in the world
         DD.game.score.lastRun = ((DD.player.element.x / 400) - 8) * DD.game.modifiers.multiplier;
         DD.game.score.lastRun = parseInt(DD.game.score.lastRun, 10);
+        DisplayData.hud.progressBar.spill.width(((DD.objects.spill.element.x / 400) - 8)*(2.5));
+        DisplayData.hud.progressBar.dolphin.css("margin-left", (((((DD.player.element.x / 400) - 8) - (DD.objects.spill.element.x / 400) - 8))*(2.5) + 28));
+        DisplayData.hud.progressBar.dolphin.css("margin-bottom", (DD.player.element.y / 21.6));
+
 
         // Update the player velocity and play animation
         DD.player.element.body.velocity.x = DD.player.speed + (50 * DD.game.world.level) + DD.game.modifiers.total;
@@ -149,7 +154,6 @@ DD.game.update = function update() {
 
         // Update the oilspill velocity
         DD.objects.spill.element.body.velocity.x = DD.objects.spill.speed + (50 * DD.game.world.level);
-
         // DD.objects.spill.gradient.element.body.velocity.x = DD.objects.spill.element.body.velocity.x;
         // DD.objects.spill.gradient.element.animations.play('spill');
     } else {
@@ -225,13 +229,13 @@ DD.game.render = function render() {
  */
 function junkHit() {
     console.log('Junk hit!');
-
+    //sound stuff
+    DD.player.element.animations.play('collide');
+    junkCollide.play();
     if (DD.objects.junks.active !== true) {
         DD.player.speed = DD.player.speed * DD.objects.junks.slow;
         DD.objects.junks.active = true;
-        game.time.events.add(Phaser.Timer.SECOND * 2, regainSpeed, this); 
-        //sound stuff
-        junkCollide.play('beginning');
+        setTimeout(regainSpeed, 3000);
     }  
 }
 

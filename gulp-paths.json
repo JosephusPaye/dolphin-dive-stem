@@ -24,7 +24,11 @@
         ],
         "images": [
         	"./source/images/**/!(_)*.*(svg|png|jpg|gif)"
+        ],
+        "audio": [
+            "./source/audio/**/!(_)*.*(mp3|wav|ogg)"
         ]
+
     },
 
     "watch": {
@@ -42,6 +46,9 @@
         ],
         "images": [
         	"./source/images/**/!(_)*.*(svg|png|jpg|gif)"
+        ],
+        "audio": [
+            "./source/audio/**/!(_)*.*(mp3|wav|ogg)"
         ]
     },
 
@@ -51,7 +58,8 @@
         "css"		: "./game/assets/css",
         "fonts"		: "./game/assets/css/fonts",
         "js"		: "./game/assets/js",
-        "images"    : "./game/assets/images"
+        "images"    : "./game/assets/images",
+        "audio"     : "./game/assets/audio"
     },
 
     "build": "./game"

@@ -104,6 +104,25 @@ gulp.task('fonts', function() {
 });
 
 /**
+ * Copy audio files from vendor/ and source/
+ * 
+ * @return {Stream}
+ */
+gulp.task('audio', function() {
+    var mainFiles = mainBowerFiles().concat(paths.source.audio);
+    var audioFilter = filterByExtension(['mp3', 'wav', 'ogg']);
+
+    if (mainFiles.length < 1) {
+        return;
+    }
+
+    return gulp.src(mainFiles)
+        .pipe(audioFilter)
+        .pipe(gulp.dest(paths.destination.audio))
+        .pipe(audioFilter.restore());
+});
+
+/**
  * Compile and bundle app CSS files
  * 
  * @return {Stream}
@@ -172,7 +191,7 @@ gulp.task('watch', function() {
  * Default Gulp task
  */
 gulp.task('default', [
-    'images', 'css', 'fonts', 'html', 'javascript', 'browser-sync', 'watch'
+    'images', 'css', 'fonts', 'audio', 'html', 'javascript', 'browser-sync', 'watch'
 ]);
 
 /**
@@ -187,7 +206,7 @@ gulp.task('build', [
  * Build without watching
  */
 gulp.task('build:full', [
-    'vendor-js', 'vendor-css', 'css', 'html', 'javascript', 'images', 'fonts'
+    'vendor-js', 'vendor-css', 'audio', 'css', 'html', 'javascript', 'images', 'fonts'
 ]);
 
 /**
