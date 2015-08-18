@@ -145,7 +145,7 @@ DD.game.update = function update() {
         DD.game.score.lastRun = parseInt(DD.game.score.lastRun, 10);
         DisplayData.hud.progressBar.spill.width(((DD.objects.spill.element.x / 400) - 8)*(2.5));
         DisplayData.hud.progressBar.dolphin.css("margin-left", (((((DD.player.element.x / 400) - 8) - (DD.objects.spill.element.x / 400) - 8))*(2.5) + 28));
-        DisplayData.hud.progressBar.dolphin.css("margin-bottom", (DD.player.element.y / 21.6));
+        DisplayData.hud.progressBar.dolphin.css("margin-top", (DD.player.element.y / 27));
 
 
         // Update the player velocity and play animation
@@ -235,7 +235,7 @@ function junkHit() {
     if (DD.objects.junks.active !== true) {
         DD.player.speed = DD.player.speed * DD.objects.junks.slow;
         DD.objects.junks.active = true;
-        setTimeout(regainSpeed, 3000);
+        setTimeout(regainSpeed, 4000);
     }  
 }
 
