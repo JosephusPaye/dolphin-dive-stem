@@ -156,14 +156,14 @@ DD.game.update = function update() {
     }
 
     DD.textures.waves.element.body.x = game.camera.x;
-    DD.textures.waves.element.body.y = 0;
+    DD.textures.waves.element.body.y = 25;
     DD.textures.sand.element.body.x = game.camera.x;
     DD.textures.sand.element.body.y = 1080;
 
     DD.textures.waves.element.body.angle = 0;
     DD.textures.sand.element.body. angle = 0;
 
-        
+
     // Governs and controls boost
     if (!DD.game.runEnd) {
 
