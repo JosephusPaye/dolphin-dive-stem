@@ -242,6 +242,14 @@ DD.game.actions = {
             // Prevent gameOver() from being called multiple times
             DD.game.gameOverCalled = true;
         }
+    },
+
+    dolphinIsCovered: function() {
+        if ( (DD.objects.spill.element.x - DD.player.element.x) > -750) {
+            return true;
+        }
+
+        return false;
     }
 };
 

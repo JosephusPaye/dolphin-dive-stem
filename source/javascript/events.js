@@ -150,7 +150,7 @@ $(document).ready(function() {
         // Reset HUD scores
         DisplayData.hud.score.text(0);
         DisplayData.hud.coins.text(0);
-        
+
         Display.hideAllMenus();
         Display.showElements([DisplayData.hud.pauseBtn]);
 
@@ -181,6 +181,7 @@ $(document).ready(function() {
         // Restart game
         DD.game.actions.restart();
         DD.game.gameOverCalled = false;
+        DD.game.runEnd = false;
 
         // Resume game
         game.paused = false;

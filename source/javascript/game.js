@@ -60,17 +60,13 @@ DD.game.create = function create() {
     DD.textures.layerB.body.immovable = true;
     DD.textures.layerC.body.immovable = true;
 
-    // Add oilspill element and enable Physics
-    DD.objects.spill.element = game.add.sprite(1600, 0, 'oilspill');
-    game.physics.p2.enable(DD.objects.spill.element);
-
-    DD.objects.spill.element.body.immovable = true;
-    DD.objects.spill.element.body.customSeparateX = true;
-    DD.objects.spill.element.body.customSeparateY = true;
-
     // Add player
     DD.player.element = game.add.sprite(3000, game.world.centerY, 'dolphin');
     DD.player.element.scale.setTo(0.4, 0.4);
+
+    // Add oilspill element and enable Physics
+    DD.objects.spill.element = game.add.sprite(1600, 0, 'oilspill');
+    game.physics.p2.enable(DD.objects.spill.element);
 
     // Player physics properties
     game.physics.p2.enable(DD.player.element);
@@ -98,7 +94,7 @@ DD.game.create = function create() {
     DD.objects.spill.element.body.setCollisionGroup(DD.objects.spill.collisionGroup);
     DD.player.element.body.setCollisionGroup(DD.player.collisionGroup);
 
-    DD.objects.spill.element.body.collides([DD.objects.spill.collisionGroup, DD.player.collisionGroup]);
+    // DD.objects.spill.element.body.collides([DD.objects.spill.collisionGroup, DD.player.collisionGroup]);
     DD.player.element.body.collides(DD.objects.junks.collisionGroup, junkHit, this);
     DD.player.element.body.collides(DD.objects.spill.collisionGroup, DD.game.actions.gameOver, this);
     DD.player.element.body.collides(DD.objects.coins.collisionGroup, collectCoin, this);
@@ -125,6 +121,16 @@ DD.game.create = function create() {
  * The game loop - run once per frame
  */
 DD.game.update = function update() {
+    // Check for game over
+    if ( DD.game.actions.dolphinIsCovered() ) {
+        DD.game.actions.gameOver();
+        DD.player.element.body.velocity.x = 0;
+
+        if ( DD.objects.spill.element.x >= (game.camera.x + 500)) {
+            DD.objects.spill.element.body.velocity.x = 0;
+        }
+    }
+
     if (DD.game.modifiers.boost.active) {
         if ((DD.player.element.x - DD.game.modifiers.boost.begin) >= 1000) {
 
@@ -150,10 +156,6 @@ DD.game.update = function update() {
 
         // DD.objects.spill.gradient.element.body.velocity.x = DD.objects.spill.element.body.velocity.x;
         // DD.objects.spill.gradient.element.animations.play('spill');
-
-    } else {
-        // Stops all of the objects so that its not clunky. Once the death menu is implemented, this will look quite nice
-        DD.player.element.body.velocity.x = 0;
     }
 
     // Reset the player's velocity (movement)
@@ -264,8 +266,6 @@ function junkHit() {
  * @param  {Game.sprite} coin
  */
 function collectCoin(player, coin) {
-    console.log('Coin collected');
-
     coin.body = null;
     coin.sprite.kill();
 

@@ -27,7 +27,7 @@ var DD = {
         },
 
         junks: {
-            amount: 1000,
+            amount: 100,
             elements: [],
             slow: 0.4,
             collisionGroup: null,
