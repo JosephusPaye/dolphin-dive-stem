@@ -44,10 +44,19 @@ var DD = {
         layerA: null,
         layerB: null,
         layerC: null,
+        waves: {
+            element: null,
+            collisionGroup: null
+        },
+        sand: {
+            element: null,
+            collisionGroup: null
+        },
         speed: 50
     },
 
     player: {
+        accelerationActive: false,
         speed: 300,
         vertSpeed: 300,
         element: null,

@@ -16,6 +16,7 @@ DD.game.preload = function preload() {
     game.load.image('oilspill', '/assets/images/OilSpill.png');
     game.load.image('overnet', '/assets/images/overnet.png');
     game.load.image('undernet', '/assets/images/undernet.png');
+    game.load.image('waves', '/assets/images/waves.png');
     game.load.spritesheet('oilspillfront', '/assets/images/GradientOil.png', 1920, 1080);
     game.load.spritesheet('dude', '/assets/images/dolphinsprite.png', 227, 95);
 
@@ -61,17 +62,24 @@ DD.game.create = function create() {
     DD.textures.layerB.body.immovable = true;
     DD.textures.layerC.body.immovable = true;
 
+    DD.textures.waves.element = game.add.sprite(0, 0, 'waves');
+    game.physics.p2.enable(DD.textures.waves.element);
+    DD.textures.sand.element = game.add.sprite(0, 1080, 'waves');
+    game.physics.p2.enable(DD.textures.sand.element);
+    DD.textures.sand.element.alpha = 0;
+
     //sound stuff
     junkCollide = game.add.audio('junkImpact');
     junkCollide.allowMultiple = true;
+
+    // Add player
+    DD.player.element = game.add.sprite(3000, game.world.centerY, 'dude');
+    DD.player.element.scale.setTo(0.4, 0.4);
 
     // Add oilspill element and enable Physics
     DD.objects.spill.element = game.add.sprite(0, 0, 'oilspill');
     game.physics.p2.enable(DD.objects.spill.element);
 
-    // Add player
-    DD.player.element = game.add.sprite(3000, game.world.centerY, 'dude');
-    DD.player.element.scale.setTo(0.4, 0.4);
 
     // Player physics properties
     game.physics.p2.enable(DD.player.element);
@@ -83,6 +91,8 @@ DD.game.create = function create() {
 
     // Create collision groups
     DD.player.collisionGroup = game.physics.p2.createCollisionGroup();
+    DD.textures.waves.collisionGroup = game.physics.p2.createCollisionGroup();
+    DD.textures.sand.collisionGroup = game.physics.p2.createCollisionGroup();
     DD.objects.junks.collisionGroup = game.physics.p2.createCollisionGroup();
     DD.objects.spill.collisionGroup = game.physics.p2.createCollisionGroup();
     DD.objects.coins.collisionGroup = game.physics.p2.createCollisionGroup();
@@ -100,11 +110,18 @@ DD.game.create = function create() {
     // Setup collisions
     DD.objects.spill.element.body.setCollisionGroup(DD.objects.spill.collisionGroup);
     DD.player.element.body.setCollisionGroup(DD.player.collisionGroup);
+    DD.textures.waves.element.body.setCollisionGroup(DD.textures.waves.collisionGroup);
+    DD.textures.sand.element.body.setCollisionGroup(DD.textures.sand.collisionGroup);
 
+    DD.textures.waves.element.body.collides([DD.textures.waves.collisionGroup, DD.player.collisionGroup]);
+    DD.textures.sand.element.body.collides([DD.textures.sand.collisionGroup, DD.player.collisionGroup]);
     DD.objects.spill.element.body.collides([DD.objects.spill.collisionGroup, DD.player.collisionGroup]);
+
     DD.player.element.body.collides(DD.objects.junks.collisionGroup, junkHit, this);
     DD.player.element.body.collides(DD.objects.spill.collisionGroup, DD.game.actions.gameOver, this);
     DD.player.element.body.collides(DD.objects.coins.collisionGroup, collectCoin, this);
+    DD.player.element.body.collides(DD.textures.waves.collisionGroup, hitWaves, this);
+    DD.player.element.body.collides(DD.textures.sand.collisionGroup, hitSand, this);
 
     // Setup keyboard controls
     DD.game.cursors = game.input.keyboard.createCursorKeys();
@@ -138,8 +155,19 @@ DD.game.update = function update() {
         }
     }
 
+    DD.textures.waves.element.body.x = game.camera.x;
+    DD.textures.waves.element.body.y = 0;
+    DD.textures.sand.element.body.x = game.camera.x;
+    DD.textures.sand.element.body.y = 1080;
+
+    DD.textures.waves.element.body.angle = 0;
+    DD.textures.sand.element.body. angle = 0;
+
+        
     // Governs and controls boost
     if (!DD.game.runEnd) {
+
+
         // Sets DD.game.score.lastRun based on the position of the player. the -8 compensates for the position of the player in the world
         DD.game.score.lastRun = ((DD.player.element.x / 400) - 8) * DD.game.modifiers.multiplier;
         DD.game.score.lastRun = parseInt(DD.game.score.lastRun, 10);
@@ -150,12 +178,13 @@ DD.game.update = function update() {
 
         // Update the player velocity and play animation
         DD.player.element.body.velocity.x = DD.player.speed + (50 * DD.game.world.level) + DD.game.modifiers.total;
-        DD.player.element.animations.play('right');
+        if (DD.objects.junks.active !== true) {
+            DD.player.element.animations.play('right');
+        }
 
         // Update the oilspill velocity
         DD.objects.spill.element.body.velocity.x = DD.objects.spill.speed + (50 * DD.game.world.level);
-        // DD.objects.spill.gradient.element.body.velocity.x = DD.objects.spill.element.body.velocity.x;
-        // DD.objects.spill.gradient.element.animations.play('spill');
+
     } else {
         // Stops all of the objects so that its not clunky. Once the death menu is implemented, this will look quite nice
         DD.objects.spill.element.body.velocity.x = 0;
@@ -163,7 +192,9 @@ DD.game.update = function update() {
     }
 
     // Reset the player's velocity (movement)
-    DD.player.element.body.velocity.y = 0;
+    if (DD.player.accelerationActive === false) {
+        DD.player.element.body.velocity.y = 0;
+    }
 
     if (DD.player.element.body.x >= (DD.game.world.interval * DD.game.world.level) ) {
         console.log('Level (speed) up!');
@@ -187,21 +218,27 @@ DD.game.update = function update() {
     }
 
     if (DD.game.cursors.up.isDown || DD.game.touch.isTouchingUp()) {
-        DD.player.element.body.angle = -1 * DD.player.angle;
-        DD.player.element.body.velocity.y = -1 * DD.player.vertSpeed;
+        
+        if (DD.player.accelerationActive === false) {
+            DD.player.element.body.velocity.y = -1 * DD.player.vertSpeed;
+            DD.player.element.body.angle = -1 * DD.player.angle;
+        }
+        else {
+            DD.player.element.body.angle = 0;
+        }
+
     } else if (DD.game.cursors.down.isDown || DD.game.touch.isTouchingDown()) {
-        DD.player.element.body.angle = DD.player.angle;
-        DD.player.element.body.velocity.y = DD.player.vertSpeed;
+
+        if (DD.player.accelerationActive === false) {
+            DD.player.element.body.angle = DD.player.angle;
+            DD.player.element.body.velocity.y = DD.player.vertSpeed;
+        }
+        else {
+            DD.player.element.body.angle = 0;
+        }
+
     } else {
         DD.player.element.body.angle = 0;
-    }
-
-    // This function is currently not working.
-    // I (Brian) will have to read the docs when i can to see how to fix this.
-    if (DD.player.element.collideWorldBounds) {
-        console.log('Touching');
-
-        DD.player.element.body.velocity.y = 0;
     }
 };
 
@@ -209,6 +246,10 @@ DD.game.update = function update() {
  * Render function
  */
 DD.game.render = function render() {
+
+    game.debug.body(DD.textures.waves.element);
+    game.debug.body(DD.player.element);
+
     // Update score
     if (DD.game.score.lastFrameValue.score !== DD.game.score.lastRun) {
         DisplayData.hud.score.text(DD.game.score.lastRun);
@@ -220,7 +261,6 @@ DD.game.render = function render() {
         DisplayData.hud.coins.text(DD.game.score.coins.lastRun);
         DD.game.score.lastFrameValue.coins = DD.game.score.coins.lastRun;
     }
-
     // game.debug.text('Score Multiplier: ' + DD.game.modifiers.multiplier, 32, 72);
 };
 
@@ -235,7 +275,7 @@ function junkHit() {
     if (DD.objects.junks.active !== true) {
         DD.player.speed = DD.player.speed * DD.objects.junks.slow;
         DD.objects.junks.active = true;
-        setTimeout(regainSpeed, 4000);
+        setTimeout(regainSpeed, 3000);
     }  
 }
 
@@ -267,6 +307,26 @@ function collectCoin(player, coin) {
     }
 
     // Additionally have to add code which will remove the object from the game
+}
+
+function hitWaves() {
+    console.log('waves have been hit');
+    DD.player.element.body.gravity.y = 1000;
+    setTimeout(stopAcceleration, 1000);
+    DD.player.accelerationActive = true;
+}
+
+function stopAcceleration() {
+    DD.player.element.body.gravity.y = 0;
+    console.log('stopAcceleration');
+    DD.player.accelerationActive = false;
+}
+
+function hitSand() {
+    console.log('sand has been hit');
+    DD.player.element.body.gravity.y = -1000;
+    setTimeout(stopAcceleration, 1000);
+    DD.player.accelerationActive = true;
 }
 
 // Everything is declared: initialize game
