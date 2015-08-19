@@ -12,7 +12,7 @@ body {
 }
 
 .game-area {
-	width: 800px;
+	width: 1280px;
 	margin: 0 auto;
 	margin-top: 20px;
 	position: relative;
@@ -20,7 +20,7 @@ body {
 
 .testing {
 	text-align: center;
-	width: 800px;
+	width: 1280px;
 	padding: 10px;
 	margin: 0 auto;
 }
@@ -80,7 +80,7 @@ body {
 	.wrapper {
 		position: relative;
 		padding-bottom: 20px;
-		max-width: 550px;
+		max-width: 50%;
 		margin: 0 auto;
 		overflow: hidden;
 		margin-top: 75px;
@@ -88,6 +88,13 @@ body {
 		.title {
 			margin-top: 25px!important;
 		}
+	}
+
+	&.art-bg {
+		background-image: url('../images/menu-bg.png');
+		background-size: contain;
+		background-position-x: 50%;
+		background-position-y: 50%;
 	}
 }
 

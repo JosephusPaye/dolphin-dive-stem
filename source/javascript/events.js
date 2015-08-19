@@ -147,6 +147,10 @@ $(document).ready(function() {
     $(DisplayData.pauseMenu.restartBtn).click(function() {
         // TODO: Calculate score here
         
+        // Reset HUD scores
+        DisplayData.hud.score.text(0);
+        DisplayData.hud.coins.text(0);
+        
         Display.hideAllMenus();
         Display.showElements([DisplayData.hud.pauseBtn]);
 

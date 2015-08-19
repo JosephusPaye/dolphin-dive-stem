@@ -64,6 +64,10 @@ DD.game.create = function create() {
     DD.objects.spill.element = game.add.sprite(1600, 0, 'oilspill');
     game.physics.p2.enable(DD.objects.spill.element);
 
+    DD.objects.spill.element.body.immovable = true;
+    DD.objects.spill.element.body.customSeparateX = true;
+    DD.objects.spill.element.body.customSeparateY = true;
+
     // Add player
     DD.player.element = game.add.sprite(3000, game.world.centerY, 'dolphin');
     DD.player.element.scale.setTo(0.4, 0.4);
@@ -146,9 +150,9 @@ DD.game.update = function update() {
 
         // DD.objects.spill.gradient.element.body.velocity.x = DD.objects.spill.element.body.velocity.x;
         // DD.objects.spill.gradient.element.animations.play('spill');
+
     } else {
         // Stops all of the objects so that its not clunky. Once the death menu is implemented, this will look quite nice
-        DD.objects.spill.element.body.velocity.x = 0;
         DD.player.element.body.velocity.x = 0;
     }
 
@@ -215,27 +219,43 @@ DD.game.render = function render() {
 };
 
 /**
- * Handle player collision with junk
- */
-function junkHit() {
-    console.log('Junk hit!');
-
-    if (DD.objects.junks.active !== true) {
-        DD.player.speed = DD.player.speed * DD.objects.junks.slow;
-        DD.objects.junks.active = true;
-        game.time.events.add(Phaser.Timer.SECOND * 2, regainSpeed, this); 
-    }  
-}
-
-/**
  * Increase player speed after
  * collision with junk
  */
-function regainSpeed() {
-    console.log('Regaining speed!');
+function junkHit() {
+    // The speed that the player should be travelling at is stored, 
+    // otherwise the function below will slow down rather than speed up.
+    var originalSpeed = DD.player.speed;
 
-    DD.player.speed = DD.player.speed / DD.objects.junks.slow;
-    DD.objects.junks.active = false;
+    // Setting a slow speed straight away so it doesn't feel laggy
+    DD.player.speed = originalSpeed * DD.objects.junks.slow;
+
+    // setInterval means that I can perform this over some time 
+    // and gradually without using Phasers stupid time function.
+    // Time on the second argument is in milliseconds. 
+    var speedUp = setInterval(function() {
+        if (DD.objects.junks.slow <= 1) {
+            console.log(DD.objects.junks.slow);
+            
+            // This is where originalSpeed is used to provide 
+            // a gradual speed up that feels a little more natural.
+            DD.player.speed = originalSpeed * DD.objects.junks.slow;
+            
+            // Every second the dolphin gets 10% closer to full speed.
+            DD.objects.junks.slow += 0.1;
+        } else { // Detecting when the maximum speed is reached, so the function can end.
+            // End the interval that is causing the change in dolphin speed.
+            clearInterval(speedUp);
+        }
+    }, 1000);
+
+    // Resetting the slowing effect after the normal speed is reached again.
+    DD.objects.junks.slow = 0.4;
+
+    /*
+     * DD.player.speed = DD.player.speed / DD.objects.junks.slow;
+     * DD.objects.junks.active = false;
+     */
 }
 
 /**

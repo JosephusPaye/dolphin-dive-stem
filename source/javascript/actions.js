@@ -9,7 +9,7 @@ DD.game.actions = {
      * Initialize the global game object
      */
     start: function() {
-        game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', {
+        game = new Phaser.Game(1280, 720, Phaser.AUTO, 'game', {
             preload: DD.game.preload,
             create: DD.game.create,
             update: DD.game.update,
@@ -255,8 +255,8 @@ DD.game.touch = {
      */
     isTouchingUp: function() {
         if (
-            (game.input.pointer1.isDown && game.input.pointer1.x > 500 && game.input.pointer1.y < 300) ||
-            (game.input.pointer2.isDown && game.input.pointer2.x > 500 && game.input.pointer2.y < 300)
+            (game.input.pointer1.isDown && game.input.pointer1.x > 780 && game.input.pointer1.y < 360) ||
+            (game.input.pointer2.isDown && game.input.pointer2.x > 780 && game.input.pointer2.y < 360)
         ) {
             return true;
         }
@@ -272,8 +272,8 @@ DD.game.touch = {
      */
     isTouchingDown: function() {
         if (
-            (game.input.pointer1.isDown && game.input.pointer1.x > 500 && game.input.pointer1.y > 300) ||
-            (game.input.pointer2.isDown && game.input.pointer2.x > 500 && game.input.pointer2.y > 300)
+            (game.input.pointer1.isDown && game.input.pointer1.x > 780 && game.input.pointer1.y > 360) ||
+            (game.input.pointer2.isDown && game.input.pointer2.x > 780 && game.input.pointer2.y > 360)
         ) {
             return true;
         }
