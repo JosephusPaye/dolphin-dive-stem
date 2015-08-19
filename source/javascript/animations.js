@@ -37,6 +37,41 @@ var PlayAnimations = {
         }, 0.1);
     },
 
+    // High scores menu page 2
+    highScoresMenu2: function() {
+        // Animate scores
+        TweenMax.staggerFrom('#highScoresMenu-list-page2 div', 0.3, {
+            y: 100,
+            opacity: 0,
+            ease: Back.easeOut
+        }, 0.1);
+
+        // Animate buttons
+        TweenMax.staggerFrom('#highScoresMenu-page2 li', 0.3, {
+            y: 100,
+            opacity: 0,
+            ease: Back.easeOut
+        }, 0.1);
+    },
+
+    howToPlayMenu: function() {
+        // Animate text
+        TweenMax.from('#howToPlayMenu .text', 0.3, {
+            y: 100,
+            opacity: 0,
+            ease: Back.easeOut
+        }, 0.1);
+    },
+
+    aboutMenu: function() {
+        // Animate text
+        TweenMax.from('#aboutMenu .text', 0.3, {
+            y: 100,
+            opacity: 0,
+            ease: Back.easeOut
+        }, 0.1);
+    },
+
     // Pause Menu animations
     pauseMenu: function() {
         // Animate buttons

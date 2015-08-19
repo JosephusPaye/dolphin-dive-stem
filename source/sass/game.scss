@@ -150,6 +150,27 @@ body {
 			background: linear-gradient(to bottom, #feb645 100%, #f1e767 0%)!important;
 		}
 	}
+
+	&.paginated {
+		overflow: hidden;
+		max-width: 80%;
+		margin: 0 auto;
+		padding: 15px;
+		
+		li {
+			min-width: 175px;
+			max-width: 300px;
+			display: inline-block;
+
+			&:last-child {
+				float: right;
+			}
+
+			&:first-child {
+				float: left;
+			}
+		}
+	}
 }
 
 .hidden {

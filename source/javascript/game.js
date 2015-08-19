@@ -13,12 +13,12 @@ DD.game.preload = function preload() {
     game.load.image('background', '/assets/images/StaticBackground.png');
     game.load.image('backgroundL1', '/assets/images/Layer1.png');
     game.load.image('backgroundL2', '/assets/images/Layer2.png');
-    game.load.image('star', '/assets/images/star.png');
-    game.load.image('healthpack', '/assets/images/firstaid.png');
+    game.load.image('bag', '/assets/images/bag.png');
+    game.load.image('starfish', '/assets/images/starfish.png');
     game.load.image('seafloor', '/assets/images/SeaFloor.png');
     game.load.image('oilspill', '/assets/images/oilback.png');
     game.load.spritesheet('oilspillfront', '/assets/images/GradientOil.png', 1920, 1080);
-    game.load.spritesheet('dude', '/assets/images/Dolphin.png', 235, 96);
+    game.load.spritesheet('dolphin', '/assets/images/new-dolphin.png', 245, 103);
 };
 
 /**
@@ -65,7 +65,7 @@ DD.game.create = function create() {
     game.physics.p2.enable(DD.objects.spill.element);
 
     // Add player
-    DD.player.element = game.add.sprite(3000, game.world.centerY, 'dude');
+    DD.player.element = game.add.sprite(3000, game.world.centerY, 'dolphin');
     DD.player.element.scale.setTo(0.4, 0.4);
 
     // Player physics properties
@@ -73,7 +73,7 @@ DD.game.create = function create() {
     DD.player.element.body.collideWorldBounds = true;
 
     // Player animations
-    DD.player.element.animations.add('right', [4, 3, 5], 6, true);
+    DD.player.element.animations.add('right', [0, 1, 2, 3, 4], 10, true);
 
     // Create collision groups
     DD.player.collisionGroup = game.physics.p2.createCollisionGroup();

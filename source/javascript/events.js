@@ -27,11 +27,13 @@ $(document).ready(function() {
     // Main menu: How to Play button
     $(DisplayData.mainMenu.howToPlayBtn).click(function() {
         Display.showMenu(DisplayData.howToPlayMenu.element);
+        PlayAnimations.howToPlayMenu();
     });
 
     // Main menu: About button
     $(DisplayData.mainMenu.aboutBtn).click(function() {
         Display.showMenu(DisplayData.aboutMenu.element);
+        PlayAnimations.aboutMenu();
     });
 
     // High Scores menu: Return to Main Menu button
@@ -40,10 +42,83 @@ $(document).ready(function() {
         PlayAnimations.mainMenu();
     });
 
+    // High Scores menu: next Page 2 button
+    $(DisplayData.highScoresMenu.nextPage2Btn).click(function() {
+        Display.hideElements([
+            DisplayData.highScoresMenu.page1,
+            DisplayData.highScoresMenu.page2
+        ]);
+
+        Display.showElements([
+            DisplayData.highScoresMenu.page2
+        ]);
+
+        PlayAnimations.highScoresMenu2();
+    });
+
+    // High Scores menu: prev Page 1 button
+    $(DisplayData.highScoresMenu.prevPage1Btn).click(function() {
+        Display.hideElements([
+            DisplayData.highScoresMenu.page1,
+            DisplayData.highScoresMenu.page2
+        ]);
+
+        Display.showElements([
+            DisplayData.highScoresMenu.page1
+        ]);
+
+        PlayAnimations.highScoresMenu();
+    });
+
     // High to Play menu: Return to Main Menu button
     $(DisplayData.howToPlayMenu.mainMenuBtn).click(function() {
         Display.showMenu(DisplayData.mainMenu.element);
         PlayAnimations.mainMenu();
+    });
+
+    // High to Play menu: prev Page 1 button
+    $(DisplayData.howToPlayMenu.prevPage1Btn).click(function() {
+        Display.hideElements([
+            DisplayData.howToPlayMenu.page1,
+            DisplayData.howToPlayMenu.page2,
+            DisplayData.howToPlayMenu.page3
+        ]);
+
+        Display.showElements([
+            DisplayData.howToPlayMenu.page1
+        ]);
+
+        PlayAnimations.howToPlayMenu();
+    });
+
+    // High to Play menu: next and prev Page 2 button
+    $(DisplayData.howToPlayMenu.nextPage2Btn).add(DisplayData.howToPlayMenu.prevPage2Btn).click(function() {
+        Display.hideElements([
+            DisplayData.howToPlayMenu.page1,
+            DisplayData.howToPlayMenu.page2,
+            DisplayData.howToPlayMenu.page3
+        ]);
+
+        Display.showElements([
+            DisplayData.howToPlayMenu.page2
+        ]);
+
+        PlayAnimations.howToPlayMenu();
+    });
+
+    // High to Play menu: next Page 3 button
+    $(DisplayData.howToPlayMenu.nextPage3Btn).click(function() {
+        Display.hideElements([
+            DisplayData.howToPlayMenu.page1,
+            DisplayData.howToPlayMenu.page2,
+            DisplayData.howToPlayMenu.page3
+        ]);
+
+        Display.showElements([
+            DisplayData.howToPlayMenu.page3
+        ]);
+
+        PlayAnimations.howToPlayMenu();
     });
 
     // About menu: Return to Main Menu button

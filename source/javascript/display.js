@@ -29,12 +29,26 @@ var DisplayData = {
     highScoresMenu: {
         element: $('#highScoresMenu'),
         list: $('#highScoresMenu-list'),
-        mainMenuBtn: $('#highScoresMenu-mainMenu')
+        listPage2: $('#highScoresMenu-list-page2'),
+        mainMenuBtn: $('#highScoresMenu-mainMenu'),
+        nextPage2Btn: $('#highScoresMenu-next-page2Btn'),
+        prevPage1Btn: $('#highScoresMenu-prev-page1Btn'),
+
+        page1: $('#highScoresMenu-page1'),
+        page2: $('#highScoresMenu-page2')
     },
 
     howToPlayMenu: {
         element: $('#howToPlayMenu'),
-        mainMenuBtn: $('#howToPlayMenu-mainMenu')
+        mainMenuBtn: $('#howToPlayMenu-mainMenu'),
+        nextPage2Btn: $('#howToPlayMenu-next-page2Btn'),
+        prevPage1Btn: $('#howToPlayMenu-prev-page1Btn'),
+        nextPage3Btn: $('#howToPlayMenu-next-page3Btn'),
+        prevPage2Btn: $('#howToPlayMenu-prev-page2Btn'),
+
+        page1: $('#howToPlayMenu-page1'),
+        page2: $('#howToPlayMenu-page2'),
+        page3: $('#howToPlayMenu-page3')
     },
 
     aboutMenu: {
@@ -161,9 +175,21 @@ var Display = {
             }
         }
 
-        // Display updated scores
+        // Display updated scores (page 1)
         if (DD.game.score.highScores.length) {
             $(DisplayData.highScoresMenu.list).html(highScoresHtml);
+        }
+
+        highScoresHtml = '';
+        for (var j = 5; j < 10; j++) {
+            if (DD.game.score.highScores[j]) {
+                highScoresHtml += '<div>' + DD.game.score.highScores[j] + '</div>';
+            }
+        }
+
+        // Display updated scores (page 2)
+        if (highScoresHtml.length) {
+            $(DisplayData.highScoresMenu.listPage2).html(highScoresHtml);
         }
     }
 };

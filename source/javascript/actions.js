@@ -34,7 +34,7 @@ DD.game.actions = {
             junk = game.add.sprite(
                 (Math.floor(Math.random() * 187000) + 5000),
                 game.world.randomY,
-                'star'
+                'bag'
             );
 
             // junk.physicsBodyType = Phaser.Physics.P2JS;
@@ -75,7 +75,7 @@ DD.game.actions = {
             coin = game.add.sprite(
                 (Math.floor(Math.random() * 187000) + 5000), 
                 game.world.randomY, 
-                'healthpack'
+                'starfish'
             );
 
             // coin.enableBody = true;

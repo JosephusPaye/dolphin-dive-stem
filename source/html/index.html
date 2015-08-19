@@ -70,27 +70,56 @@
 		<!-- High Scores Menu -->
 		<div id="highScoresMenu" class="menu hidden">
 			<h1 class="title">High Scores</h1>
-			<ul class="menu-buttons">
+			<div class="page" id="highScoresMenu-page1">
 				<span id="highScoresMenu-list" class="list">
 					<span class="blank-state">No high scores yet</span>
 				</span>
-				<li id="highScoresMenu-mainMenu">Back</li>
-			</ul>
+				<ul class="menu-buttons paginated">
+					<li id="highScoresMenu-mainMenu">&lt; Main Menu</li>
+					<li id="highScoresMenu-next-page2Btn">More &gt;</li>
+				</ul>
+			</div>
+			<div class="page hidden" id="highScoresMenu-page2">
+				<span id="highScoresMenu-list-page2" class="list">
+					<span class="blank-state">No high scores yet</span>
+				</span>
+				<ul class="menu-buttons paginated">
+					<li id="highScoresMenu-prev-page1Btn">&lt; Back</li>
+				</ul>
+			</div>
 		</div>
 
 		<!-- How to Play Menu -->
 		<div id="howToPlayMenu" class="menu hidden">
 			<h1 class="title">How to Play</h1>
-			<div class="text" id="howToPlayMenu-page1">
-				<p>Instructions on how to play.</p>
+			<div class="page" id="howToPlayMenu-page1">
+				<div class="text">
+					<p>Instructions on how to play.</p>
+				</div>
+				<ul class="menu-buttons paginated">
+					<li id="howToPlayMenu-mainMenu">&lt; Main Menu</li>
+					<li id="howToPlayMenu-next-page2Btn">Next &gt;</li>
+				</ul>
 			</div>
-			<div class="text hidden" id="howToPlayMenu-page2">
-				<p>More instructions on how to play.</p>
+
+			<div class="page hidden" id="howToPlayMenu-page2">
+				<div class="text">
+					<p>More instructions on how to play.</p>
+				</div>
+				<ul class="menu-buttons paginated">
+					<li id="howToPlayMenu-prev-page1Btn">&lt; Back</li>
+					<li id="howToPlayMenu-next-page3Btn">Next &gt;</li>
+				</ul>
 			</div>
-			<ul class="menu-buttons paginated">
-				<li id="howToPlayMenu-mainMenu">&lt; Back</li>
-				<li id="howToPlayMenu-mainMenu">Next &gt;</li>
-			</ul>
+			
+			<div class="page hidden" id="howToPlayMenu-page3">
+				<div class="text">
+					<p>Even more instructions on how to play.</p>
+				</div>
+				<ul class="menu-buttons paginated">
+					<li id="howToPlayMenu-prev-page2Btn">&lt; Back</li>
+				</ul>
+			</div>
 		</div>
 
 		<!-- About menu -->
