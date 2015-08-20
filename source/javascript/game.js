@@ -199,13 +199,15 @@ DD.game.update = function update() {
         );
 
         // Update the player velocity and play animation
-        DD.player.element.body.velocity.x = DD.player.speed + (50 * DD.game.world.level) + DD.game.modifiers.total;
+        DD.player.element.body.velocity.x = DD.player.speed + (30 * DD.game.world.level) + DD.game.modifiers.total;
+
+        // Update the oilspill velocity
+        DD.objects.spill.element.body.velocity.x = 350;
+
         if (DD.objects.junks.active !== true) {
             DD.player.element.animations.play('right');
         }
 
-        // Update the oilspill velocity
-        DD.objects.spill.element.body.velocity.x = DD.objects.spill.speed + (50 * DD.game.world.level);
     }
 
     // Reset the player's velocity (movement)
@@ -213,9 +215,11 @@ DD.game.update = function update() {
         DD.player.element.body.velocity.y = 0;
     }
 
-    if (DD.player.element.body.x >= (DD.game.world.interval * DD.game.world.level) ) {
-        console.log('Level (speed) up!');
-        DD.game.world.level += 1;
+    if (DD.player.element.body.x >= (DD.game.world.interval * DD.game.world.level)) {
+        if (DD.game.world.level < 19) {
+            DD.game.world.level += 1;
+            console.log('Level (speed) up!');
+        }
     }
 
     if (DD.game.cursors.right.isDown) {
@@ -252,7 +256,7 @@ DD.game.update = function update() {
     }
 };
 
-/**
+/*
  * Render function
  */
 DD.game.render = function render() {
@@ -291,7 +295,7 @@ DD.game.render = function render() {
 //     }  
 // }
 
-/**
+/*
  * Increase player speed after
  * collision with junk
  */
@@ -331,7 +335,7 @@ function junkHit() {
      */
 }
 
-/**
+/*
  * Handle player collision with starfish
  * @param  {Game.sprite} player
  * @param  {Game.sprite} starfish
