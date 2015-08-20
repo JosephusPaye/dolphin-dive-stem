@@ -14,8 +14,13 @@ var DisplayData = {
     hud: {
         element: $('#hud'),
         score: $('#hud-score'),
-        coins: $('#hud-coins'),
-        pauseBtn: $('#hud-pauseBtn')
+        starfish: $('#hud-starfish'),
+        pauseBtn: $('#hud-pauseBtn'),
+        progressBar: {
+            element: $('#hud-progressbar'),
+            spill: $('#hud-progressbar-oilspill'),
+            dolphin: $('#hud-progressbar-dolphin')
+        }
     },
 
     mainMenu: {
@@ -79,9 +84,9 @@ var DisplayData = {
             number: $('#gameOverMenu-score .score')
         },
 
-        coins: {
-            element: $('#gameOverMenu-coins'),
-            number: $('#gameOverMenu-coins .score')
+        starfish: {
+            element: $('#gameOverMenu-starfish'),
+            number: $('#gameOverMenu-starfish .score')
         },
 
         playAgainBtn: $('#gameOverMenu-playAgain'),

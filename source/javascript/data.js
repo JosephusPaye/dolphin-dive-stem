@@ -19,7 +19,7 @@ var DD = {
             }
         },
 
-        coins: {
+        starfish: {
             amount: (Math.random() * 50) + 50,
             elements: [],
             collectedIds: [],
@@ -32,6 +32,11 @@ var DD = {
             slow: 0.4,
             collisionGroup: null,
             active: false
+        },
+
+        nets: {
+            amount: 200,
+            elements: []
         }
     },
 
@@ -39,10 +44,19 @@ var DD = {
         layerA: null,
         layerB: null,
         layerC: null,
+        waves: {
+            element: null,
+            collisionGroup: null
+        },
+        sand: {
+            element: null,
+            collisionGroup: null
+        },
         speed: 50
     },
 
     player: {
+        accelerationActive: false,
         speed: 300,
         vertSpeed: 300,
         element: null,
@@ -62,14 +76,14 @@ var DD = {
         },
 
         score: {
-            coins: {
+            starfish: {
                 lastRun: 0,
                 total: 0
             },
 
             lastRun: 0,
             lastFrameValue: {
-                coins: 0,
+                starfish: 0,
                 score: 0
             },
             highScores: []
@@ -87,6 +101,10 @@ var DD = {
             },
 
             multiplier: 1
+        },
+
+        audio: {
+            junkCollide: null
         }
     }
 };

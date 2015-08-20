@@ -17,8 +17,14 @@
 			<!-- Score display -->
 			<ul class="hud">
 				<li>Score: <span id="hud-score">0</span></li>
-				<li>Coins: <span id="hud-coins">0</span></li>
+				<li>Starfish: <span id="hud-starfish">0</span></li>
 			</ul>
+
+			<!-- Minimap -->
+			<div id="hud-progressbar" class="progressbar">
+				<div id="hud-progressbar-oilspill" class="oilspill"></div>
+				<div id="hud-progressbar-dolphin" class="dolphin"></div>
+			</div>
 	
 			<!-- Pause button -->
 			<div id="hud-pauseBtn" class="pause-btn">
@@ -58,7 +64,7 @@
 				<div class="info">
 					<h2 id="gameOverMenu-highScore" class="hidden">New highscore! <span class="score odometer">0</span></h2>
 					<h2 id="gameOverMenu-score" class="hidden">Score: <span class="score odometer">0</span></h2>
-					<h2 id="gameOverMenu-coins">Coins: <span class="score">0</span></h2>
+					<h2 id="gameOverMenu-starfish">Starfish: <span class="score">0</span></h2>
 				</div>
 				<ul class="menu-buttons">
 					<li id="gameOverMenu-playAgain">Play again</li>

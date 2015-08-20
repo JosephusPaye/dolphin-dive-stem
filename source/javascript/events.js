@@ -149,7 +149,7 @@ $(document).ready(function() {
         
         // Reset HUD scores
         DisplayData.hud.score.text(0);
-        DisplayData.hud.coins.text(0);
+        DisplayData.hud.starfish.text(0);
 
         Display.hideAllMenus();
         Display.showElements([DisplayData.hud.pauseBtn]);
@@ -173,7 +173,7 @@ $(document).ready(function() {
 
         // Reset HUD scores
         DisplayData.hud.score.text(0);
-        DisplayData.hud.coins.text(0);
+        DisplayData.hud.starfish.text(0);
 
         // Show HUD and pause button
         Display.showElements([DisplayData.hud.element, DisplayData.hud.pauseBtn]);
