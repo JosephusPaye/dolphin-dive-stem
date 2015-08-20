@@ -24,6 +24,7 @@ DD.game.preload = function preload() {
     game.load.image('undernet', '/assets/images/undernet.png');
     game.load.image('waves', '/assets/images/waves.png');
     game.load.audio('junkImpact', '/assets/audio/yey.wav');
+    game.load.audio('GameSound', '/assets/audio/GameSound.ogg');
 };
 
 /**
@@ -87,8 +88,15 @@ DD.game.create = function create() {
     DD.textures.sand.element.alpha = 0;
 
     // Sound stuff
-    DD.game.audio.junkCollide = game.add.audio('junkImpact');
-    DD.game.audio.junkCollide.allowMultiple = true;
+    DD.game.audio.GameSound = game.add.audio('GameSound');
+    DD.game.audio.GameSound.allowMultiple = true;
+
+    DD.game.audio.GameSound.addMarker('junkHit', 0.48, 0.2);
+    DD.game.audio.GameSound.addMarker('coinGet', 0.2, 0.2);
+    DD.game.audio.GameSound.addMarker('Music', 1.7, 59.0);
+    if (DD.game.firstRun === true) {
+        playMusic();
+    };
 
     // Player animations
     DD.player.element.animations.add('right', [0, 1, 2, 3, 4], 10, true);
@@ -149,6 +157,7 @@ DD.game.create = function create() {
  * The game loop - run once per frame
  */
 DD.game.update = function update() {
+
     // Check for game over
     if ( DD.game.actions.dolphinIsCovered() ) {
         DD.game.actions.gameOver();
@@ -200,9 +209,7 @@ DD.game.update = function update() {
 
         // Update the player velocity and play animation
         DD.player.element.body.velocity.x = DD.player.speed + (50 * DD.game.world.level) + DD.game.modifiers.total;
-        if (DD.objects.junks.active !== true) {
-            DD.player.element.animations.play('right');
-        }
+        DD.player.element.animations.play('right');
 
         // Update the oilspill velocity
         DD.objects.spill.element.body.velocity.x = DD.objects.spill.speed + (50 * DD.game.world.level);
@@ -282,7 +289,7 @@ DD.game.render = function render() {
 
 //     // Sound stuff
 //     DD.player.element.animations.play('collide');
-//     DD.game.audio.junkCollide.play();
+    
 
 //     if (!DD.objects.junks.active) {
 //         DD.player.speed = DD.player.speed * DD.objects.junks.slow;
@@ -296,6 +303,8 @@ DD.game.render = function render() {
  * collision with junk
  */
 function junkHit() {
+
+    DD.game.audio.GameSound.play('junkHit');
     // The speed that the player should be travelling at is stored, 
     // otherwise the function below will slow down rather than speed up.
     var originalSpeed = DD.player.speed;
@@ -309,18 +318,17 @@ function junkHit() {
     var speedUp = setInterval(function() {
         if (DD.objects.junks.slow <= 1) {
             console.log(DD.objects.junks.slow);
-            
             // This is where originalSpeed is used to provide 
             // a gradual speed up that feels a little more natural.
             DD.player.speed = originalSpeed * DD.objects.junks.slow;
             
             // Every second the dolphin gets 10% closer to full speed.
-            DD.objects.junks.slow += 0.1;
+            DD.objects.junks.slow += 0.01;
         } else { // Detecting when the maximum speed is reached, so the function can end.
             // End the interval that is causing the change in dolphin speed.
             clearInterval(speedUp);
         }
-    }, 1000);
+    }, 100);
 
     // Resetting the slowing effect after the normal speed is reached again.
     DD.objects.junks.slow = 0.4;
@@ -339,6 +347,7 @@ function junkHit() {
 function collectStarfish(player, starfish) {
     starfish.body = null;
     starfish.sprite.kill();
+    DD.game.audio.GameSound.play('coinGet');
 
     if (DD.objects.starfish.collectedIds.indexOf(starfish.data.id) === -1) {
         DD.game.score.starfish.lastRun += 1;
@@ -367,6 +376,11 @@ function hitSand() {
     DD.player.element.body.gravity.y = -1000;
     setTimeout(stopAcceleration, 1000);
     DD.player.accelerationActive = true;
+}
+
+function playMusic() {
+    DD.game.audio.GameSound.play('Music');
+    setTimeout(playMusic, 59000);
 }
 
 // Everything is declared: initialize game

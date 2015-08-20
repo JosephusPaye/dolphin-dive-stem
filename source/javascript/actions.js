@@ -85,7 +85,7 @@ DD.game.actions = {
 
             // The size of the object will likely change too, if that is possible
             starfish.body.setRectangle(24, 22);
-            junk.scale.setTo(0.5, 0.5);
+            starfish.scale.setTo(0.5, 0.5);
 
             // Tell the starfish to use the DD.objects.starfish.collisionGroup 
             starfish.body.setCollisionGroup(DD.objects.starfish.collisionGroup);
@@ -188,6 +188,10 @@ DD.game.actions = {
      * re-initializing the game
      */
     restart: function() {
+
+        DD.game.audio.GameSound.destroy();
+        game.cache.removeSound('GameSound');
+
         // Kill off junks
         DD.objects.junks.elements.forEach(function(junk, index) {
             junk.body = null;
