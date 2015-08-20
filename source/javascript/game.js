@@ -20,7 +20,7 @@
         game.load.image('backgroundL1', '/assets/images/Layer1.png');
         game.load.image('backgroundL2', '/assets/images/Layer2.png');
         game.load.image('seafloor', '/assets/images/SeaFloor.png');
-        game.load.image('waves', '/assets/images/waves.png');
+        game.load.spritesheet('waves', '/assets/images/waveNew.png', 1280, 45);
 
         // Junks
         game.load.image('bag', '/assets/images/bag.png');
@@ -28,7 +28,7 @@
         game.load.image('boot', '/assets/images/boot.png');
         game.load.image('bottle', '/assets/images/bottle.png');
         game.load.image('tyre', '/assets/images/tyre.png');
-        game.load.image('overnet', '/assets/images/overnet.png');
+        game.load.image('ball', '/assets/images/ball.png');
         game.load.image('undernet', '/assets/images/undernet.png');
 
         // Objects
@@ -38,10 +38,10 @@
         // Main characters
         game.load.image('oilspill', '/assets/images/oilback.png');
         game.load.spritesheet('dolphin', '/assets/images/new-dolphin.png', 245, 103);
+        game.load.spritesheet('barrier', '/assets/images/boost.png', 288, 289);
 
         // Audio
-        game.load.audio('junkImpact', '/assets/audio/yey.wav');
-        game.load.audio('GameSound', '/assets/audio/GameSound.ogg');
+        game.load.audio('Junks', '/assets/audio/Junks.ogg');
 
         // Enable advanced timing for FPS counter
         game.time.advancedTiming = true;
@@ -90,6 +90,12 @@
         DD.player.element = game.add.sprite(3000, game.world.centerY, 'dolphin');
         DD.player.element.scale.setTo(0.4, 0.4);
 
+        DD.player.barrier.element = game.add.sprite(0, 0, 'barrier');
+        game.physics.enable(DD.player.barrier.element, Phaser.Physics.ARCADE);
+        DD.player.barrier.element.alpha = 0;
+        DD.player.barrier.element.animations.add('boost', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 10, true);
+        DD.player.barrier.element.animations.play('boost');
+
         // Player physics properties
         game.physics.p2.enable(DD.player.element);
         DD.player.element.body.collideWorldBounds = true;
@@ -101,6 +107,7 @@
         // Waves
         DD.textures.waves.element = game.add.sprite(0, 0, 'waves');
         game.physics.p2.enable(DD.textures.waves.element);
+        DD.textures.waves.element.animations.add('wave', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 10, true);
 
         // Sand
         DD.textures.sand.element = game.add.sprite(0, 1080, 'waves');
@@ -108,12 +115,16 @@
         DD.textures.sand.element.alpha = 0;
 
         // Sound stuff
-        DD.game.audio.GameSound = game.add.audio('GameSound');
-        DD.game.audio.GameSound.allowMultiple = true;
+        DD.game.audio.JunkSound = game.add.audio('Junks');
+        DD.game.audio.JunkSound.allowMultiple = true;
 
-        DD.game.audio.GameSound.addMarker('junkHit', 0.48, 0.2);
-        DD.game.audio.GameSound.addMarker('coinGet', 0.2, 0.2);
-        DD.game.audio.GameSound.addMarker('Music', 1.7, 59.0);
+        DD.game.audio.JunkSound.addMarker('barrel', 0, 2);
+        DD.game.audio.JunkSound.addMarker('bottle', 2, 0.5);
+        DD.game.audio.JunkSound.addMarker('bag', 3, 0.5);
+        DD.game.audio.JunkSound.addMarker('boot', 3.5, 0.1);
+        DD.game.audio.JunkSound.addMarker('tyre', 4, 0.2);
+        DD.game.audio.JunkSound.addMarker('starfish', 3.6, 0.35);
+        DD.game.audio.JunkSound.addMarker('boost', 4.5, 1);
 
         // Player animations
         DD.player.element.animations.add('right', [0, 1, 2, 3, 4], 10, true);
@@ -126,6 +137,7 @@
         DD.objects.junks.collisionGroup = game.physics.p2.createCollisionGroup();
         DD.objects.spill.collisionGroup = game.physics.p2.createCollisionGroup();
         DD.objects.starfish.collisionGroup = game.physics.p2.createCollisionGroup();
+        DD.objects.nets.collisionGroup = game.physics.p2.createCollisionGroup();
 
         // This part is vital if you want the objects with their own collision groups to still 
         // Collide with the world bounds (which we do)
@@ -135,6 +147,8 @@
         // Generate junks and starfishes
         DD.game.actions.createJunks();
         DD.game.actions.createStarfish();
+        //DD.game.actions.createNets();
+
         DD.game.world.lastGeneratedPosition = DD.player.element.x;
 
         // Setup collisions
@@ -161,7 +175,7 @@
 
         // Pause and show Main Menu on first run
         if (DD.game.firstRun) {
-            playMusic();
+            //playMusic();
 
             DD.game.firstRun = false;
             game.paused = true;
@@ -184,13 +198,14 @@
 
             if ( DD.objects.spill.element.x >= (game.camera.x + 500)) {
                 DD.objects.spill.element.body.velocity.x = 0;
-            }
-        }
+            };
+        };
 
         // On demand generation
         if (DD.player.element.x >= DD.game.world.lastGeneratedPosition + game.camera.width + 200) {
             DD.game.actions.createJunks();
             DD.game.actions.createStarfish();
+            //DD.game.actions.createNets();
             DD.game.world.lastGeneratedPosition = DD.player.element.x;
         }
 
@@ -199,23 +214,26 @@
             DD.game.actions.cleanUp();
         }
 
-        if (DD.game.modifiers.boost.active) {
-            if ((DD.player.element.x - DD.game.modifiers.boost.begin) >= 1000) {
-
-                DD.game.modifiers.total += -1 * DD.game.modifiers.boost.total;
-                DD.game.modifiers.boost.active = false;
-
-                console.log('Boost End :(');
+        if (DD.game.modifiers.boost.active) { 
+            if ((DD.player.element.x - DD.game.modifiers.boost.begin) >= 300) {
+                DD.game.modifiers.total +=  -0.4 *(DD.player.speed/DD.game.modifiers.boost.total);
+                DD.player.barrier.element.alpha += -0.3;
+                if (DD.game.modifiers.total <= 0) {
+                    DD.game.modifiers.total = 0;
+                    DD.game.modifiers.boost.active = false;
+                    console.log('Boost End :(');
+                }
             }
         }
 
-        // DD.textures.waves.element.body.x = game.camera.x;
-        // DD.textures.waves.element.body.y = 25;
-        // DD.textures.sand.element.body.x = game.camera.x;
-        // DD.textures.sand.element.body.y = 1080;
+        DD.textures.waves.element.body.x = game.camera.x + 647;
+        DD.textures.waves.element.body.y = 20;
+        DD.textures.sand.element.body.x = game.camera.x;
+        DD.textures.sand.element.body.y = 1080;
+        DD.textures.waves.element.animations.play('wave');
 
-        // DD.textures.waves.element.body.angle = 0;
-        // DD.textures.sand.element.body. angle = 0;
+        DD.textures.waves.element.body.angle = 0.000000;
+        DD.textures.sand.element.body. angle = 0;
 
         // Governs and controls boost
         if (!DD.game.runEnd) {
@@ -240,9 +258,11 @@
 
             // Update the player velocity and play animation
             DD.player.element.body.velocity.x = DD.player.speed + (30 * DD.game.world.level) + DD.game.modifiers.total;
-
+            DD.player.barrier.element.body.x = DD.player.element.body.x - 100;
+            DD.player.barrier.element.body.y = DD.player.element.body.y - 150;
+    
             // Update the oilspill velocity
-            DD.objects.spill.element.body.velocity.x = 350;
+            DD.objects.spill.element.body.velocity.x = 350 + (20 * DD.game.world.level);
 
             if (!DD.objects.junks.active) {
                 DD.player.element.animations.play('right');
@@ -263,13 +283,16 @@
 
         if (DD.game.cursors.right.isDown) {
             if (DD.game.modifiers.boost.charges > 0) {
-                DD.game.modifiers.boost.charges += -1;
-                DD.game.modifiers.total += DD.game.modifiers.boost.total;
-
-                DD.game.modifiers.boost.active = true;
-                DD.game.modifiers.boost.begin = DD.player.element.x;
-
-                console.log('BOOST!');
+                if (!DD.game.modifiers.boost.active) {
+                    DD.game.modifiers.boost.charges += -1;
+                    DD.game.score.starfish.lastRun += -1;
+                    DD.game.modifiers.total += (DD.player.speed*DD.game.modifiers.boost.total);
+                    DD.game.modifiers.boost.active = true;
+                    DD.game.modifiers.boost.begin = DD.player.element.x;
+                    DD.game.audio.JunkSound.play('boost');
+                    DD.player.barrier.element.alpha = 1;
+                    console.log('BOOST!');
+                }
             } else {
                 console.log('No charges left');
             }
@@ -362,56 +385,42 @@
         return false;
     }
 
-    /**
-     * Handle player collision with junk
-     */
-    // function junkHit() {
-    //     console.log('Junk hit!');
-
-    //     // Sound stuff
-    //     DD.player.element.animations.play('collide');
-        
-
-    //     if (!DD.objects.junks.active) {
-    //         DD.player.speed = DD.player.speed * DD.objects.junks.slow;
-    //         DD.objects.junks.active = true;
-    //         setTimeout(regainSpeed, 3000);
-    //     }  
-    // }
 
     /**
      * Increase player speed after
      * collision with junk
      */
-    function junkHit() {
-        DD.game.audio.GameSound.play('junkHit');
+    function junkHit(player, junk) {
+        if (!DD.game.modifiers.boost.active) {
 
-        // The speed that the player should be travelling at is stored, 
-        // otherwise the function below will slow down rather than speed up.
-        var originalSpeed = DD.player.speed;
+            DD.game.audio.JunkSound.play(junk.sprite.key);
+            // The speed that the player should be travelling at is stored, 
+            // otherwise the function below will slow down rather than speed up.
+            var originalSpeed = DD.player.speed;
 
-        // Setting a slow speed straight away so it doesn't feel laggy
-        DD.player.speed = originalSpeed * DD.objects.junks.slow;
+            // Setting a slow speed straight away so it doesn't feel laggy
+            DD.player.speed = originalSpeed * (DD.objects.junks.slow/DD.game.world.level);
 
-        // setInterval means that I can perform this over some time 
-        // and gradually without using Phasers stupid time function.
-        // Time on the second argument is in milliseconds. 
-        var speedUp = setInterval(function() {
-            if (DD.objects.junks.slow <= 1) {
-                // This is where originalSpeed is used to provide 
-                // a gradual speed up that feels a little more natural.
-                DD.player.speed = originalSpeed * DD.objects.junks.slow;
-                
-                // Every second the dolphin gets 10% closer to full speed.
-                DD.objects.junks.slow += 0.1;
-            } else { // Detecting when the maximum speed is reached, so the function can end.
-                // End the interval that is causing the change in dolphin speed.
-                clearInterval(speedUp);
-            }
-        }, 1000);
+            // setInterval means that I can perform this over some time 
+            // and gradually without using Phasers stupid time function.
+            // Time on the second argument is in milliseconds. 
+            var speedUp = setInterval(function() {
+                if (DD.objects.junks.slow <= 1.05) {
+                    // This is where originalSpeed is used to provide 
+                    // a gradual speed up that feels a little more natural.
+                    DD.player.speed = originalSpeed * DD.objects.junks.slow;
+                    // Every second the dolphin gets 10% closer to full speed.
+                    DD.objects.junks.slow += 0.05;
+                } else { // Detecting when the maximum speed is reached, so the function can end.
+                    // End the interval that is causing the change in dolphin speed.
+                    console.log(DD.player.element.body.velocity.x);
+                    clearInterval(speedUp);
+                }
+            }, 100);
 
-        // Resetting the slowing effect after the normal speed is reached again.
-        DD.objects.junks.slow = 0.4;
+            // Resetting the slowing effect after the normal speed is reached again.
+            DD.objects.junks.slow = 0.4;
+        }
     }
 
     /**
@@ -420,8 +429,10 @@
     function hitWaves() {
         console.log('Wave hit');
 
-        DD.player.element.body.gravity.y = 1000;
-        setTimeout(stopAcceleration, 1000);
+        DD.player.element.body.velocity.y = 500;
+        DD.player.element.body.gravity.y = -500;
+        DD.player.element.body.velocity.x += -100;
+        setTimeout(stopAcceleration, 100);
         DD.player.accelerationActive = true;
     }
 
@@ -431,13 +442,14 @@
      * @param  {Game.sprite} starfish
      */
     function collectStarfish(player, starfish) {
-        DD.game.audio.GameSound.play('coinGet');
         
         var id = starfish.data.id;
         DD.game.actions.killSprite(starfish.sprite);
 
         if (DD.objects.starfish.collectedIds.indexOf(id) === -1) {
+            DD.game.audio.JunkSound.play('starfish');
             DD.game.score.starfish.lastRun += 1;
+            DD.game.modifiers.boost.charges += 1;
             DD.objects.starfish.collectedIds.push(id);
         }
 
@@ -449,7 +461,9 @@
      * after colliding with waves
      */
     function stopAcceleration() {
+        DD.player.element.body.velocity.y = 0;
         DD.player.element.body.gravity.y = 0;
+        DD.player.element.body.velocity.x += 100;
         console.log('Stop Acceleration');
         DD.player.accelerationActive = false;
     }
@@ -459,14 +473,11 @@
      */
     function hitSand() {
         console.log('Sand has been hit');
-        DD.player.element.body.gravity.y = -1000;
-        setTimeout(stopAcceleration, 1000);
+        DD.player.element.body.velocity.y = -500;
+        DD.player.element.body.gravity.y = -500;
+        DD.player.element.body.velocity.x += -100;
+        setTimeout(stopAcceleration, 100);
         DD.player.accelerationActive = true;
-    }
-
-    function playMusic() {
-        DD.game.audio.GameSound.play('Music');
-        setTimeout(playMusic, 59000);
     }
     
 })();

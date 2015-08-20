@@ -60,6 +60,29 @@
             game.physics.p2.enable(junk);
 
             // The size of the object will likely change too, if that is possible
+            switch (junk.key) {
+                case 'bag':
+                    //console.log('is bag');
+                    junk.body.offset.x = 32;
+                    junk.body.offset.y = 24;
+                    junk.body.setCircle(35);
+                    break;
+                case 'barrel':
+                    //console.log('is barrel');
+                    break;
+                case 'boot':
+                    //console.log('is boot');
+                    break;
+                case 'bottle':
+                    //console.log('is bottle');
+                    break;
+                case 'tyre':
+                    //console.log('is tyre');
+                    break;
+                default:
+                    //console.log('whut?');
+            };
+
             junk.body.setRectangle(24, 22);
             junk.scale.setTo(0.5, 0.5);
 
@@ -212,35 +235,35 @@
         simpleStorage.set('starfish', starfish);
     }
 
-    function createNets() {
+function createNets() {
+        var currentEdge;
+        var nextEdge;
+        var nets = [];
         var net;
-        var underNet;
-        var k;
+        var j;
 
-        // Create a two hundred net objects
-        for (k = 0; k < DD.objects.nets.amount; k++) {
-            // For where it says 'star', i want to add a list which it will take from randomly.
-            net = game.add.sprite(((k + 8) * 400), 0, 'overnet');
+        for (j = 0; j < DD.objects.nets.amount; j++) {
+            currentEdge = DD.player.element.x + (game.camera.width / 2) + 200;
+            nextEdge = currentEdge + game.camera.width;
 
-            // net.enableBody = true;
-            // net.physicsBodyType = Phaser.Physics.P2JS;
+            net = game.add.sprite(currentEdge + (Helper.getRandomIntBetween(j*100, nextEdge)), game.world.randomY, 'ball');
+
             game.physics.p2.enable(net);
+            net.body.setCircle(500);
 
-            underNet = game.add.sprite(net.body.x, net.body.y, 'undernet');
-
-            // The size of the object will likely change too, if that is possible
-            net.body.setRectangle(24, 22);
-
-            // Tell the net to use the DD.objects.nets.collisionGroup 
+            // Tell the net to use the DD.objects.net.collisionGroup 
             net.body.setCollisionGroup(DD.objects.nets.collisionGroup);
 
-            // nets will collide against themselves and the player
+            // netes will collide against themselves and the player
             // If you don't set this they'll not collide with anything.
             // The first parameter is either an array or a single collision group.
-            net.body.collides([DD.objects.nets.collisionGroup, DD.player.collisionGroup]);
+            net.body.collides([DD.objects.junks.collisionGroup, DD.player.collisionGroup]);
+            net.collectionIndex = j;
 
-            DD.objects.nets.elements.push(net);
+            nets.push(net);
         }
+
+        DD.objects.nets.elements.push(net);
     }
 
     /**
@@ -251,9 +274,6 @@
      * re-initializing the game
      */
     function restart() {
-        DD.game.audio.GameSound.destroy();
-        game.cache.removeSound('GameSound');
-
         // Kill off junks
         // DD.objects.junks.elements.forEach(function(junk, index) {
         //     junk.body = null;

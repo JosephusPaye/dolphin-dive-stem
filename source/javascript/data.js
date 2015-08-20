@@ -19,7 +19,7 @@ var DD = {
         },
 
         starfish: {
-            amount: Helper.getRandomIntBetween(1, 4),
+            amount: Helper.getRandomIntBetween(0, 2),
             elements: [],
             collectedIds: [],
             collisionGroup: null
@@ -34,8 +34,9 @@ var DD = {
         },
 
         nets: {
-            amount: 200,
-            elements: []
+            amount: 1,
+            elements: [],
+            collisionGroup: null
         }
     },
 
@@ -60,7 +61,10 @@ var DD = {
         vertSpeed: 300,
         element: null,
         collisionGroup: null,
-        angle: 20
+        angle: 20,
+        barrier: {
+            element: null
+        }
     },
 
     game: {
@@ -98,9 +102,9 @@ var DD = {
 
             boost: {
                 active: false,
-                total: 200,
+                total: 2.5,
                 begin: 0,
-                charges: 1
+                charges: 0
             },
 
             multiplier: 1
@@ -108,7 +112,10 @@ var DD = {
 
         audio: {
             junkCollide: null,
-            GameSound: null
+            GameSound: null,
+            bottle: null,
+            barrel: null,
+            plasticBag: null
         }
     }
 };

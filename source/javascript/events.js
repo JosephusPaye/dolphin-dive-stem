@@ -179,6 +179,9 @@ $(document).ready(function() {
         // Show HUD and pause button
         Display.showElements([DisplayData.hud.element, DisplayData.hud.pauseBtn]);
 
+        //Resetting values that seem to get altered at some point
+        DD.player.speed = 300;
+
         // Restart game
         DD.game.actions.restart();
         DD.game.gameOverCalled = false;
