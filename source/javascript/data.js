@@ -108,7 +108,8 @@ var DD = {
         },
 
         audio: {
-            junkCollide: null
+            junkCollide: null,
+            GameSound: null
         }
     }
 };

@@ -251,6 +251,9 @@
      * re-initializing the game
      */
     function restart() {
+        DD.game.audio.GameSound.destroy();
+        game.cache.removeSound('GameSound');
+
         // Kill off junks
         // DD.objects.junks.elements.forEach(function(junk, index) {
         //     junk.body = null;

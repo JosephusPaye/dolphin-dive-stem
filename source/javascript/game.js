@@ -41,6 +41,7 @@
 
         // Audio
         game.load.audio('junkImpact', '/assets/audio/yey.wav');
+        game.load.audio('GameSound', '/assets/audio/GameSound.ogg');
 
         // Enable advanced timing for FPS counter
         game.time.advancedTiming = true;
@@ -107,8 +108,12 @@
         DD.textures.sand.element.alpha = 0;
 
         // Sound stuff
-        DD.game.audio.junkCollide = game.add.audio('junkImpact');
-        DD.game.audio.junkCollide.allowMultiple = true;
+        DD.game.audio.GameSound = game.add.audio('GameSound');
+        DD.game.audio.GameSound.allowMultiple = true;
+
+        DD.game.audio.GameSound.addMarker('junkHit', 0.48, 0.2);
+        DD.game.audio.GameSound.addMarker('coinGet', 0.2, 0.2);
+        DD.game.audio.GameSound.addMarker('Music', 1.7, 59.0);
 
         // Player animations
         DD.player.element.animations.add('right', [0, 1, 2, 3, 4], 10, true);
@@ -156,6 +161,8 @@
 
         // Pause and show Main Menu on first run
         if (DD.game.firstRun) {
+            playMusic();
+
             DD.game.firstRun = false;
             game.paused = true;
 
@@ -302,24 +309,9 @@
             DisplayData.hud.starfish.text(DD.game.score.starfish.lastRun);
             DD.game.score.lastFrameValue.starfish = DD.game.score.starfish.lastRun;
         }
+
+        // game.debug.text('Score Multiplier: ' + DD.game.modifiers.multiplier, 32, 72);
     }
-
-    /**
-     * Handle player collision with junk
-     */
-    // function junkHit() {
-    //     console.log('Junk hit!');
-
-    //     // Sound stuff
-    //     DD.player.element.animations.play('collide');
-    //     DD.game.audio.junkCollide.play();
-
-    //     if (!DD.objects.junks.active) {
-    //         DD.player.speed = DD.player.speed * DD.objects.junks.slow;
-    //         DD.objects.junks.active = true;
-    //         setTimeout(regainSpeed, 3000);
-    //     }  
-    // }
 
     /**
      * Detect if oilspill is covering Dolphin
@@ -369,10 +361,29 @@
     }
 
     /**
+     * Handle player collision with junk
+     */
+    // function junkHit() {
+    //     console.log('Junk hit!');
+
+    //     // Sound stuff
+    //     DD.player.element.animations.play('collide');
+        
+
+    //     if (!DD.objects.junks.active) {
+    //         DD.player.speed = DD.player.speed * DD.objects.junks.slow;
+    //         DD.objects.junks.active = true;
+    //         setTimeout(regainSpeed, 3000);
+    //     }  
+    // }
+
+    /**
      * Increase player speed after
      * collision with junk
      */
     function junkHit() {
+        DD.game.audio.GameSound.play('junkHit');
+
         // The speed that the player should be travelling at is stored, 
         // otherwise the function below will slow down rather than speed up.
         var originalSpeed = DD.player.speed;
@@ -386,45 +397,20 @@
         var speedUp = setInterval(function() {
             if (DD.objects.junks.slow <= 1) {
                 console.log(DD.objects.junks.slow);
-                
                 // This is where originalSpeed is used to provide 
                 // a gradual speed up that feels a little more natural.
                 DD.player.speed = originalSpeed * DD.objects.junks.slow;
                 
                 // Every second the dolphin gets 10% closer to full speed.
-                DD.objects.junks.slow += 0.1;
+                DD.objects.junks.slow += 0.01;
             } else { // Detecting when the maximum speed is reached, so the function can end.
                 // End the interval that is causing the change in dolphin speed.
                 clearInterval(speedUp);
             }
-        }, 1000);
+        }, 100);
 
         // Resetting the slowing effect after the normal speed is reached again.
         DD.objects.junks.slow = 0.4;
-
-        /*
-         * DD.player.speed = DD.player.speed / DD.objects.junks.slow;
-         * DD.objects.junks.active = false;
-         */
-    }
-
-    /**
-     * Handle player collision with starfish
-     * 
-     * @param  {Game.sprite} player
-     * @param  {Game.sprite} starfish
-     */
-    function collectStarfish(player, starfish) {
-        var id = starfish.data.id;
-
-        DD.game.actions.killSprite(starfish.sprite);
-
-        if (DD.objects.starfish.collectedIds.indexOf(id) === -1) {
-            DD.game.score.starfish.lastRun += 1;
-            DD.objects.starfish.collectedIds.push(id);
-        }
-
-        starfish = null;
     }
 
     /**
@@ -436,6 +422,25 @@
         DD.player.element.body.gravity.y = 1000;
         setTimeout(stopAcceleration, 1000);
         DD.player.accelerationActive = true;
+    }
+
+    /**
+     * Handle player collision with starfish
+     * @param  {Game.sprite} player
+     * @param  {Game.sprite} starfish
+     */
+    function collectStarfish(player, starfish) {
+        DD.game.audio.GameSound.play('coinGet');
+        
+        var id = starfish.data.id;
+        DD.game.actions.killSprite(starfish.sprite);
+
+        if (DD.objects.starfish.collectedIds.indexOf(id) === -1) {
+            DD.game.score.starfish.lastRun += 1;
+            DD.objects.starfish.collectedIds.push(id);
+        }
+
+        starfish = null;
     }
 
     /**
@@ -456,6 +461,11 @@
         DD.player.element.body.gravity.y = -1000;
         setTimeout(stopAcceleration, 1000);
         DD.player.accelerationActive = true;
+    }
+
+    function playMusic() {
+        DD.game.audio.GameSound.play('Music');
+        setTimeout(playMusic, 59000);
     }
     
 })();
