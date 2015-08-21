@@ -15,12 +15,27 @@
      * images and sprite sheets
      */
     function preload() {
+
+        ion.sound({
+            sounds: [
+                {
+                    name: "GameMusic",
+                    loop: true,
+                    multiplay: false
+                }
+            ],
+
+            path: "/assets/audio/",
+            preload: true,
+            volume: 1
+        });
+
         // Backgrounds
         game.load.image('background', '/assets/images/StaticBackground.png');
         game.load.image('backgroundL1', '/assets/images/Layer1.png');
         game.load.image('backgroundL2', '/assets/images/Layer2.png');
         game.load.image('seafloor', '/assets/images/SeaFloor.png');
-        game.load.spritesheet('waves', '/assets/images/waveNew.png', 1280, 45);
+        game.load.spritesheet('waves', '/assets/images/waveFinal.png', 1280, 45);
 
         // Junks
         game.load.image('bag', '/assets/images/bag.png');
@@ -28,8 +43,8 @@
         game.load.image('boot', '/assets/images/boot.png');
         game.load.image('bottle', '/assets/images/bottle.png');
         game.load.image('tyre', '/assets/images/tyre.png');
-        game.load.image('ball', '/assets/images/ball.png');
-        game.load.image('undernet', '/assets/images/undernet.png');
+        game.load.image('botnet', '/assets/images/botnet.png');
+        game.load.image('topnet', '/assets/images/topnet.png');
 
         // Objects
         game.load.image('crab', '/assets/images/angrycrab.png');
@@ -37,7 +52,7 @@
 
         // Main characters
         game.load.image('oilspill', '/assets/images/oilback.png');
-        game.load.spritesheet('dolphin', '/assets/images/new-dolphin.png', 245, 103);
+        game.load.spritesheet('dolphin', '/assets/images/dolphinFinal.png', 573, 295);
         game.load.spritesheet('barrier', '/assets/images/boost.png', 288, 289);
 
         // Audio
@@ -54,6 +69,9 @@
      * for the game
      */
     function create() {
+
+        game.load.onLoadComplete.add(playMusic, this);
+
         // Set boundaries of the world
         game.world.setBounds(0, 0, 192000, 1080);
 
@@ -88,7 +106,7 @@
 
         // Add player
         DD.player.element = game.add.sprite(3000, game.world.centerY, 'dolphin');
-        DD.player.element.scale.setTo(0.4, 0.4);
+        DD.player.element.scale.setTo(0.2, 0.2);
 
         DD.player.barrier.element = game.add.sprite(0, 0, 'barrier');
         game.physics.enable(DD.player.barrier.element, Phaser.Physics.ARCADE);
@@ -127,7 +145,7 @@
         DD.game.audio.JunkSound.addMarker('boost', 4.5, 1);
 
         // Player animations
-        DD.player.element.animations.add('right', [0, 1, 2, 3, 4], 10, true);
+        DD.player.element.animations.add('right', [0, 1, 2, 3, 4, 5, 6, 7], 15, true);
         // DD.player.element.animations.add('collide', [9, 8, 7, 6, 5, 4, 3, 2, 1, 0], 100, true);
 
         // Create collision groups
@@ -147,7 +165,7 @@
         // Generate junks and starfishes
         DD.game.actions.createJunks();
         DD.game.actions.createStarfish();
-        //DD.game.actions.createNets();
+        DD.game.actions.createNets();
 
         DD.game.world.lastGeneratedPosition = DD.player.element.x;
 
@@ -199,14 +217,14 @@
 
             if ( DD.objects.spill.element.x >= (game.camera.x + 500)) {
                 DD.objects.spill.element.body.velocity.x = 0;
-            };
-        };
+            }
+        }
 
         // On demand generation
         if (DD.player.element.x >= DD.game.world.lastGeneratedPosition + game.camera.width + 200) {
             DD.game.actions.createJunks();
             DD.game.actions.createStarfish();
-            //DD.game.actions.createNets();
+            DD.game.actions.createNets();
             DD.game.world.lastGeneratedPosition = DD.player.element.x;
         }
 
@@ -215,14 +233,21 @@
             DD.game.actions.cleanUp();
         }
 
-        if (DD.game.modifiers.boost.active) { 
+        if (DD.game.modifiers.boost.active) {
+
             if ((DD.player.element.x - DD.game.modifiers.boost.begin) >= 300) {
+                
                 DD.game.modifiers.total +=  -0.4 *(DD.player.speed/DD.game.modifiers.boost.total);
-                if (DD.objects.junks.active) {
-                    DD.player.barrier.element.alpha += -1;
-                } else {
-                    DD.player.barrier.element.alpha += -0.3;
-                }
+                
+                var fadeOut = setInterval(function(){
+                    if (DD.game.modifiers.boost.total !== 0) {
+                        DD.player.barrier.element.alpha += -0.3;
+                    }
+                    else {
+                        clearInterval(fadeOut);
+                    }
+                }, 1000);
+
                 if (DD.game.modifiers.total <= 0) {
                     DD.game.modifiers.total = 0;
                     DD.game.modifiers.boost.active = false;
@@ -267,7 +292,7 @@
             DD.player.barrier.element.body.y = DD.player.element.body.y - 150;
     
             // Update the oilspill velocity
-            DD.objects.spill.element.body.velocity.x = 350 + (20 * DD.game.world.level);
+            DD.objects.spill.element.body.velocity.x = 280 + (28 * DD.game.world.level);
 
             if (!DD.objects.junks.active) {
                 DD.player.element.animations.play('right');
@@ -396,9 +421,10 @@
      * collision with junk
      */
     function junkHit(player, junk) {
-        if (!DD.game.modifiers.boost.active) {
 
-            DD.game.audio.JunkSound.play(junk.sprite.key);
+        DD.game.audio.JunkSound.play(junk.sprite.key);
+        
+        if (!DD.game.modifiers.boost.active) {
             // The speed that the player should be travelling at is stored, 
             // otherwise the function below will slow down rather than speed up.
             var originalSpeed = DD.player.speed;
@@ -485,9 +511,20 @@
         DD.player.accelerationActive = true;
     }
     
-    function netHit() {
+    function netHit(player, net) {
         console.log('netHit');
+        console.log(net);
+        // if (DD.game.modifiers.boost.active) {
+        //     net.body = null;
+        //     net.kill();
+        // }
+        DD.player.element.body.velocity.x = 0;
     }
+
+    function playMusic() {
+        ion.sound.play("GameMusic");
+    }
+
 })();
 
 // Restore persisted values from local storage

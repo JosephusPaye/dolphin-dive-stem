@@ -62,29 +62,34 @@
             // The size of the object will likely change too, if that is possible
             switch (junk.key) {
                 case 'bag':
-                    //console.log('is bag');
-                    junk.body.offset.x = 32;
-                    junk.body.offset.y = 24;
-                    junk.body.setCircle(35);
+                    console.log('is bag');
+                    junk.scale.setTo(0.8, 0.8);
+                    junk.body.setRectangle(10 ,10);
+
                     break;
                 case 'barrel':
-                    //console.log('is barrel');
+                    junk.scale.setTo(0.8, 0.8);
+                    junk.body.setRectangle(30, 40);
+                    console.log('is barrel');
                     break;
                 case 'boot':
-                    //console.log('is boot');
+                    junk.scale.setTo(0.6, 0.6);
+                    junk.body.setRectangle(15, 15);
+                    console.log('is boot');
                     break;
                 case 'bottle':
-                    //console.log('is bottle');
+                    junk.scale.setTo(0.5, 0.5);
+                    junk.body.setRectangle(5, 10);
+                    console.log('is bottle');
                     break;
                 case 'tyre':
-                    //console.log('is tyre');
+                    console.log('is tyre');
+                    junk.scale.setTo(0.6, 0.6);
+                    junk.body.setRectangle(25, 25);
                     break;
                 default:
-                    //console.log('whut?');
+                    console.log('whut?');
             };
-
-            junk.body.setRectangle(24, 22);
-            junk.scale.setTo(0.5, 0.5);
 
             junk.body.angularVelocity = Math.random() * 2;
             junk.body.velocity.y = Math.random() * 80;
@@ -241,31 +246,52 @@ function createNets() {
         var nets = [];
         var net;
         var j;
+        var wallX;
+        var wallAY;
+        var wallBY;
 
         for (j = 0; j < DD.objects.nets.amount; j++) {
             currentEdge = DD.player.element.x + (game.camera.width / 2) + 200;
             nextEdge = currentEdge + game.camera.width;
 
-            net = game.add.sprite(currentEdge + (Helper.getRandomIntBetween(j*100, nextEdge)), game.world.randomY, 'ball');
+            wallX = Helper.getRandomIntBetween(currentEdge, nextEdge);
+            wallAY = Helper.getRandomIntBetween(-560, 420);
+            wallBY = wallAY + 1080 + Helper.getRandomIntBetween(100, 500);
 
-            game.physics.p2.enable(net);
-            net.body.setCircle(500*0.3);
-            net.scale.setTo(0.3, 0.3);
-            net.body.static = true;
+            console.log(wallAY);
+            console.log(wallBY);
+
+            netA = game.add.sprite(currentEdge + wallX, wallAY, 'topnet');
+            netB = game.add.sprite(currentEdge + wallX, wallBY, 'topnet');
+
+            game.physics.p2.enable(netA);
+            game.physics.p2.enable(netB);
+            netA.body.static = true;
+            netB.body.static = true;
+
+            netB.body.angle = 180;
+
+            netA.body.setRectangle(250, 950);
+            netB.body.setRectangle(250, 950);
 
             // Tell the net to use the DD.objects.net.collisionGroup 
-            net.body.setCollisionGroup(DD.objects.nets.collisionGroup);
+            netA.body.setCollisionGroup(DD.objects.nets.collisionGroup);
+            netB.body.setCollisionGroup(DD.objects.nets.collisionGroup);
 
             // netes will collide against themselves and the player
             // If you don't set this they'll not collide with anything.
             // The first parameter is either an array or a single collision group.
-            net.body.collides([DD.objects.junks.collisionGroup, DD.player.collisionGroup]);
-            net.collectionIndex = j;
+            netA.body.collides([DD.objects.junks.collisionGroup, DD.player.collisionGroup]);
+            netB.body.collides([DD.objects.junks.collisionGroup, DD.player.collisionGroup]);
+            netA.collectionIndex = j;
+            netB.collectionIndex = j;
 
-            nets.push(net);
+            nets.push(netA);
+            nets.push(netB);
         }
 
-        DD.objects.nets.elements.push(net);
+        DD.objects.nets.elements.push(netA);
+        DD.objects.nets.elements.push(netB);
     }
 
     /**

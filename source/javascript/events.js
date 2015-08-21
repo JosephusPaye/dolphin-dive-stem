@@ -181,6 +181,8 @@ $(document).ready(function() {
 
         //Resetting values that seem to get altered at some point
         DD.player.speed = 300;
+        DD.objects.spill.speed = 280;
+        DD.game.modifiers.boost.active = false;
 
         // Restart game
         DD.game.actions.restart();

@@ -34,7 +34,7 @@ var DD = {
         },
 
         nets: {
-            amount: 1,
+            amount: Helper.getRandomIntBetween(0, 1),
             elements: [],
             collisionGroup: null
         }
@@ -58,7 +58,7 @@ var DD = {
     player: {
         accelerationActive: false,
         speed: 300,
-        vertSpeed: 300,
+        vertSpeed: 500,
         element: null,
         collisionGroup: null,
         angle: 20,
