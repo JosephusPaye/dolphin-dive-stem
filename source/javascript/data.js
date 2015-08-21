@@ -20,14 +20,14 @@ var DD = {
         },
 
         starfish: {
-            amount: (Math.random() * 50) + 50,
+            amount: Helper.getRandomIntBetween(1, 4),
             elements: [],
             collectedIds: [],
             collisionGroup: null
         },
 
         junks: {
-            amount: 100,
+            amount: Helper.getRandomIntBetween(10, 15),
             elements: [],
             slow: 0.4,
             collisionGroup: null,
@@ -71,12 +71,16 @@ var DD = {
         cursors: null,
 
         world: {
+            cleaningUp: false,
+            lastGeneratedPosition: 0,
             level: 1,
             interval: 2000
         },
 
         score: {
+            text: null,
             starfish: {
+                text: null,
                 lastRun: 0,
                 total: 0
             },

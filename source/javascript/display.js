@@ -100,43 +100,54 @@ var DisplayData = {
  * 
  * @type {Object}
  */
-var Display = {
+var Display = {};
+
+(function() {
+
+    // Export functions
+    Display.showElements = showElements;
+    Display.hideElements = hideElements;
+    Display.showMenu = showMenu;
+    Display.hideAllMenus = hideAllMenus;
+    Display.hideAllElements = hideAllElements;
+    Display.updateHighScores = updateHighScores;
+
     /**
      * Show given element on screen
      * 
      * @param  {Array} elements
      */
-    showElements: function(elements) {
+    function showElements(elements) {
         elements.forEach(function(element) {
             element.removeClass('hidden');
         });
-    },
+    }
 
     /**
      * Hide given elements from the screen
      * 
      * @param  {Array} elements
      */
-    hideElements: function(elements) {
+    function hideElements(elements) {
         elements.forEach(function(element) {
             element.addClass('hidden');
         });
-    },
+    }
 
     /**
      * Show a menu by first hiding all other menus
      * 
      * @param  {DOMElement} menu
      */
-    showMenu: function(menu) {
+    function showMenu(menu) {
         Display.hideAllElements();
         Display.showElements([menu]);
-    },
+    }
 
     /**
      * Hide all menus from the screen
      */
-    hideAllMenus: function() {
+    function hideAllMenus() {
         var menus = [
             DisplayData.mainMenu.element, 
             DisplayData.highScoresMenu.element,
@@ -149,20 +160,20 @@ var Display = {
         menus.forEach(function(menu) {
             menu.addClass('hidden');
         });
-    },
+    }
 
     /**
      * Hide all elements from the screen
      */
-    hideAllElements: function() {
+    function hideAllElements() {
         Display.hideAllMenus();
         Display.hideElements([DisplayData.hud.element]);
-    },
+    }
 
     /**
      * Update scores in About menu
      */
-    updateHighScores: function() {
+    function updateHighScores() {
         // Get unique scores
         DD.game.score.highScores = DD.game.score.highScores.unique();
         
@@ -197,4 +208,5 @@ var Display = {
             $(DisplayData.highScoresMenu.listPage2).html(highScoresHtml);
         }
     }
-};
+
+})();

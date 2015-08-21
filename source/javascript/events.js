@@ -11,6 +11,7 @@ $(document).ready(function() {
 
         Display.showElements([
             DisplayData.hud.element,
+            DisplayData.hud.progressBar.element,
             DisplayData.hud.pauseBtn
         ]);
 

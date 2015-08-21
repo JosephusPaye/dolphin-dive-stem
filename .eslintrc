@@ -19,6 +19,7 @@
         "DD": true,
         "Display": true,
         "DisplayData": true,
+        "Helper": true,
 
         "PlayAnimations": true
     },
