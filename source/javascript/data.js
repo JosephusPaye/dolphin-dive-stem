@@ -11,7 +11,6 @@ var DD = {
 
     objects: {
         spill: {
-            speed: 250,
             element: null,
             collisionGroup: null,
             gradient: {

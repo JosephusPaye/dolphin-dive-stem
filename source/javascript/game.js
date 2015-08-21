@@ -239,13 +239,14 @@
             );
 
             // Update the player velocity and play animation
-            DD.player.element.body.velocity.x = DD.player.speed + (50 * DD.game.world.level) + DD.game.modifiers.total;
+            DD.player.element.body.velocity.x = DD.player.speed + (30 * DD.game.world.level) + DD.game.modifiers.total;
+
+            // Update the oilspill velocity
+            DD.objects.spill.element.body.velocity.x = 350;
+
             if (!DD.objects.junks.active) {
                 DD.player.element.animations.play('right');
             }
-
-            // Update the oilspill velocity
-            DD.objects.spill.element.body.velocity.x = DD.objects.spill.speed + (50 * DD.game.world.level);
         }
 
         // Reset the player's velocity (movement)
@@ -253,15 +254,16 @@
             DD.player.element.body.velocity.y = 0;
         }
 
-        if (DD.player.element.body.x >= (DD.game.world.interval * DD.game.world.level) ) {
-            console.log('Level (speed) up!');
-            DD.game.world.level += 1;
+        if (DD.player.element.body.x >= (DD.game.world.interval * DD.game.world.level)) {
+            if (DD.game.world.level < 19) {
+                DD.game.world.level += 1;
+                console.log('Level (speed) up!');
+            }
         }
 
         if (DD.game.cursors.right.isDown) {
             if (DD.game.modifiers.boost.charges > 0) {
                 DD.game.modifiers.boost.charges += -1;
-
                 DD.game.modifiers.total += DD.game.modifiers.boost.total;
 
                 DD.game.modifiers.boost.active = true;
@@ -396,18 +398,17 @@
         // Time on the second argument is in milliseconds. 
         var speedUp = setInterval(function() {
             if (DD.objects.junks.slow <= 1) {
-                console.log(DD.objects.junks.slow);
                 // This is where originalSpeed is used to provide 
                 // a gradual speed up that feels a little more natural.
                 DD.player.speed = originalSpeed * DD.objects.junks.slow;
                 
                 // Every second the dolphin gets 10% closer to full speed.
-                DD.objects.junks.slow += 0.01;
+                DD.objects.junks.slow += 0.1;
             } else { // Detecting when the maximum speed is reached, so the function can end.
                 // End the interval that is causing the change in dolphin speed.
                 clearInterval(speedUp);
             }
-        }, 100);
+        }, 1000);
 
         // Resetting the slowing effect after the normal speed is reached again.
         DD.objects.junks.slow = 0.4;
