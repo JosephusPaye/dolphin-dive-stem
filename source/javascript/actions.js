@@ -249,7 +249,9 @@ function createNets() {
             net = game.add.sprite(currentEdge + (Helper.getRandomIntBetween(j*100, nextEdge)), game.world.randomY, 'ball');
 
             game.physics.p2.enable(net);
-            net.body.setCircle(500);
+            net.body.setCircle(500*0.3);
+            net.scale.setTo(0.3, 0.3);
+            net.body.static = true;
 
             // Tell the net to use the DD.objects.net.collisionGroup 
             net.body.setCollisionGroup(DD.objects.nets.collisionGroup);

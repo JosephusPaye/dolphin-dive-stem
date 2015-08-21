@@ -120,7 +120,7 @@
 
         DD.game.audio.JunkSound.addMarker('barrel', 0, 2);
         DD.game.audio.JunkSound.addMarker('bottle', 2, 0.5);
-        DD.game.audio.JunkSound.addMarker('bag', 3, 0.5);
+        DD.game.audio.JunkSound.addMarker('bag', 3, 0.4);
         DD.game.audio.JunkSound.addMarker('boot', 3.5, 0.1);
         DD.game.audio.JunkSound.addMarker('tyre', 4, 0.2);
         DD.game.audio.JunkSound.addMarker('starfish', 3.6, 0.35);
@@ -166,6 +166,7 @@
         DD.player.element.body.collides(DD.objects.starfish.collisionGroup, collectStarfish, this);
         DD.player.element.body.collides(DD.textures.waves.collisionGroup, hitWaves, this);
         DD.player.element.body.collides(DD.textures.sand.collisionGroup, hitSand, this);
+        DD.player.element.body.collides(DD.objects.nets.collisionGroup, netHit, this);
 
         // Setup keyboard controls
         DD.game.cursors = game.input.keyboard.createCursorKeys();
@@ -217,7 +218,11 @@
         if (DD.game.modifiers.boost.active) { 
             if ((DD.player.element.x - DD.game.modifiers.boost.begin) >= 300) {
                 DD.game.modifiers.total +=  -0.4 *(DD.player.speed/DD.game.modifiers.boost.total);
-                DD.player.barrier.element.alpha += -0.3;
+                if (DD.objects.junks.active) {
+                    DD.player.barrier.element.alpha += -1;
+                } else {
+                    DD.player.barrier.element.alpha += -0.3;
+                }
                 if (DD.game.modifiers.total <= 0) {
                     DD.game.modifiers.total = 0;
                     DD.game.modifiers.boost.active = false;
@@ -233,7 +238,7 @@
         DD.textures.waves.element.animations.play('wave');
 
         DD.textures.waves.element.body.angle = 0.000000;
-        DD.textures.sand.element.body. angle = 0;
+        DD.textures.sand.element.body. angle = 0.000000;
 
         // Governs and controls boost
         if (!DD.game.runEnd) {
@@ -480,6 +485,9 @@
         DD.player.accelerationActive = true;
     }
     
+    function netHit() {
+        console.log('netHit');
+    }
 })();
 
 // Restore persisted values from local storage

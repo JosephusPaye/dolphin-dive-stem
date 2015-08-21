@@ -19,7 +19,7 @@ var DD = {
         },
 
         starfish: {
-            amount: Helper.getRandomIntBetween(0, 2),
+            amount: Helper.getRandomIntBetween(1, 2),
             elements: [],
             collectedIds: [],
             collisionGroup: null
