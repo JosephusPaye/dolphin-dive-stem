@@ -6,6 +6,7 @@
         "javascript": {
             "game": [
                 "./source/javascript/polyfills.js",
+                "./source/javascript/helper.js",
                 "./source/javascript/data.js",
                 "./source/javascript/display.js",
                 "./source/javascript/animations.js",

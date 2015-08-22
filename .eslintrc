@@ -11,6 +11,7 @@
         "jQuery": false,
         "$": false,
         "simpleStorage": false,
+        "ion": false,
 
         "TweenMax": false,
         "Bounce": false,

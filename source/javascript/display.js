@@ -16,6 +16,7 @@ var DisplayData = {
         score: $('#hud-score'),
         starfish: $('#hud-starfish'),
         pauseBtn: $('#hud-pauseBtn'),
+        
         progressBar: {
             element: $('#hud-progressbar'),
             spill: $('#hud-progressbar-oilspill'),

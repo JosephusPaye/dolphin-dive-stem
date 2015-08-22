@@ -7,11 +7,9 @@
  * Contains game state independent of Phaser
  */
 var DD = {
-    version: '0.1.0',
+    version: '1.0.0',
 
     objects: {
-        allSprites: [],
-
         spill: {
             element: null,
             collisionGroup: null,
@@ -21,7 +19,7 @@ var DD = {
         },
 
         starfish: {
-            amount: Helper.getRandomIntBetween(1, 4),
+            amount: Helper.getRandomIntBetween(1, 2),
             elements: [],
             collectedIds: [],
             collisionGroup: null
@@ -36,8 +34,9 @@ var DD = {
         },
 
         nets: {
-            amount: 200,
-            elements: []
+            amount: Helper.getRandomIntBetween(0, 1),
+            elements: [],
+            collisionGroup: null
         }
     },
 
@@ -45,24 +44,31 @@ var DD = {
         layerA: null,
         layerB: null,
         layerC: null,
+
         waves: {
             element: null,
             collisionGroup: null
         },
+
         sand: {
             element: null,
             collisionGroup: null
         },
+
         speed: 50
     },
 
     player: {
         accelerationActive: false,
         speed: 300,
-        vertSpeed: 300,
+        vertSpeed: 500,
         element: null,
         collisionGroup: null,
-        angle: 20
+        angle: 20,
+
+        barrier: {
+            element: null
+        }
     },
 
     game: {
@@ -80,6 +86,7 @@ var DD = {
 
         score: {
             text: null,
+
             starfish: {
                 text: null,
                 lastRun: 0,
@@ -87,10 +94,12 @@ var DD = {
             },
 
             lastRun: 0,
+
             lastFrameValue: {
                 starfish: 0,
                 score: 0
             },
+
             highScores: []
         },
 
@@ -100,9 +109,9 @@ var DD = {
 
             boost: {
                 active: false,
-                total: 200,
+                total: 2.5,
                 begin: 0,
-                charges: 1
+                charges: 0
             },
 
             multiplier: 1
@@ -110,7 +119,10 @@ var DD = {
 
         audio: {
             junkCollide: null,
-            GameSound: null
+            GameSound: null,
+            bottle: null,
+            barrel: null,
+            plasticBag: null
         }
     }
 };

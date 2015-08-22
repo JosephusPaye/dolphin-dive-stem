@@ -5,12 +5,11 @@
     // Export game actions and action-related functions
     DD.game.actions = {
         start: start,
+        playMusic: playMusic,
         createJunks: createJunks,
         cleanUp: cleanUp,
         killSprite: killSprite,
-        isVisible: isVisible,
         createStarfish: createStarfish,
-        restoreSavedValues: restoreSavedValues,
         updateHighScores: updateHighScores,
         createNets: createNets,
         restart: restart,
@@ -34,6 +33,13 @@
         });
 
         // game.paused = true;
+    }
+
+    /**
+     * Play game background music
+     */
+    function playMusic() {
+        ion.sound.play('GameMusic');
     }
 
     /**
@@ -64,16 +70,39 @@
             game.physics.p2.enable(junk);
 
             // The size of the object will likely change too, if that is possible
-            junk.body.setRectangle(24, 22);
-            junk.scale.setTo(0.5, 0.5);
+            switch (junk.key) {
+                case 'bag':
+                    junk.scale.setTo(0.8, 0.8);
+                    junk.body.setRectangle(10, 10);
+                    break;
+                case 'barrel':
+                    junk.scale.setTo(0.8, 0.8);
+                    junk.body.setRectangle(30, 40);
+                    break;
+                case 'boot':
+                    junk.scale.setTo(0.6, 0.6);
+                    junk.body.setRectangle(15, 15);
+                    break;
+                case 'bottle':
+                    junk.scale.setTo(0.5, 0.5);
+                    junk.body.setRectangle(5, 10);
+                    break;
+                case 'tyre':
+                    junk.scale.setTo(0.6, 0.6);
+                    junk.body.setRectangle(25, 25);
+                    break;
+                default:
+                    console.log('Whut?');
+            }
 
+            // Set junk velocity
             junk.body.angularVelocity = Math.random() * 2;
             junk.body.velocity.y = Math.random() * 80;
 
             // Tell the junk to use the DD.objects.junks.collisionGroup 
             junk.body.setCollisionGroup(DD.objects.junks.collisionGroup);
 
-            // junks will collide against themselves and the player
+            // Junks will collide against themselves and the player
             // If you don't set this they'll not collide with anything.
             // The first parameter is either an array or a single collision group.
             junk.body.collides([DD.objects.junks.collisionGroup, DD.player.collisionGroup]);
@@ -120,7 +149,6 @@
             // If you don't set this they'll not collide with anything.
             // The first parameter is either an array or a single collision group.
             starfish.body.collides([DD.objects.starfish.collisionGroup, DD.player.collisionGroup]);
-            starfish.collectionIndex = j;
 
             starfishes.push(starfish);
         }
@@ -128,6 +156,9 @@
         DD.objects.starfish.elements.push(starfishes);
     }
 
+    /**
+     * Clean up junks, starfishes and nets
+     */
     function cleanUp() {
         if (DD.objects.junks.elements.length <= 3) {
             return;
@@ -141,7 +172,7 @@
         junksToClear.forEach(function(generation, i) {
             generation.forEach(function(junk, j) {
                 if (junk) {
-                    if ( isVisible(junk) ) { //  || junk.x >= DD.player.element.x
+                    if ( Helper.isVisible(junk) ) {
                         DD.objects.junks.elements[0].push(junk);
                     } else {
                         killSprite(junk);
@@ -159,7 +190,7 @@
         starsToClear.forEach(function(generation, i) {
             generation.forEach(function(starfish, j) {
                 if (starfish) {
-                    if ( isVisible(starfish) ) { //  || junk.x >= DD.player.element.x
+                    if ( Helper.isVisible(starfish) ) {
                         DD.objects.starfish.elements[0].push(starfish);
                     } else {
                         killSprite(starfish);
@@ -177,6 +208,12 @@
         console.log('Clean up done');
     }
 
+    /**
+     * Destroy a sprite and remove it from the 
+     * game
+     * 
+     * @param  {Phaser.Sprite} sprite
+     */
     function killSprite(sprite) {
         sprite.body = null;
         sprite.kill();
@@ -188,29 +225,12 @@
         }
     }
 
-    // Restore saved values from local storage
-    function restoreSavedValues() {
-        var highScores;
-        var starfish;
-
-        if (!simpleStorage.canUse()) {
-            console.error('Local storage not available');
-            return;
-        }
-
-        // Restore high scores
-        highScores = simpleStorage.get('highScores');
-        if (highScores) {
-            DD.game.score.highScores = highScores;
-        }
-
-        // Restore starfish count
-        starfish = simpleStorage.get('starfish');
-        if (starfish) {
-            DD.game.score.starfish.total = starfish;
-        }
-    }
-
+    /**
+     * Update and persist high scores after
+     * a game
+     * 
+     * @param  {Object} score
+     */
     function updateHighScores(score) {
         if (score.score <= 0) {
             return;
@@ -238,35 +258,60 @@
         simpleStorage.set('starfish', starfish);
     }
 
+    /**
+     * Generate nets for maze
+     */
     function createNets() {
-        var net;
-        var underNet;
-        var k;
+        var currentEdge;
+        var nextEdge;
+        var nets = [];
+        var netA;
+        var netB;
+        var j;
+        var wallX;
+        var wallAY;
+        var wallBY;
 
-        // Create a two hundred net objects
-        for (k = 0; k < DD.objects.nets.amount; k++) {
-            // For where it says 'star', i want to add a list which it will take from randomly.
-            net = game.add.sprite(((k + 8) * 400), 0, 'overnet');
+        for (j = 0; j < DD.objects.nets.amount; j++) {
+            currentEdge = DD.player.element.x + (game.camera.width / 2) + 200;
+            nextEdge = currentEdge + game.camera.width;
 
-            // net.enableBody = true;
-            // net.physicsBodyType = Phaser.Physics.P2JS;
-            game.physics.p2.enable(net);
+            wallX = Helper.getRandomIntBetween(currentEdge, nextEdge);
+            wallAY = Helper.getRandomIntBetween(-560, 420);
+            wallBY = wallAY + 1080 + Helper.getRandomIntBetween(100, 500);
 
-            underNet = game.add.sprite(net.body.x, net.body.y, 'undernet');
+            console.log(wallAY);
+            console.log(wallBY);
 
-            // The size of the object will likely change too, if that is possible
-            net.body.setRectangle(24, 22);
+            netA = game.add.sprite(currentEdge + wallX, wallAY, 'topnet');
+            netB = game.add.sprite(currentEdge + wallX, wallBY, 'topnet');
 
-            // Tell the net to use the DD.objects.nets.collisionGroup 
-            net.body.setCollisionGroup(DD.objects.nets.collisionGroup);
+            game.physics.p2.enable(netA);
+            game.physics.p2.enable(netB);
 
-            // nets will collide against themselves and the player
+            netA.body.static = true;
+            netB.body.static = true;
+
+            netB.body.angle = 180;
+
+            netA.body.setRectangle(250, 950);
+            netB.body.setRectangle(250, 950);
+
+            // Tell the net to use the DD.objects.net.collisionGroup 
+            netA.body.setCollisionGroup(DD.objects.nets.collisionGroup);
+            netB.body.setCollisionGroup(DD.objects.nets.collisionGroup);
+
+            // Nets will collide against themselves and the player
             // If you don't set this they'll not collide with anything.
             // The first parameter is either an array or a single collision group.
-            net.body.collides([DD.objects.nets.collisionGroup, DD.player.collisionGroup]);
+            netA.body.collides([DD.objects.junks.collisionGroup, DD.player.collisionGroup]);
+            netB.body.collides([DD.objects.junks.collisionGroup, DD.player.collisionGroup]);
 
-            DD.objects.nets.elements.push(net);
+            nets.push(netA);
+            nets.push(netB);
         }
+
+        DD.objects.nets.elements.push(nets);
     }
 
     /**
@@ -277,9 +322,6 @@
      * re-initializing the game
      */
     function restart() {
-        DD.game.audio.GameSound.destroy();
-        game.cache.removeSound('GameSound');
-
         // Kill off junks
         // DD.objects.junks.elements.forEach(function(junk, index) {
         //     junk.body = null;
@@ -365,10 +407,6 @@
             // Prevent gameOver() from being called multiple times
             DD.game.gameOverCalled = true;
         }
-    }
-
-    function isVisible(junk) {
-        return junk.x > ( DD.player.element.x - (game.camera.width / 2) ); 
     }
 
 })();
