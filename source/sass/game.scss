@@ -58,13 +58,25 @@ body {
 	}
 
 	.text {
-		max-width: 90%;
+		max-width: 930px;
 	    margin: 0 auto;
 	    margin-bottom: 50px;
 	    position: relative;
+	    color: #fff;
+	    font-size: 24px;
+	    text-shadow: 0 0 10px #000;
 
 	    p {
+		    margin-bottom: 35px;
 			font-size: 22px;
+		}
+
+		.icon {
+			// display: block;
+			// float: left;
+			font-size: 36px;
+			margin-right: 10px;
+			color: yellow;
 		}
 	}
 
@@ -201,7 +213,7 @@ body {
 	font-size: 24px;
 	width: 40px;
 	height: 40px;
-	padding-top: 6px;
+	padding-top: 3px;
 	padding-left: 1px;
 
 	&:hover,

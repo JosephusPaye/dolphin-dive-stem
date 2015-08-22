@@ -15,11 +15,11 @@
 /* Icons */
 @font-face {
   font-family: 'icons';
-  src:url('fonts/icons.eot?-9ukpgv');
-  src:url('fonts/icons.eot?#iefix-9ukpgv') format('embedded-opentype'),
-    url('fonts/icons.ttf?-9ukpgv') format('truetype'),
-    url('fonts/icons.woff?-9ukpgv') format('woff'),
-    url('fonts/icons.svg?-9ukpgv#icons') format('svg');
+  src:url('fonts/icons.eot?-h4zi7j');
+  src:url('fonts/icons.eot?#iefix-h4zi7j') format('embedded-opentype'),
+    url('fonts/icons.ttf?-h4zi7j') format('truetype'),
+    url('fonts/icons.woff?-h4zi7j') format('woff'),
+    url('fonts/icons.svg?-h4zi7j#icons') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -38,15 +38,6 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-home:before {
-  content: "\e600";
-}
-.icon-music:before {
-  content: "\e601";
-}
-.icon-pushpin:before {
-  content: "\e602";
-}
 .icon-reload:before {
   content: "\e603";
 }
@@ -56,7 +47,7 @@
 .icon-shrink:before {
   content: "\e605";
 }
-.icon-cog:before {
+.icon-settings:before {
   content: "\e606";
 }
 .icon-trophy:before {
@@ -65,14 +56,14 @@
 .icon-list-numbered:before {
   content: "\e608";
 }
+.icon-hand-up:before {
+  content: "\e612";
+}
 .icon-question:before {
   content: "\e609";
 }
 .icon-info:before {
   content: "\e60a";
-}
-.icon-exit:before {
-  content: "\e60b";
 }
 .icon-play-circle:before {
   content: "\e60c";
@@ -86,35 +77,38 @@
 .icon-pause:before {
   content: "\e60f";
 }
-.icon-volume-high:before {
-  content: "\e610";
-}
-.icon-volume-medium:before {
-  content: "\e611";
-}
-.icon-volume-low:before {
-  content: "\e612";
-}
-.icon-volume-none:before {
-  content: "\e613";
-}
-.icon-volume-mute:before {
-  content: "\e614";
+.icon-arrow-up:before {
+  content: "\e600";
 }
 .icon-arrow-right:before {
   content: "\e615";
 }
+.icon-arrow-down:before {
+  content: "\e601";
+}
 .icon-arrow-left:before {
   content: "\e616";
+}
+.icon-arrow-thin-up:before {
+  content: "\e602";
 }
 .icon-arrow-thin-right:before {
   content: "\e617";
 }
+.icon-arrow-thin-down:before {
+  content: "\e60b";
+}
 .icon-arrow-thin-left:before {
   content: "\e618";
 }
+.icon-circle-up:before {
+  content: "\e610";
+}
 .icon-circle-right:before {
   content: "\e619";
+}
+.icon-circle-down:before {
+  content: "\e611";
 }
 .icon-circle-left:before {
   content: "\e61a";
