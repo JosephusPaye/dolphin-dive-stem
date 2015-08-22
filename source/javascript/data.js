@@ -6,7 +6,7 @@
  * 
  * Contains game state independent of Phaser
  */
-var DD = {
+var DDBlueprint = {
     version: '1.0.0',
 
     objects: {
@@ -114,6 +114,13 @@ var DD = {
                 charges: 0
             },
 
+            newBoost: {
+                active: false,
+                amount: 2.5,
+                startX: 0,
+                originalSpeed: 0
+            },
+
             multiplier: 1
         },
 
@@ -126,6 +133,8 @@ var DD = {
         }
     }
 };
+
+var DD = jQuery.extend(true, {}, DDBlueprint);
 
 // Just a friendly reminder
 console.info('Dolphin Dive v' + DD.version);

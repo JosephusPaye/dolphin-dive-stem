@@ -22,10 +22,10 @@
      * Initialize the global game object
      */
     function start() {
-        var w = window.innerWidth * window.devicePixelRatio;
-        var h = window.innerHeight * window.devicePixelRatio;
+        // var w = window.innerWidth * window.devicePixelRatio;
+        // var h = window.innerHeight * window.devicePixelRatio;
 
-        game = new Phaser.Game(w, h, Phaser.AUTO, 'game', {
+        game = new Phaser.Game(1280, 720, Phaser.AUTO, 'game', {
             preload: DD.game.preload,
             create: DD.game.create,
             update: DD.game.update,
@@ -337,16 +337,32 @@
         // });
 
         // Reset junks and starfish arrays
-        DD.objects.junks.elements = [];
-        DD.objects.starfish.elements = [];
+        // DD.objects.junks.elements = [];
+        // DD.objects.starfish.elements = [];
 
-        // Reset game world
-        DD.game.world.level = 1;
+        // // Reset game world
+        // DD.game.world.level = 1;
 
-        // Reset scores
-        DD.game.score.lastRun = 0;
-        DD.game.score.lastFrameValue.starfish = 0;
-        DD.game.score.lastFrameValue.score = 0;
+        // // Reset scores
+        // DD.game.score.lastRun = 0;
+        // DD.game.score.starfish.total = 0;
+        // DD.game.score.starfish.lastRun = 0;
+        // DD.game.score.lastFrameValue.starfish = 0;
+        // DD.game.score.lastFrameValue.score = 0;
+
+        DD.objects = jQuery.extend(true, {}, DDBlueprint.objects);
+        DD.textures = jQuery.extend(true, {}, DDBlueprint.textures);
+        DD.player = jQuery.extend(true, {}, DDBlueprint.player);
+
+        DD.game.gameOverCalled = false;
+        DD.game.runEnd = false;
+        DD.game.cursors = null;
+        DD.game.world = jQuery.extend(true, {}, DDBlueprint.game.world);
+        DD.game.score = jQuery.extend(true, {}, DDBlueprint.game.score);
+        DD.game.modifiers = jQuery.extend(true, {}, DDBlueprint.game.modifiers);
+        DD.game.audio = jQuery.extend(true, {}, DDBlueprint.game.audio);
+
+        Helper.restoreSavedValues();
 
         game.destroy();
         game = null;

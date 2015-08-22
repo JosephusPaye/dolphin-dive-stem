@@ -16,8 +16,8 @@
      */
     function preload() {
         // This sets a limit on the up-scale
-        // game.scale.maxWidth = 1280;
-        // game.scale.maxHeight = 720;
+        game.scale.maxWidth = 1280;
+        game.scale.maxHeight = 720;
 
         // Set scale mode and resize game
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -51,7 +51,6 @@
         // Main characters
         game.load.image('oilspill', 'assets/images/oilback.png');
         game.load.spritesheet('dolphin', 'assets/images/dolphinFinal.png', 573, 295);
-        // game.load.spritesheet('dolphin', 'assets/images/new-dolphin.png', 245, 103);
 
         // Audio
         game.load.audio('junkImpact', 'assets/audio/yey.wav');
@@ -86,16 +85,16 @@
         // game.load.onLoadComplete.add(DD.game.actions.playMusic(), this);
 
         // Set boundaries of the world
-        game.world.setBounds(0, 0, 192000, 1080);
+        game.world.setBounds(0, 0, 300000, 1080);
 
         // Enable the P2 Physics system
         game.physics.startSystem(Phaser.Physics.P2JS);
         game.physics.p2.setImpactEvents(true);
 
         // Add background layers
-        DD.textures.layerA = game.add.tileSprite(0, 0, 192000, 1080, 'background');
-        DD.textures.layerB = game.add.tileSprite(0, 0, 192000, 1080, 'backgroundL1');
-        DD.textures.layerC = game.add.tileSprite(0, 0, 192000, 1080, 'backgroundL2');
+        DD.textures.layerA = game.add.tileSprite(0, 0, 300000, 1080, 'background');
+        DD.textures.layerB = game.add.tileSprite(0, 0, 300000, 1080, 'backgroundL1');
+        DD.textures.layerC = game.add.tileSprite(0, 0, 300000, 1080, 'backgroundL2');
 
         // Set transparency of background layers
         DD.textures.layerA.alpha = 1;
@@ -237,6 +236,11 @@
             }
         }
 
+        // Player end
+        if ( DD.player.element.x > (300000 - game.camera.width / 2 ) ) {
+            // show game end screen
+        }
+
         // On demand generation
         if (DD.player.element.x >= DD.game.world.lastGeneratedPosition + game.camera.width + 200) {
             DD.game.actions.createJunks();
@@ -254,7 +258,7 @@
         // Activate boost
         if (DD.game.modifiers.boost.active) {
             if ( (DD.player.element.x - DD.game.modifiers.boost.begin) >= 300) {
-                DD.game.modifiers.total += -0.4 * (DD.player.speed / DD.game.modifiers.boost.total);
+                DD.game.modifiers.total -= 0.4 * (DD.player.speed / DD.game.modifiers.boost.total);
                 
                 var fadeOut = setInterval(function() {
                     if (DD.game.modifiers.boost.total !== 0) {
@@ -274,11 +278,12 @@
         }
 
         // Update positions of characters
-        DD.textures.waves.element.body.x = game.camera.x + 647;
+        DD.textures.waves.element.body.x = game.camera.x + (game.camera.width / 2) + 5;
         DD.textures.waves.element.body.y = 20;
+        DD.textures.waves.element.animations.play('wave');
+
         DD.textures.sand.element.body.x = game.camera.x;
         DD.textures.sand.element.body.y = 1080;
-        DD.textures.waves.element.animations.play('wave');
 
         DD.textures.waves.element.body.angle = 0.000000;
         DD.textures.sand.element.body. angle = 0.000000;
@@ -291,11 +296,11 @@
             DD.game.score.lastRun = parseInt(DD.game.score.lastRun, 10);
 
             // Minimap: update progress bar
-            DisplayData.hud.progressBar.spill.width( (DD.objects.spill.element.x * 500 ) / 192000 );
+            DisplayData.hud.progressBar.spill.width( (DD.objects.spill.element.x * 500 ) / 300000 );
 
             // Minimap: update dolphin x
             DisplayData.hud.progressBar.dolphin.css(
-                'left', ( (DD.player.element.x * 492 ) / 192000 )
+                'left', ( (DD.player.element.x * 492 ) / 300000 )
             );
 
             // Minimap: Update dolphin y
@@ -333,9 +338,21 @@
         if (DD.game.cursors.right.isDown) {
             if (DD.game.modifiers.boost.charges > 0) {
                 if (!DD.game.modifiers.boost.active) {
-                    DD.game.audio.JunkSound.play('boost');
+                    // DD.game.audio.JunkSound.play('boost');
+                        
+                    // DD.game.modifiers.newBoost.originalSpeed = DD.player.element.body.velocity.x;
+                    // // DD.player.element.body.velocity.x = DD.player.element.body.velocity.x * DD.game.modifiers.newBoost.amount;
+                    // DD.player.element.x += 100;
+                    // DD.player.barrier.element.alpha = 1;
 
-                    // Decrement boost changes and starfish count
+                    // // Disable boost after 1 second
+                    // window.setTimeout(function() {
+                    //     DD.player.element.body.velocity.x = DD.game.modifiers.newBoost.originalSpeed;
+                    //     DD.player.barrier.element.alpha = 0;
+                    //     DD.game.modifiers.newBoost.active = false;
+                    // }, 500);
+
+                    // Decrement boost charges and starfish count
                     DD.game.modifiers.boost.charges--;
                     DD.game.score.starfish.lastRun--;
                     

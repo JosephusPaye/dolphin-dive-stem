@@ -72,11 +72,23 @@ body {
 		}
 
 		.icon {
-			// display: block;
-			// float: left;
 			font-size: 36px;
 			margin-right: 10px;
-			color: yellow;
+			color: #FFEB3B;
+		}
+
+		.highlight {
+			color: #FFEB3B;
+
+			&.mr8 {
+				margin-right: 8px;
+			}
+		}
+
+		ul {
+			list-style: none;
+			margin: 0;
+			padding: 0;
 		}
 	}
 
@@ -237,6 +249,7 @@ body {
     cursor: default;
 
 	ul {
+		min-width: 300px;
 		display: block;
 		padding: 0 5px;
 		margin: 0;
@@ -250,7 +263,7 @@ body {
 
 	li {
 	    margin-right: 15px;
-	    min-width: 120px;
+	    min-width: 125px;
 	    float: left;
 
 	    span {
