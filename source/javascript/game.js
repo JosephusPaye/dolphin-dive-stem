@@ -40,7 +40,7 @@
         // Objects
         game.load.image('crab', 'assets/images/angrycrab.png');
         game.load.image('starfish', 'assets/images/starfish.png');
-        game.load.spritesheet('barrier', '/assets/images/boost.png', 288, 289);
+        game.load.spritesheet('barrier', 'assets/images/boost.png', 288, 289);
 
         // Nets
         game.load.image('overnet', 'assets/images/overnet.png');
@@ -83,7 +83,7 @@
      */
     function create() { 
         // Play background music on load
-        game.load.onLoadComplete.add(DD.game.actions.playMusic(), this);
+        // game.load.onLoadComplete.add(DD.game.actions.playMusic(), this);
 
         // Set boundaries of the world
         game.world.setBounds(0, 0, 192000, 1080);

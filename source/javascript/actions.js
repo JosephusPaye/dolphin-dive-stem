@@ -280,8 +280,8 @@
             wallAY = Helper.getRandomIntBetween(-560, 420);
             wallBY = wallAY + 1080 + Helper.getRandomIntBetween(100, 500);
 
-            console.log(wallAY);
-            console.log(wallBY);
+            // console.log(wallAY);
+            // console.log(wallBY);
 
             netA = game.add.sprite(currentEdge + wallX, wallAY, 'topnet');
             netB = game.add.sprite(currentEdge + wallX, wallBY, 'topnet');

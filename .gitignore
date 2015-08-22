@@ -2,6 +2,7 @@ node_modules
 /vendor
 _del
 **/_del
+/dploy.yaml
 
 # OS generated files #
 ######################
