@@ -179,11 +179,6 @@ $(document).ready(function() {
         // Show HUD and pause button
         Display.showElements([DisplayData.hud.element, DisplayData.hud.pauseBtn]);
 
-        // Resetting values that seem to get altered at some point
-        DD.player.speed = 300;
-        DD.objects.spill.speed = 280;
-        DD.game.modifiers.boost.active = false;
-
         // Restart game
         DD.game.actions.restart();
         DD.game.gameOverCalled = false;
@@ -195,6 +190,35 @@ $(document).ready(function() {
 
     // Game Over menu: Quit to Main Menu button
     $(DisplayData.gameOverMenu.mainMenuBtn).click(function() {
+        // First run will show Main Menu and play its animation
+        DD.game.firstRun = true;
+        DD.game.actions.restart();
+
+        DD.game.gameOverCalled = false;
+    });
+
+    // Game End Menu: Play again button
+    $(DisplayData.gameEndMenu.playAgainBtn).click(function() {
+        Display.hideAllMenus();
+
+        // Reset HUD scores
+        DisplayData.hud.score.text(0);
+        DisplayData.hud.starfish.text(0);
+
+        // Show HUD and pause button
+        Display.showElements([DisplayData.hud.element, DisplayData.hud.pauseBtn]);
+
+        // Restart game
+        DD.game.actions.restart();
+        DD.game.gameOverCalled = false;
+        DD.game.runEnd = false;
+
+        // Resume game
+        game.paused = false;
+    });
+
+    // Game End Menu: Quit to Main Menu button
+    $(DisplayData.gameEndMenu.mainMenuBtn).click(function() {
         // First run will show Main Menu and play its animation
         DD.game.firstRun = true;
         DD.game.actions.restart();

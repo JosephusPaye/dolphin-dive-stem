@@ -73,6 +73,7 @@ var DDBlueprint = {
 
     game: {
         gameOverCalled: false,
+        gameEndCalled: false,
         firstRun: true,
         runEnd: false,
         cursors: null,

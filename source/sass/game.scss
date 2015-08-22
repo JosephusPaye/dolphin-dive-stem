@@ -77,6 +77,19 @@ body {
 			color: #FFEB3B;
 		}
 
+		h3 {
+			margin-top: 0;
+			font-size: 20px;
+			color: #FFF;
+			margin-bottom: 10px;
+			font-weight: normal;
+		}
+
+		a {
+			color: #FFEB3B;
+			text-decoration: none;
+		}
+
 		.highlight {
 			color: #FFEB3B;
 
@@ -156,6 +169,42 @@ body {
 	}
 }
 
+#gameEndMenu {
+	.wrapper {
+		margin-top: 25px!important;
+	}
+
+	.title {
+		margin-bottom: 25px;
+		margin-top: 15px!important;
+	}
+
+	.info {
+		text-shadow: 0 0 10px #000;
+		margin-top: 15px;
+		margin-bottom: 50px;
+	}
+
+	h2 {
+		margin-top: 0;
+		font-size: 26px;
+		color: #FFF;
+		margin-bottom: 10px;
+		font-weight: normal;
+	}
+
+	.score {
+		font-size: 36px;
+		color: #FFF;
+		font-weight: bold;
+		margin-left: 12px;
+	}
+
+	ul {
+		margin-top: 40px;
+	}
+}
+
 .menu-buttons {
 	list-style: none;
 	padding: 0;
@@ -168,7 +217,7 @@ body {
 		cursor: pointer;
 		text-align: center;
 		display: block;
-		max-width: 300px;
+		max-width: 350px;
 		font-size: 22px;
 		margin: 0 auto;
 		margin-bottom: 25px;

@@ -14,6 +14,7 @@ var PlayAnimations = {};
     PlayAnimations.aboutMenu = aboutMenu;
     PlayAnimations.howToPlayMenu = howToPlayMenu;
     PlayAnimations.gameOverMenu = gameOverMenu;
+    PlayAnimations.gameEndMenu = gameEndMenu;
 
     // Main Menu animations
     function mainMenu() {
@@ -102,6 +103,21 @@ var PlayAnimations = {};
 
         // Animate buttons
         TweenMax.staggerFrom('#gameOverMenu li', 0.3, {
+            y: 100,
+            opacity: 0,
+            ease: Back.easeOut
+        }, 0.1);
+    }
+
+    function gameEndMenu() {
+        // Animate menu title
+        TweenMax.from('#gameEndMenu h1', 1, {
+            scale: 0.4,
+            ease: Bounce.easeOut
+        }, 0.1);
+
+        // Animate buttons
+        TweenMax.staggerFrom('#gameEndMenu li', 0.3, {
             y: 100,
             opacity: 0,
             ease: Back.easeOut

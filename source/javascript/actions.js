@@ -13,7 +13,8 @@
         updateHighScores: updateHighScores,
         createNets: createNets,
         restart: restart,
-        gameOver: gameOver
+        gameOver: gameOver,
+        gameEnd: gameEnd
     };
 
     /**
@@ -422,6 +423,59 @@
 
             // Prevent gameOver() from being called multiple times
             DD.game.gameOverCalled = true;
+        }
+    }
+
+    /**
+     * Handle game end
+     * 
+     * Ends current game and displays
+     * game end menu
+     */
+    function gameEnd() {
+        var newHighestScore = false;
+
+        if (!DD.game.gameEndCalled) {
+            DD.game.runEnd = true;
+
+            if (DD.game.score.lastRun > DD.game.score.highScores[0]) {
+                newHighestScore = true;
+            }
+
+            DD.game.actions.updateHighScores({
+                score: DD.game.score.lastRun,
+                starfish: DD.game.score.starfish.lastRun
+            });
+
+            Display.hideElements([
+                DisplayData.gameEndMenu.highScore.element,
+                DisplayData.gameEndMenu.score.element
+            ]);
+
+            if (newHighestScore) {
+                Display.showElements([
+                    DisplayData.gameEndMenu.highScore.element
+                ]);
+            } else {
+                Display.showElements([
+                    DisplayData.gameEndMenu.score.element
+                ]);
+            }
+
+            Display.showMenu(DisplayData.gameEndMenu.element);
+            PlayAnimations.gameEndMenu();
+
+            // Wait half a second, then trigger score display animation
+            window.setTimeout(function() {
+                if (newHighestScore) {
+                    DisplayData.gameEndMenu.highScore.number.text(DD.game.score.lastRun);
+                } else {
+                    DisplayData.gameEndMenu.score.number.text(DD.game.score.lastRun);
+                }
+            }, 500);
+
+            // Prevent gameEnd() from being called multiple times
+            DD.game.gameEndCalled = true;
         }
     }
 

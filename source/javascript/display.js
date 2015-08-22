@@ -92,6 +92,24 @@ var DisplayData = {
 
         playAgainBtn: $('#gameOverMenu-playAgain'),
         mainMenuBtn: $('#gameOverMenu-mainMenu')
+    },
+
+    gameEndMenu: {
+        element: $('#gameEndMenu'),
+        overlay: $('#gameEndMenu .overlay'),
+
+        highScore: {
+            element: $('#gameEndMenu-highScore'),
+            number: $('#gameEndMenu-highScore .score')
+        },
+
+        score: {
+            element: $('#gameEndMenu-score'),
+            number: $('#gameEndMenu-score .score')
+        },
+
+        playAgainBtn: $('#gameEndMenu-playAgain'),
+        mainMenuBtn: $('#gameEndMenu-mainMenu')
     }
 };
 

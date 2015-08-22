@@ -71,7 +71,7 @@
         });
 
         // Enable advanced timing for FPS counter
-        game.time.advancedTiming = true;
+        // game.time.advancedTiming = true;
     }
 
     /**
@@ -237,8 +237,10 @@
         }
 
         // Player end
-        if ( DD.player.element.x > (300000 - game.camera.width / 2 ) ) {
-            // show game end screen
+        if ( DD.player.element.x > (game.camera.width * 4) ) { // DD.player.element.x > (300000 - game.camera.width / 2 ) ) {
+            DD.game.actions.gameEnd();
+            DD.player.element.body.velocity.x = 0;
+            DD.objects.spill.element.body.velocity.x = 0;
         }
 
         // On demand generation
@@ -257,8 +259,9 @@
 
         // Activate boost
         if (DD.game.modifiers.boost.active) {
-            if ( (DD.player.element.x - DD.game.modifiers.boost.begin) >= 300) {
-                DD.game.modifiers.total -= 0.4 * (DD.player.speed / DD.game.modifiers.boost.total);
+            if ((DD.player.element.x - DD.game.modifiers.boost.begin) >= 300) {
+                
+                DD.game.modifiers.total +=  -0.4 * (DD.player.speed / DD.game.modifiers.boost.total);
                 
                 var fadeOut = setInterval(function() {
                     if (DD.game.modifiers.boost.total !== 0) {
@@ -271,7 +274,6 @@
                 if (DD.game.modifiers.total <= 0) {
                     DD.game.modifiers.total = 0;
                     DD.game.modifiers.boost.active = false;
-
                     console.log('Boost End :(');
                 }
             }
@@ -335,35 +337,20 @@
         }
 
         // Handle Boost
-        if (DD.game.cursors.right.isDown) {
+        if (DD.game.cursors.right.isDown || isTouchingRight()) {
+            DD.game.audio.JunkSound.play('boost');
+
             if (DD.game.modifiers.boost.charges > 0) {
                 if (!DD.game.modifiers.boost.active) {
-                    // DD.game.audio.JunkSound.play('boost');
-                        
-                    // DD.game.modifiers.newBoost.originalSpeed = DD.player.element.body.velocity.x;
-                    // // DD.player.element.body.velocity.x = DD.player.element.body.velocity.x * DD.game.modifiers.newBoost.amount;
-                    // DD.player.element.x += 100;
-                    // DD.player.barrier.element.alpha = 1;
+                    DD.game.modifiers.boost.charges += -1;
+                    DD.game.score.starfish.lastRun += -1;
 
-                    // // Disable boost after 1 second
-                    // window.setTimeout(function() {
-                    //     DD.player.element.body.velocity.x = DD.game.modifiers.newBoost.originalSpeed;
-                    //     DD.player.barrier.element.alpha = 0;
-                    //     DD.game.modifiers.newBoost.active = false;
-                    // }, 500);
-
-                    // Decrement boost charges and starfish count
-                    DD.game.modifiers.boost.charges--;
-                    DD.game.score.starfish.lastRun--;
-                    
-                    // Update modifiers
                     DD.game.modifiers.total += (DD.player.speed * DD.game.modifiers.boost.total);
-                    DD.game.modifiers.boost.active = true;
 
-                    // Set boost begin position and show boost animation
+                    DD.game.modifiers.boost.active = true;
                     DD.game.modifiers.boost.begin = DD.player.element.x;
                     DD.player.barrier.element.alpha = 1;
-
+                    
                     console.log('BOOST!');
                 }
             } else {
@@ -395,7 +382,7 @@
      * Render function
      */
     function render() {
-        game.debug.text(game.time.fps || '--', 2, 14, '#00ff00');
+        // game.debug.text(game.time.fps || '--', 2, 14, '#00ff00');
 
         // Update score
         if (DD.game.score.lastFrameValue.score !== DD.game.score.lastRun) {
@@ -424,7 +411,7 @@
     }
 
     /**
-     * Detect touch input in upper right half of screen
+     * Detect touch input in upper left half of screen
      * for both pointer1 (first finger) & pointer2 (second finger)
      * 
      * @return {Boolean}
@@ -441,7 +428,7 @@
     }
 
     /**
-     * Detect touch input in lower right half of screen
+     * Detect touch input in upper right half of screen
      * for both pointer1 (first finger) & pointer2 (second finger)
      * 
      * @return {Boolean}
@@ -450,6 +437,23 @@
         if (
             (game.input.pointer1.isDown && game.input.pointer1.x < 500 && game.input.pointer1.y > 360) ||
             (game.input.pointer2.isDown && game.input.pointer2.x < 500 && game.input.pointer2.y > 360)
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Detect touch input in right half of screen
+     * for both pointer1 (first finger) & pointer2 (second finger)
+     * 
+     * @return {Boolean}
+     */
+    function isTouchingRight() {
+        if (
+            (game.input.pointer1.isDown && game.input.pointer1.x > 780) ||
+            (game.input.pointer2.isDown && game.input.pointer2.x < 780)
         ) {
             return true;
         }
