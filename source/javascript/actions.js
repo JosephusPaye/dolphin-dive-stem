@@ -8,6 +8,7 @@
         createJunks: createJunks,
         cleanUp: cleanUp,
         killSprite: killSprite,
+        isVisible: isVisible,
         createStarfish: createStarfish,
         restoreSavedValues: restoreSavedValues,
         updateHighScores: updateHighScores,
@@ -22,7 +23,10 @@
      * Initialize the global game object
      */
     function start() {
-        game = new Phaser.Game(1280, 720, Phaser.AUTO, 'game', {
+        var w = window.innerWidth * window.devicePixelRatio;
+        var h = window.innerHeight * window.devicePixelRatio;
+
+        game = new Phaser.Game(w, h, Phaser.AUTO, 'game', {
             preload: DD.game.preload,
             create: DD.game.create,
             update: DD.game.update,
@@ -130,25 +134,47 @@
         }
 
         console.log('Cleaning up');
-
         DD.game.world.cleaningUp = true;
 
-        var toClear = DD.objects.junks.elements.splice(0, DD.objects.junks.elements.length - 3);
-
-        toClear.forEach(function(generation, i) {
+        // Clean up junks
+        var junksToClear = DD.objects.junks.elements.splice(0, DD.objects.junks.elements.length - 3);
+        junksToClear.forEach(function(generation, i) {
             generation.forEach(function(junk, j) {
                 if (junk) {
-                    killSprite(junk);
+                    if ( isVisible(junk) ) { //  || junk.x >= DD.player.element.x
+                        DD.objects.junks.elements[0].push(junk);
+                    } else {
+                        killSprite(junk);
+                    }
+
                     generation[j] = null;
                 }
             });
 
-            toClear[i] = null;
+            junksToClear[i] = null;
+        });
+
+        // Clean up stars
+        var starsToClear = DD.objects.starfish.elements.splice(0, DD.objects.starfish.elements.length - 3);
+        starsToClear.forEach(function(generation, i) {
+            generation.forEach(function(starfish, j) {
+                if (starfish) {
+                    if ( isVisible(starfish) ) { //  || junk.x >= DD.player.element.x
+                        DD.objects.starfish.elements[0].push(starfish);
+                    } else {
+                        killSprite(starfish);
+                    }
+
+                    generation[j] = null;
+                }
+            });
+
+            starsToClear[i] = null;
         });
 
         DD.game.world.cleaningUp = false;
 
-        console.log('Cleaning up done');
+        console.log('Clean up done');
     }
 
     function killSprite(sprite) {
@@ -339,6 +365,10 @@
             // Prevent gameOver() from being called multiple times
             DD.game.gameOverCalled = true;
         }
+    }
+
+    function isVisible(junk) {
+        return junk.x > ( DD.player.element.x - (game.camera.width / 2) ); 
     }
 
 })();

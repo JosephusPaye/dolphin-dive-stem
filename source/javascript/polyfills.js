@@ -23,3 +23,8 @@ var Helper = {
 function getRandomIntBetween(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+if (window.$ === undefined) {
+    $ = require('jQuery');
+    jQuery = require('jQuery');
+}

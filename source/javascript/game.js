@@ -15,33 +15,44 @@
      * images and sprite sheets
      */
     function preload() {
+        // Setup scaling
+        
+        // This sets a limit on the up-scale
+        // game.scale.maxWidth = 1280;
+        // game.scale.maxHeight = 720;
+
+        // Then we tell Phaser that we want it to scale up to whatever 
+        // the browser can handle, but to do it proportionally
+        game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        game.scale.setScreenSize();
+
         // Backgrounds
-        game.load.image('background', '/assets/images/StaticBackground.png');
-        game.load.image('backgroundL1', '/assets/images/Layer1.png');
-        game.load.image('backgroundL2', '/assets/images/Layer2.png');
-        game.load.image('seafloor', '/assets/images/SeaFloor.png');
-        game.load.image('waves', '/assets/images/waves.png');
+        game.load.image('background', 'assets/images/StaticBackground.png');
+        game.load.image('backgroundL1', 'assets/images/Layer1.png');
+        game.load.image('backgroundL2', 'assets/images/Layer2.png');
+        game.load.image('seafloor', 'assets/images/SeaFloor.png');
+        game.load.image('waves', 'assets/images/waves.png');
 
         // Junks
-        game.load.image('bag', '/assets/images/bag.png');
-        game.load.image('barrel', '/assets/images/barrel.png');
-        game.load.image('boot', '/assets/images/boot.png');
-        game.load.image('bottle', '/assets/images/bottle.png');
-        game.load.image('tyre', '/assets/images/tyre.png');
-        game.load.image('overnet', '/assets/images/overnet.png');
-        game.load.image('undernet', '/assets/images/undernet.png');
+        game.load.image('bag', 'assets/images/bag.png');
+        game.load.image('barrel', 'assets/images/barrel.png');
+        game.load.image('boot', 'assets/images/boot.png');
+        game.load.image('bottle', 'assets/images/bottle.png');
+        game.load.image('tyre', 'assets/images/tyre.png');
+        game.load.image('overnet', 'assets/images/overnet.png');
+        game.load.image('undernet', 'assets/images/undernet.png');
 
         // Objects
-        game.load.image('crab', '/assets/images/angrycrab.png');
-        game.load.image('starfish', '/assets/images/starfish.png');
+        game.load.image('crab', 'assets/images/angrycrab.png');
+        game.load.image('starfish', 'assets/images/starfish.png');
 
         // Main characters
-        game.load.image('oilspill', '/assets/images/oilback.png');
-        game.load.spritesheet('dolphin', '/assets/images/new-dolphin.png', 245, 103);
+        game.load.image('oilspill', 'assets/images/oilback.png');
+        game.load.spritesheet('dolphin', 'assets/images/new-dolphin.png', 245, 103);
 
         // Audio
-        game.load.audio('junkImpact', '/assets/audio/yey.wav');
-        game.load.audio('GameSound', '/assets/audio/GameSound.ogg');
+        game.load.audio('junkImpact', 'assets/audio/yey.wav');
+        game.load.audio('GameSound', 'assets/audio/GameSound.ogg');
 
         // Enable advanced timing for FPS counter
         game.time.advancedTiming = true;

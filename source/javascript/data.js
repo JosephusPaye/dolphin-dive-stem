@@ -10,6 +10,8 @@ var DD = {
     version: '0.1.0',
 
     objects: {
+        allSprites: [],
+
         spill: {
             element: null,
             collisionGroup: null,
