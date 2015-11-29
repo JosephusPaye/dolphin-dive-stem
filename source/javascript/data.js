@@ -26,7 +26,7 @@ var DDBlueprint = {
         },
 
         junks: {
-            amount: Helper.getRandomIntBetween(10, 15),
+            amount: Helper.getRandomIntBetween(5, 10),
             elements: [],
             slow: 0.4,
             collisionGroup: null,

@@ -140,7 +140,8 @@
         // Waves
         DD.textures.waves.element = game.add.sprite(0, 0, 'waves');
         game.physics.p2.enable(DD.textures.waves.element);
-        DD.textures.waves.element.animations.add('wave', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 10, true);
+        DD.textures.waves.element.animations.add('wave', [9, 8, 7, 6, 5, 4, 3, 2, 1, 0], 10, true);
+        DD.textures.waves.element.animations.play('wave');
 
         // Sand
         DD.textures.sand.element = game.add.sprite(0, 1080, 'waves');
@@ -237,7 +238,7 @@
         }
 
         // Player end
-        if ( DD.player.element.x > (game.camera.width * 4) ) { // DD.player.element.x > (300000 - game.camera.width / 2 ) ) {
+        if (DD.player.element.x > (300000 - game.camera.width / 2 ) ) {
             DD.game.actions.gameEnd();
             DD.player.element.body.velocity.x = 0;
             DD.objects.spill.element.body.velocity.x = 0;
@@ -282,7 +283,6 @@
         // Update positions of characters
         DD.textures.waves.element.body.x = game.camera.x + (game.camera.width / 2) + 5;
         DD.textures.waves.element.body.y = 20;
-        DD.textures.waves.element.animations.play('wave');
 
         DD.textures.sand.element.body.x = game.camera.x;
         DD.textures.sand.element.body.y = 1080;
@@ -323,7 +323,7 @@
             }
         }
 
-        // Reset the player's velocity (movement)
+        // Reset the player's y velocity (movement)
         if (!DD.player.accelerationActive) {
             DD.player.element.body.velocity.y = 0;
         }
@@ -338,10 +338,10 @@
 
         // Handle Boost
         if (DD.game.cursors.right.isDown || isTouchingRight()) {
-            DD.game.audio.JunkSound.play('boost');
-
             if (DD.game.modifiers.boost.charges > 0) {
                 if (!DD.game.modifiers.boost.active) {
+                    DD.game.audio.JunkSound.play('boost');
+                    
                     DD.game.modifiers.boost.charges += -1;
                     DD.game.score.starfish.lastRun += -1;
 

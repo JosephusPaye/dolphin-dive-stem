@@ -313,6 +313,7 @@
         }
 
         DD.objects.nets.elements.push(nets);
+        console.log('Nets Created')
     }
 
     /**
