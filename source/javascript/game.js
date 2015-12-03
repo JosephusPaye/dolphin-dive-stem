@@ -43,9 +43,6 @@
         game.load.spritesheet('barrier', 'assets/images/boost.png', 288, 289);
 
         // Nets
-        game.load.image('overnet', 'assets/images/overnet.png');
-        game.load.image('botnet', 'assets/images/botnet.png');
-        game.load.image('undernet', 'assets/images/undernet.png');
         game.load.image('topnet', 'assets/images/topnet.png');
 
         // Main characters
@@ -53,7 +50,6 @@
         game.load.spritesheet('dolphin', 'assets/images/dolphinFinal.png', 573, 295);
 
         // Audio
-        game.load.audio('junkImpact', 'assets/audio/yey.wav');
         game.load.audio('GameSound', 'assets/audio/GameSound.ogg');
         game.load.audio('Junks', 'assets/audio/Junks.ogg');
         
@@ -81,7 +77,7 @@
      * for the game
      */
     function create() { 
-        // Play background music on load
+        // Play music on load (old solution. May revisit)
         // game.load.onLoadComplete.add(DD.game.actions.playMusic(), this);
 
         // Set boundaries of the world
@@ -297,7 +293,7 @@
             DD.game.score.lastRun = ((DD.player.element.x / 400) - 8) * DD.game.modifiers.multiplier;
             DD.game.score.lastRun = parseInt(DD.game.score.lastRun, 10);
 
-            // Minimap: update progress bar
+            // Minimap: update spill
             DisplayData.hud.progressBar.spill.width( (DD.objects.spill.element.x * 500 ) / 300000 );
 
             // Minimap: update dolphin x
@@ -311,7 +307,7 @@
             );
 
             // Update the player velocity and play animation
-            DD.player.element.body.velocity.x = DD.player.speed + (30 * DD.game.world.level) + DD.game.modifiers.total;
+            DD.player.element.body.velocity.x = DD.player.speed + (30 * DD.game.world.level) + DD.game.modifiers.total + DD.game.modifiers.slow;
             DD.player.barrier.element.body.x = DD.player.element.body.x - 100;
             DD.player.barrier.element.body.y = DD.player.element.body.y - 150;
     
@@ -341,7 +337,7 @@
             if (DD.game.modifiers.boost.charges > 0) {
                 if (!DD.game.modifiers.boost.active) {
                     DD.game.audio.JunkSound.play('boost');
-                    
+
                     DD.game.modifiers.boost.charges += -1;
                     DD.game.score.starfish.lastRun += -1;
 
@@ -467,33 +463,39 @@
      * collision with junk
      */
     function junkHit(player, junk) {
+        if (DD.player.speedUp) {
+            clearInterval(DD.player.speedUp);
+            DD.game.modifiers.slow = 0;
+        }
         // Play junk hit sound
         DD.game.audio.JunkSound.play(junk.sprite.key);
         
         if (!DD.game.modifiers.boost.active) {
-            // The speed that the player should be travelling at is stored, 
-            // otherwise the function below will slow down rather than speed up.
-            var originalSpeed = DD.player.speed;
+            // Stores the value of the speed when function triggers
+            var originalSpeed = DD.player.speed; 
 
-            // Setting a slow speed straight away so it doesn't feel laggy
-            DD.player.speed = originalSpeed * (DD.objects.junks.slow / DD.game.world.level);
+            // calculates total of speed reduction
+            var speedReduction = (originalSpeed * DD.objects.junks.slow) - originalSpeed;
 
-            // setInterval means that I can perform this over some time 
-            // and gradually without using Phasers stupid time function.
-            // Time on the second argument is in milliseconds. 
-            var speedUp = setInterval(function() {
-                if (DD.objects.junks.slow <= 1.05) {
-                    // This is where originalSpeed is used to provide 
-                    // a gradual speed up that feels a little more natural.
-                    DD.player.speed = originalSpeed * DD.objects.junks.slow;
-                    // Every second the dolphin gets 10% closer to full speed.
-                    DD.objects.junks.slow += 0.05;
+            DD.game.modifiers.slow = speedReduction;
+
+            var counter = 0;
+
+            // slowly returns the missing speed back to the player
+            DD.player.speedUp = setInterval(function() {
+                if (counter < 4 ) {
+                    // A fraction of the speed is returned
+                    console.log(DD.game.modifiers.slow);
+                    DD.game.modifiers.slow += speedReduction * -0.25;
+                    counter += 1
                 } else { // Detecting when the maximum speed is reached, so the function can end.
                     // End the interval that is causing the change in dolphin speed.
                     console.log(DD.player.element.body.velocity.x);
                     clearInterval(speedUp);
+                    DD.game.modifiers.slow = 0;
+                    console.log(DD.player.element.body.velocity.x);
                 }
-            }, 100);
+            }, 200);
 
             // Resetting the slowing effect after the normal speed is reached again.
             DD.objects.junks.slow = 0.4;

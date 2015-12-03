@@ -65,7 +65,7 @@ var DDBlueprint = {
         element: null,
         collisionGroup: null,
         angle: 20,
-
+        speedUp: null,
         barrier: {
             element: null
         }
@@ -105,6 +105,7 @@ var DDBlueprint = {
         },
 
         modifiers: {
+            slow: 0,
             total: 0,
             active: true,
 
