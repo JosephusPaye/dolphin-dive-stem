@@ -111,7 +111,7 @@ var DDBlueprint = {
 
             boost: {
                 active: false,
-                total: 2.5,
+                total: 1600,
                 begin: 0,
                 charges: 0
             },

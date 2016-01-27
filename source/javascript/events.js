@@ -71,13 +71,13 @@ $(document).ready(function() {
         PlayAnimations.highScoresMenu();
     });
 
-    // High to Play menu: Return to Main Menu button
+    // How to Play menu: Return to Main Menu button
     $(DisplayData.howToPlayMenu.mainMenuBtn).click(function() {
         Display.showMenu(DisplayData.mainMenu.element);
         PlayAnimations.mainMenu();
     });
 
-    // High to Play menu: prev Page 1 button
+    // How to Play menu: prev Page 1 button
     $(DisplayData.howToPlayMenu.prevPage1Btn).click(function() {
         Display.hideElements([
             DisplayData.howToPlayMenu.page1,
@@ -92,7 +92,7 @@ $(document).ready(function() {
         PlayAnimations.howToPlayMenu();
     });
 
-    // High to Play menu: next and prev Page 2 button
+    // How to Play menu: next and prev Page 2 button
     $(DisplayData.howToPlayMenu.nextPage2Btn).add(DisplayData.howToPlayMenu.prevPage2Btn).click(function() {
         Display.hideElements([
             DisplayData.howToPlayMenu.page1,
@@ -107,7 +107,7 @@ $(document).ready(function() {
         PlayAnimations.howToPlayMenu();
     });
 
-    // High to Play menu: next Page 3 button
+    // How to Play menu: next Page 3 button
     $(DisplayData.howToPlayMenu.nextPage3Btn).click(function() {
         Display.hideElements([
             DisplayData.howToPlayMenu.page1,

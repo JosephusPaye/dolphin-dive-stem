@@ -165,7 +165,6 @@
             return;
         }
 
-        console.log('Cleaning up');
         DD.game.world.cleaningUp = true;
 
         // Clean up junks
@@ -205,8 +204,6 @@
         });
 
         DD.game.world.cleaningUp = false;
-
-        console.log('Clean up done');
     }
 
     /**
@@ -313,7 +310,7 @@
         }
 
         DD.objects.nets.elements.push(nets);
-        console.log('Nets Created')
+        console.log(nets)
     }
 
     /**

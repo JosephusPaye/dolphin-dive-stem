@@ -149,7 +149,7 @@
         DD.game.audio.JunkSound.allowMultiple = true;
 
         // Setup sounds
-        DD.game.audio.JunkSound.addMarker('barrel', 0, 2);
+        DD.game.audio.JunkSound.addMarker('barrel', 0, 1.9);
         DD.game.audio.JunkSound.addMarker('bottle', 2, 0.5);
         DD.game.audio.JunkSound.addMarker('bag', 3, 0.4);
         DD.game.audio.JunkSound.addMarker('boot', 3.5, 0.1);
@@ -253,29 +253,7 @@
         if (DD.objects.junks.elements.length >= 2 & !DD.game.world.cleaningUp) {
             DD.game.actions.cleanUp();
         }
-
-        // Activate boost
-        if (DD.game.modifiers.boost.active) {
-            if ((DD.player.element.x - DD.game.modifiers.boost.begin) >= 300) {
-                
-                DD.game.modifiers.total +=  -0.4 * (DD.player.speed / DD.game.modifiers.boost.total);
-                
-                var fadeOut = setInterval(function() {
-                    if (DD.game.modifiers.boost.total !== 0) {
-                        DD.player.barrier.element.alpha += -0.3;
-                    } else {
-                        clearInterval(fadeOut);
-                    }
-                }, 1000);
-
-                if (DD.game.modifiers.total <= 0) {
-                    DD.game.modifiers.total = 0;
-                    DD.game.modifiers.boost.active = false;
-                    console.log('Boost End :(');
-                }
-            }
-        }
-
+            
         // Update positions of characters
         DD.textures.waves.element.body.x = game.camera.x + (game.camera.width / 2) + 5;
         DD.textures.waves.element.body.y = 20;
@@ -340,9 +318,7 @@
 
                     DD.game.modifiers.boost.charges += -1;
                     DD.game.score.starfish.lastRun += -1;
-
-                    DD.game.modifiers.total += (DD.player.speed * DD.game.modifiers.boost.total);
-
+                    DD.game.modifiers.total = DD.game.modifiers.boost.total;
                     DD.game.modifiers.boost.active = true;
                     DD.game.modifiers.boost.begin = DD.player.element.x;
                     DD.player.barrier.element.alpha = 1;
@@ -351,6 +327,22 @@
                 }
             } else {
                 console.log('No charges left');
+            }
+        }
+        
+        if (DD.game.modifiers.boost.active) {
+            if (DD.game.modifiers.total > 0) {
+                DD.game.modifiers.total +=  -0.05 * DD.game.modifiers.boost.total;
+                console.log(DD.game.modifiers.total)
+                console.log(DD.game.modifiers.boost.total)
+            } else {
+                if (DD.player.barrier.element.alpha > 0) {
+                    DD.player.barrier.element.alpha += -0.2;
+                } else {
+                    DD.game.modifiers.total = 0;
+                    DD.game.modifiers.boost.active = false;
+                    console.log('animation end')
+                }
             }
         }
 
@@ -491,7 +483,7 @@
                 } else { // Detecting when the maximum speed is reached, so the function can end.
                     // End the interval that is causing the change in dolphin speed.
                     console.log(DD.player.element.body.velocity.x);
-                    clearInterval(speedUp);
+                    clearInterval(DD.player.speedUp);
                     DD.game.modifiers.slow = 0;
                     console.log(DD.player.element.body.velocity.x);
                 }
