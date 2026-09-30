@@ -1,3 +1,7 @@
+> [!NOTE]
+> **2026 addendum by Josephus:**
+> Copied the repo from [Bitbucket](https://bitbucket.org/anomalyblue/dolphin-dive-stem/) to GitHub, added the built assets that were deployed to the old webplus-sites-v2 server to `public/`, deployed to Laravel Forge, and added this note. Forge's deploy key is configured on GitHub to pull the repo and deploy on each push. Nothing else was changed.
+
 # README #
 
 This a repository for the Dolphin Dive STEM game we're working on. This Readme contains details on how to get the code and setup a development environment.
